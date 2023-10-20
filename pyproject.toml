@@ -1,7 +1,7 @@
 [project]
 # https://packaging.python.org/en/latest/specifications/declaring-project-metadata/
 name = "lsst-cst"
-description = "Rubin/LSST Community Science Tools"
+description = "Rubin LSST Community Science Tools"
 license = {file = "LICENSE"}
 readme= "README.md"
 keywords = [
