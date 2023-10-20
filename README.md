@@ -1,6 +1,6 @@
 # lsst-cst
 
-Rubin/LSST Community Science Tools
+Rubin LSST Community Science Tools
 Learn more at https://lsst-cst.lsst.io
 
 Install from PyPI:
