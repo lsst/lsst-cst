@@ -58,11 +58,11 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools.packages.find]
 # https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html
 where = ["src"]
-include = ["lsstcst*"]
+include = ["lsst*"]
 
 [tool.black]
 line-length = 79
-target-version = ["py38"]
+target-version = ["py311"]
 exclude = '''
 /(
     \.eggs
@@ -81,7 +81,7 @@ exclude = '''
 [tool.coverage.run]
 parallel = true
 branch = true
-source = ["lsstcst"]
+source = ["lsst"]
 
 [tool.coverage.paths]
 source = ["src", ".tox/*/site-packages"]
@@ -103,7 +103,7 @@ exclude_lines = [
 [tool.isort]
 profile = "black"
 line_length = 79
-known_first_party = ["lsstcst", "tests"]
+known_first_party = ["lsst", "tests"]
 skip = ["docs/conf.py"]
 
 [tool.mypy]
@@ -191,7 +191,7 @@ select = ["ALL"]
 target-version = "py311"
 
 [tool.ruff.per-file-ignores]
-"src/lsstcst/handlers/**" = [
+"src/lsst/handlers/**" = [
     "D103",    # FastAPI handlers should not have docstrings
 ]
 "tests/**" = [
@@ -203,7 +203,7 @@ target-version = "py311"
 ]
 
 [tool.ruff.isort]
-known-first-party = ["lsstcst", "tests"]
+known-first-party = ["lsst", "tests"]
 split-on-trailing-comma = false
 
 [tool.ruff.flake8-bugbear]

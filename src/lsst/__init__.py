@@ -5,7 +5,7 @@ __all__ = ["__version__"]
 from importlib.metadata import PackageNotFoundError, version
 
 __version__: str
-"""The version string of lsstcst
+"""The version string of lsst
 (PEP 440 / SemVer compatible).
 """
 
