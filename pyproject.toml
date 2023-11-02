@@ -24,7 +24,14 @@ requires-python = ">=3.11"
 dependencies = [
     "matplotlib>= 3.3",
     "scipy>1.5",
-    "numpy>1.22"
+    "numpy>1.22",
+    "pandas",
+    "astropy",
+    "seaborn",
+    "bokeh",
+    "holoviews",
+    "datashader",
+    "lsst-daf-butler",
 ]
 dynamic = ["version"]
 

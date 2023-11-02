@@ -3,7 +3,7 @@ import unittest
 import matplotlib.pyplot as plt
 import numpy as np
 
-from lsst.cst.mplutils import remove_figure
+from lsst.cst.mpl_utils import remove_figure
 
 
 class TestMPLUtils(unittest.TestCase):
