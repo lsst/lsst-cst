@@ -78,6 +78,8 @@ jobs:
       # requests from ticket branches in the same repository.  This avoids
       # version clutter in the docs and failures when a PR doesn't have access
       # to secrets.
+
+# Uncomment when the lsst-cst.lsst.io LSST the Docs website is set up
 #      - name: Upload to LSST the Docs
 #        uses: lsst-sqre/ltd-upload@v1
 #        with:
