@@ -3,7 +3,7 @@ import unittest
 import matplotlib.pyplot as plt
 import numpy as np
 
-from lsstcst.mplutils import remove_figure
+from lsstcst.cst.mplutils import remove_figure
 
 
 class TestMPLUtils(unittest.TestCase):
@@ -11,7 +11,7 @@ class TestMPLUtils(unittest.TestCase):
 
     def testRemoveFigure(self) -> None:
         """Create a figure and test that the remove_figure function
-        removes it as exepected."""
+        removes it as expected."""
 
         # Data for plotting
         t = np.arange(0.0, 2.0, 0.01)
