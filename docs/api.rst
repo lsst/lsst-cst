@@ -1,8 +1,8 @@
-:og:description: Comprehensive API documentation for lsstcst.
+:og:description: Comprehensive API documentation for lsst.cst.
 
 ####################
 Python API reference
 ####################
 
-.. automodapi:: lsstcst
+.. automodapi:: lsst.cst
    :include-all-objects:
