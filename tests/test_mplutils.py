@@ -26,6 +26,7 @@ class TestMPLUtils(unittest.TestCase):
             title="A simple test plot",
         )
         ax.grid()
-        plt.show()
+        self.assertIsNotNone(fig)
 
+        # Remove figure using utility function
         remove_figure(fig)
