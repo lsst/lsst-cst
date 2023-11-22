@@ -1,3 +1,5 @@
+"""Matplotlib science utils"""
+
 import gc
 
 import matplotlib.pyplot as plt
