@@ -6,6 +6,5 @@
 Python API reference
 ####################
 
-.. automodapi:: lsst_cst
+.. automodapi:: lsst.cst
    :no-inheritance-diagram:
-

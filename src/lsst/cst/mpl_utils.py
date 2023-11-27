@@ -11,7 +11,7 @@ def remove_figure(fig: Figure) -> None:
 
     Parameters
     ----------
-    fig : `Figure`
+    fig : `matplotlib.figure.Figure`
         Figure to be removed.
 
     Returns
