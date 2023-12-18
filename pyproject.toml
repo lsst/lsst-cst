@@ -23,8 +23,8 @@ classifiers = [
 requires-python = ">=3.11"
 dependencies = [
     "matplotlib>= 3.3",
+    "numpy",
     "pandas",
-    "numpy"
 ]
 dynamic = ["version"]
 

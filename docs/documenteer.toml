@@ -15,3 +15,5 @@ disable_primary_sidebars = [
 [sphinx.intersphinx.projects]
 python = "https://docs.python.org/3/"
 matplotlib = 'http://matplotlib.org/stable'
+numpy = "http://docs.scipy.org/doc/numpy"
+pandas = "https://pandas.pydata.org/pandas-docs/stable/"
