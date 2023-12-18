@@ -2,7 +2,8 @@
 
 from importlib.metadata import PackageNotFoundError, version
 
-from .mpl_utils import remove_figure
+# from .data_utils import sort_dataframe
+# from .mpl_utils import remove_figure
 
 __version__: str
 """The version string of lsst
@@ -10,7 +11,7 @@ __version__: str
 """
 
 
-__all__ = ["__version__", "remove_figure"]
+_all__ = ["__version__"]  # , "remove_figure", "sort_dataframe"]
 
 
 try:

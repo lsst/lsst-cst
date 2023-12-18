@@ -19,6 +19,6 @@ lsst-cst is developed on GitHub at https://github.com/lsst/lsst-cst.
    :hidden:
 
    User guide <user-guide/index>
-   API <api>
+   API <api/index>
    Change log <changelog>
    Contributing <dev/index>
