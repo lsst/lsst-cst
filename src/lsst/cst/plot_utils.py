@@ -10,7 +10,7 @@ from typing import Dict, List
 
 from lsst.afw.image._exposure import ExposureF
 
-
+__all__ = ["get_options", "Plot", "set_extension"]
 _bokeh_extension_set = None
 _extension_available = ['bokeh']
 
@@ -32,7 +32,13 @@ def set_extension(extension: str):
 class Options(ABC):
 
     @abstractmethod
-    def to_dict():
+    def to_dict(self):
+        NotImplementedError()
+
+
+class NoOptions(Options):
+
+    def to_dict(self):
         return {}
 
 
@@ -44,6 +50,7 @@ def get_options() -> Options:
         raise Exception("Extension not set")
     if _bokeh_extension_set == 'bokeh':
         return _BokehOptions
+    return NoOptions()
 
 
 @dataclass(frozen=True)
