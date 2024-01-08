@@ -7,12 +7,12 @@ from enum import Enum
 
 
 _log = logging.getLogger(__name__)
-_lsst_butler_ready = False
+_lsst_butler_ready = True
 
 try:
     from lsst.daf.butler import Butler
 except ImportError:
-    _lsst_butler_ready = True
+    _lsst_butler_ready = False
     _log.warning()
 
 
@@ -23,7 +23,7 @@ class Collection(Enum):
 
 class Configuration(Enum):
     """"""
-    DP02 = {'name': 'dp02', 'collections_available': [Collection.DP02]}
+    DP02 = {'name': 'dp02', 'collections_available': [Collection.i22]}
 
 
 class Band(Enum):
@@ -52,7 +52,7 @@ class ExposureId:
 
     def __str__(self):
         """"""
-        return f"visit: {self._visit} detector: {self._detector} band: {self._band}"
+        return f"visit: {self._visit} detector: {self._detector} band: {self._band.value}"
 
     def __repr__(self):
         """"""
@@ -77,14 +77,13 @@ class ButlerCalExpData:
     """"""
     def __init__(self, configuration: Configuration, collection: Collection):
         if not _lsst_butler_ready:
-            raise Exception(f"Unable to instantiate class {self.__name__}")
+            raise Exception(f"Unable to instantiate class ButlerCalExpData")
         _configuration = configuration.value
-        _collection = collection.value
-        if _collection not in _configuration['collections_available']:
-            raise Exception(f"Collection {_configuration} not compatible with configuration")
+        if collection not in _configuration['collections_available']:
+            raise Exception(f"Collection {_collection} not compatible with configuration: {_configuration['name']}")
         self._configuration = _configuration['name']
-        self._collection = _collection.value
-        self._butler = Butler(self._configuration, collections=self.__collection)
+        self._collection = collection.value
+        self._butler = Butler(self._configuration, collections=self._collection)
 
     def get_exposure(self, exposure_id: ExposureId):
         """"""

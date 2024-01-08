@@ -13,7 +13,7 @@ from bokeh.models import HoverTool
 import numpy as np
 
 from lsst.afw.image._exposure import ExposureF
-from data_utils import CalExpData
+from lsst.cst.data_utils import CalExpData
 
 __all__ = ["Plot", "CalExpDataPlot", "ImagePlot", "set_extension"]
 _bokeh_extension_set = None
@@ -68,9 +68,11 @@ def _get_options(options_type: str) -> Options:
 @dataclass(frozen=True)
 class _BokehPointsOptions(Options):
     """.env"""
-    fill_color: str
-    size: int
-    color: str
+    fill_color: str = None
+    size: int = 9
+    color: str = "darkorange"
+    def to_dict(self):
+        return dict(fill_color=self.fill_color, size=self.size, color=self.color)
 
 
 @dataclass(frozen=True)
@@ -136,7 +138,13 @@ class _BokehExposureOptions(_BokehImageOptions):
     """"""
     show_detections: bool = True
 
+    def to_dict(self):
+        base_dict = super().to_dict()
+        exposure_dict = dict(show_detections=self.show_detections)
+        base_dict.update(exposure_dict)
+        return base_dict
 
+		
 class Plot(ABC):
     """.env"""
 
