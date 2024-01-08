@@ -90,9 +90,10 @@ class ButlerExposureFactory:
         return ButlerCalExpData(self._butler, exposure_id)
 
 
-class ButlerCalExpData:
+class ButlerCalExpData(CalExpData):
     """"""
     def __init__(self, butler: Butler, exposure_id: ExposureId):
+        super.__init__()
         self._exposure_id = exposure_id
         self._butler = butler
 
