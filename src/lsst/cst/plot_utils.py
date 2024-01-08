@@ -15,7 +15,7 @@ import numpy as np
 from lsst.afw.image._exposure import ExposureF
 from data_utils import CalExpData
 
-__all__ = ["Plot", "set_extension"]
+__all__ = ["Plot", "CalExpDataPlot", "ImagePlot", "set_extension"]
 _bokeh_extension_set = None
 _extension_available = ["bokeh"]
 
