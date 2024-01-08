@@ -13,7 +13,7 @@ try:
     from lsst.daf.butler import Butler
 except ImportError:
     _lsst_butler_ready = False
-    _log.warning()
+    _log.warning("Unable to import lsst.daf.butler")
 
 
 class Collection(Enum):
@@ -73,31 +73,48 @@ class CalExpData(ABC):
         raise NotImplementedError()
 
 
-class ButlerCalExpData:
+class ButlerExposureFactory:
     """"""
     def __init__(self, configuration: Configuration, collection: Collection):
         if not _lsst_butler_ready:
-            raise Exception(f"Unable to instantiate class ButlerCalExpData")
+            raise Exception("Unable to instantiate class ButlerCalExpData")
         _configuration = configuration.value
         if collection not in _configuration['collections_available']:
-            raise Exception(f"Collection {_collection} not compatible with configuration: {_configuration['name']}")
+            raise Exception(f'''Collection {collection} not compatible with configuration: 
+                            {_configuration['name']}''')
         self._configuration = _configuration['name']
         self._collection = collection.value
         self._butler = Butler(self._configuration, collections=self._collection)
 
     def get_exposure(self, exposure_id: ExposureId):
-        """"""
-        exposure = self._butler.get('calexp', dataId=exposure_id)
-        return exposure
+        return ButlerCalExpData(self._butler, exposure_id)
 
-    def get_sources(self, exposure_id: ExposureId):
+
+class ButlerCalExpData:
+    """"""
+    def __init__(self, butler: Butler, exposure_id: ExposureId):
+        self._exposure_id = exposure_id
+        self._butler = butler
+
+    def get_calexp(self):
         """"""
-        exp_sources = self._butler.get('sourceTable', dataId=exposure_id)
+        calexp = self._butler.get('calexp', dataId=self._exposure_id)
+        return calexp
+
+    def get_sources(self):
+        """"""
+        exp_sources = self._butler.get('sourceTable', dataId=self._exposure_id)
         return exp_sources
+
+    @property
+    def exposure_id(self):
+        """.env"""
+        return self._exposure_id
 
     def __str__(self):
         """"""
-        return f"Butler exposure data. Configuration: {self._configuration} collection: {self._collection}"
+        return f'''Butler exposure data {self._exposure_id}.\
+                Configuration: {self._configuration} collection: {self._collection}'''
 
     def __repr__(self):
         """"""
