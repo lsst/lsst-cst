@@ -48,7 +48,7 @@ class ExposureId:
 
     def as_dict(self):
         """"""
-        return {'visit': self._visit, 'detector': self._detector, 'band': self._band}
+        return {'visit': self._visit, 'detector': self._detector, 'band': self._band.value}
 
     def __str__(self):
         """"""
@@ -63,7 +63,7 @@ class CalExpData(ABC):
     """"""
 
     @abstractmethod
-    def get_exposure(self, exposure_id: ExposureId):
+    def get_calexp(self, exposure_id: ExposureId):
         """"""
         raise NotImplementedError()
 
@@ -93,18 +93,18 @@ class ButlerExposureFactory:
 class ButlerCalExpData(CalExpData):
     """"""
     def __init__(self, butler: Butler, exposure_id: ExposureId):
-        super.__init__()
+        super().__init__()
         self._exposure_id = exposure_id
         self._butler = butler
 
     def get_calexp(self):
         """"""
-        calexp = self._butler.get('calexp', dataId=self._exposure_id)
+        calexp = self._butler.get('calexp', dataId=self._exposure_id.as_dict())
         return calexp
 
     def get_sources(self):
         """"""
-        exp_sources = self._butler.get('sourceTable', dataId=self._exposure_id)
+        exp_sources = self._butler.get('sourceTable', dataId=self._exposure_id.as_dict())
         return exp_sources
 
     @property

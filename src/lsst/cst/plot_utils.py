@@ -170,7 +170,6 @@ class Plot(ABC):
         """.env"""
         raise NotImplementedError()
 
-    @abstractmethod
     def delete(self):
         """Delete underlying image"""
         assert self._img is not None
@@ -195,7 +194,7 @@ class Plot(ABC):
         return ImagePlot(exposure.image.array)
 
     @staticmethod
-    def from_exposure_data(cal_exp_data: CalExpData, title: str = "No title",
+    def from_cal_exp_data(cal_exp_data: CalExpData, title: str = "No title",
                            xlabel: str = "X", ylabel: str = "Y"):
         """
         """
@@ -270,6 +269,7 @@ class ImagePlot(Plot):
         self._title = title
         self._xlabel = xlabel
         self._ylabel = ylabel
+        self._img = None
 
     @staticmethod
     @property
@@ -343,7 +343,7 @@ class CalExpDataPlot(Plot):
     def __init__(self, exposure_data: CalExpData, title: str = "No title",
                  xlabel: str = "X", ylabel: str = "Y",
                  source_options: _BokehPointsOptions = _BokehPointsOptions()):
-        super.__init__()
+        super().__init__()
         self._exposure_data = exposure_data
         self._title = title
         self._xlabel = xlabel
@@ -368,7 +368,7 @@ class CalExpDataPlot(Plot):
         """"""
         assert isinstance(options, _BokehExposureOptions)
         self._show_detections = options.show_detections
-        self._img = Plot.from_exposure(self._exposure_data.get_exposure())
+        self._img = Plot.from_exposure(self._exposure_data.get_calexp())
         self._img.render(options)
         self._detections = Plot.from_points(self._exposure_data.get_sources())
         self._detections.render(self._source_options)
