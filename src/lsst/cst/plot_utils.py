@@ -16,16 +16,17 @@ from lsst.afw.image._exposure import ExposureF
 from lsst.cst.data_utils import CalExpData
 
 __all__ = ["Plot", "CalExpDataPlot", "ImagePlot", "set_extension"]
+
 _bokeh_extension_set = None
 _extension_available = ["bokeh"]
 
 
 class _DocstringProperty:
     """Helper class to substitute the docstring of a class
-    Mainly used on porperties, to return the docstring
+    Mainly used on properties, to return the docstring
     of the returned object"""
-    def __init__(self, docstring_cls):
-        self._docstring_cls = docstring_cls
+    def __init__(self, docstring_id):
+        self._docstring_cls = _get_options(docstring_id)
 
     def __call__(self, func):
         variable = getattr(self._docstring_cls, '__doc__', None)
@@ -242,7 +243,7 @@ class PointsPlot(Plot):
 
     @staticmethod
     @property
-    @_DocstringProperty(_get_options("points"))
+    @_DocstringProperty("points")
     def options():
         """"""
         if PointsPlot._options is None:
@@ -289,7 +290,7 @@ class ImagePlot(Plot):
 
     @staticmethod
     @property
-    @_DocstringProperty(_get_options("image"))
+    @_DocstringProperty("image")
     def options():
         """"""
         if ImagePlot._options is None:
@@ -372,7 +373,7 @@ class CalExpDataPlot(Plot):
 
     @staticmethod
     @property
-    @_DocstringProperty(_get_options("exposure_data"))
+    @_DocstringProperty("exposure_data")
     def options():
         """"""
         if CalExpDataPlot._options is None:
