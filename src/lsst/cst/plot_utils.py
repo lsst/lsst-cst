@@ -20,6 +20,20 @@ _bokeh_extension_set = None
 _extension_available = ["bokeh"]
 
 
+class _DocstringProperty:
+    """Helper class to substitute the docstring of a class
+    Mainly used on porperties, to return the docstring
+    of the returned object"""
+    def __init__(self, docstring_cls):
+        self._docstring_cls = docstring_cls
+
+    def __call__(self, func):
+        variable = getattr(self._docstring_cls, '__doc__', None)
+        if variable is not None:
+            func.__doc__ = getattr(self._docstring_cls, '__doc__', None)
+        return func
+
+
 def set_extension(extension: str):
     """Function to set the extension used
     by the holoviews module.
@@ -71,6 +85,7 @@ class _BokehPointsOptions(Options):
     fill_color: str = None
     size: int = 9
     color: str = "darkorange"
+
     def to_dict(self):
         return dict(fill_color=self.fill_color, size=self.size, color=self.color)
 
@@ -144,7 +159,7 @@ class _BokehExposureOptions(_BokehImageOptions):
         base_dict.update(exposure_dict)
         return base_dict
 
-		
+
 class Plot(ABC):
     """.env"""
 
@@ -195,7 +210,7 @@ class Plot(ABC):
 
     @staticmethod
     def from_cal_exp_data(cal_exp_data: CalExpData, title: str = "No title",
-                           xlabel: str = "X", ylabel: str = "Y"):
+                          xlabel: str = "X", ylabel: str = "Y"):
         """
         """
         return CalExpDataPlot(cal_exp_data)
@@ -227,6 +242,7 @@ class PointsPlot(Plot):
 
     @staticmethod
     @property
+    @_DocstringProperty(_get_options("points"))
     def options():
         """"""
         if PointsPlot._options is None:
@@ -273,6 +289,7 @@ class ImagePlot(Plot):
 
     @staticmethod
     @property
+    @_DocstringProperty(_get_options("image"))
     def options():
         """"""
         if ImagePlot._options is None:
@@ -341,7 +358,7 @@ class CalExpDataPlot(Plot):
     _options = None
 
     def __init__(self, exposure_data: CalExpData, title: str = "No title",
-                 xlabel: str = "X", ylabel: str = "Y",
+                 xlabel: str = "X", ylabel: str = "Y", show_detections: bool = True,
                  source_options: _BokehPointsOptions = _BokehPointsOptions()):
         super().__init__()
         self._exposure_data = exposure_data
@@ -351,10 +368,11 @@ class CalExpDataPlot(Plot):
         self._source_options = source_options
         self._img = None
         self._detections = None
-        self._show_detections = False
+        self._show_detections = show_detections
 
     @staticmethod
     @property
+    @_DocstringProperty(_get_options("exposure_data"))
     def options():
         """"""
         if CalExpDataPlot._options is None:
@@ -363,31 +381,38 @@ class CalExpDataPlot(Plot):
 
     def render(
         self,
-        options: _BokehExposureOptions = _BokehExposureOptions(),
+        options: _BokehImageOptions = _BokehImageOptions(),
     ):
         """"""
-        assert isinstance(options, _BokehExposureOptions)
-        self._show_detections = options.show_detections
+        assert isinstance(options, _BokehImageOptions)
+        assert self._img is None
+        assert self._detections is None
         self._img = Plot.from_exposure(self._exposure_data.get_calexp())
         self._img.render(options)
-        self._detections = Plot.from_points(self._exposure_data.get_sources())
-        self._detections.render(self._source_options)
+        if self._show_detections:
+            self._detections = Plot.from_points(self._exposure_data.get_sources())
+            self._detections.render(self._source_options)
 
     def show(self):
         """"""
+        assert self._img is not None
         if self._show_detections:
+            assert self._detections is not None
             return self._img.show() * self._detections.show()
         else:
             return self._img.show()
 
     def rasterize(self):
         """"""
+        assert self._img is not None
         if self._show_detections:
+            assert self._detections is not None
             return self._img.show() * self._detections.show()
         else:
             return self._img.rasterize()
 
     def delete(self):
         """.env"""
+        assert self._detections is not None
         self._detections.delete()
         super().delete()

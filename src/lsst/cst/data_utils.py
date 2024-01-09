@@ -80,7 +80,7 @@ class ButlerExposureFactory:
             raise Exception("Unable to instantiate class ButlerCalExpData")
         _configuration = configuration.value
         if collection not in _configuration['collections_available']:
-            raise Exception(f'''Collection {collection} not compatible with configuration: 
+            raise Exception(f'''Collection {collection} not compatible with configuration:
                             {_configuration['name']}''')
         self._configuration = _configuration['name']
         self._collection = collection.value
