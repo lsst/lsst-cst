@@ -215,17 +215,14 @@ class PointsPlot(Plot):
             },
         )
 
-    @abstractmethod
     def render(self):
         """.env"""
         self._img = hv.Points(self._points).opts(self._options.to_dict(), tools=[self._hover_tool])
 
-    @abstractmethod
     def show(self):
         """.env"""
         return self._img
 
-    @abstractmethod
     def rasterize(self):
         """.env"""
         raise NotImplementedError()
