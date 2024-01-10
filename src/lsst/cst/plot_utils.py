@@ -115,7 +115,7 @@ class ImageOptions(Options):
     colorbar: bool = True
     toolbar: str = "right"
     show_grid: bool = True
-    tools: List[str] = field(default_factory=lambda: ["hover"])
+    tools: List[str] = field(default_factory=lambda: [])
     image_bounds: tuple[float] = None
 
     def to_dict(self):
@@ -269,8 +269,7 @@ class ImagePlot(Plot):
             title=self._title,
             xlabel=self._xlabel,
             ylabel=self._ylabel,
-            **self._options.to_dict(),
-            tools=[]
+            **self._options.to_dict()
         )
 
     def show(self):
