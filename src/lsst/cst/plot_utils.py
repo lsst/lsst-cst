@@ -246,7 +246,7 @@ class ImagePlot(Plot):
     """
     _options = ImageOptions
 
-    def __init__(self, exposure: ExposureF, title: str = "No title",
+    def __init__(self, exposure: ExposureF, title: str = None,
                  xlabel: str = "X", ylabel: str = "Y", options: ImageOptions = ImageOptions()):
         self._exposure = exposure
         self._title = title
@@ -270,6 +270,7 @@ class ImagePlot(Plot):
             xlabel=self._xlabel,
             ylabel=self._ylabel,
             **self._options.to_dict(),
+            tools=[]
         )
 
     def show(self):
