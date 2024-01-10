@@ -178,7 +178,7 @@ class Plot(ABC):
         results: `Plot`
             Plot instance with the array inside exposure as image data
         """
-        return ImagePlot(exposure)
+        return ImagePlot(exposure, title, xlabel, ylabel, image_options)
 
     @staticmethod
     def from_cal_exp_data(cal_exp_data: CalExpData, title: str = None,
@@ -327,7 +327,7 @@ class CalExpPlot(Plot):
         """"""
         assert self._img is None
         assert self._detections is None
-        if not self._title:
+        if self._title is None:
             self._title = self._exposure_data.cal_exp_id
         if self._image_options.image_bounds is None:
             self._image_options.image_bounds = self._exposure_data.get_image_bounds()
