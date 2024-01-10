@@ -250,21 +250,22 @@ class ImagePlot(Plot):
     _options = ImageOptions
 
     def __init__(self, exposure: ExposureF, title: str = "No title",
-                 xlabel: str = "X", ylabel: str = "Y"):
+                 xlabel: str = "X", ylabel: str = "Y", options: ImageOptions = ImageOptions()):
         self._exposure = exposure
         self._title = title
         self._xlabel = xlabel
         self._ylabel = ylabel
         self._img = None
+        self._options = options
 
     def render(self):
         """Renders the array converting the array data into an holoviews Image
         """
         assert self._img is None
-        if self._image_options.image_bounds is None:
-            self._image_options.image_bounds = (0, 0,
-                                                self._exposure.getDimensions()[0],
-                                                self._exposure.getDimensions()[1])
+        if self._options.image_bounds is None:
+            self._options.image_bounds = (0, 0,
+                                          self._exposure.getDimensions()[0],
+                                          self._exposure.getDimensions()[1])
         image_transform = ImageTransform(self._exposure.image.array)
         array = image_transform.transform(["flip_columns", "scale"])
         self._img = hv.Image(array, kdims=[self._xlabel, self._ylabel]).opts(
