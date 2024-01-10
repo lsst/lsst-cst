@@ -10,29 +10,14 @@ from pandas import Series
 import holoviews as hv
 from holoviews.operation.datashader import rasterize
 from bokeh.models import HoverTool
-import numpy as np
 
 from lsst.afw.image._exposure import ExposureF
-from lsst.cst.data_utils import CalExpData
+from lsst.cst.data_utils import CalExpData, ImageActions
 
 __all__ = ["Plot", "CalExpDataPlot", "ImagePlot", "set_extension"]
 
 _bokeh_extension_set = None
 _extension_available = ["bokeh"]
-
-
-class _DocstringProperty:
-    """Helper class to substitute the docstring of a class
-    Mainly used on properties, to return the docstring
-    of the returned object"""
-    def __init__(self, docstring_id):
-        self._docstring_cls = _get_options(docstring_id)
-
-    def __call__(self, func):
-        variable = getattr(self._docstring_cls, '__doc__', None)
-        if variable is not None:
-            func.__doc__ = getattr(self._docstring_cls, '__doc__', None)
-        return func
 
 
 def set_extension(extension: str):
@@ -47,9 +32,6 @@ def set_extension(extension: str):
         raise Exception(f"Unknown extension: {extension}")
     hv.extension(extension)
     _bokeh_extension_set = extension
-
-
-set_extension("bokeh")
 
 
 class Options(ABC):
@@ -75,16 +57,14 @@ def _get_options(options_type: str) -> Options:
         raise Exception("Extension not set")
     if _bokeh_extension_set == "bokeh":
         if options_type == "image":
-            return _BokehImageOptions
+            return ImageOptions
         elif options_type == "points":
-            return _BokehPointsOptions
-        elif options_type == "exposure_data":
-            return _BokehExposureOptions
+            return PointsOptions
     return NoOptions
 
 
-@dataclass(frozen=True)
-class _BokehPointsOptions(Options):
+@dataclass
+class PointsOptions(Options):
     """.env"""
     fill_color: str = None
     size: int = 9
@@ -94,8 +74,8 @@ class _BokehPointsOptions(Options):
         return dict(fill_color=self.fill_color, size=self.size, color=self.color)
 
 
-@dataclass(frozen=True)
-class _BokehImageOptions(Options):
+@dataclass
+class ImageOptions(Options):
     """Image options class
     Parameters
     ----------
@@ -136,6 +116,7 @@ class _BokehImageOptions(Options):
     toolbar: str = "right"
     show_grid: bool = True
     tools: List[str] = field(default_factory=lambda: ["hover"])
+    image_bounds: tuple[float] = None
 
     def to_dict(self):
         return dict(
@@ -153,17 +134,6 @@ class _BokehImageOptions(Options):
         )
 
 
-class _BokehExposureOptions(_BokehImageOptions):
-    """"""
-    show_detections: bool = True
-
-    def to_dict(self):
-        base_dict = super().to_dict()
-        exposure_dict = dict(show_detections=self.show_detections)
-        base_dict.update(exposure_dict)
-        return base_dict
-
-
 class Plot(ABC):
     """.env"""
 
@@ -172,10 +142,7 @@ class Plot(ABC):
         self._img = None
 
     @abstractmethod
-    def render(
-        self,
-        options: Options = NoOptions(),
-    ):
+    def render(self):
         """.env"""
         raise NotImplementedError()
 
@@ -197,7 +164,8 @@ class Plot(ABC):
 
     @staticmethod
     def from_exposure(exposure: ExposureF, title: str = "No title",
-                      xlabel: str = "X", ylabel: str = "Y"):
+                      xlabel: str = "X", ylabel: str = "Y",
+                      image_options: ImageOptions = ImageOptions()):
         """Create a basic plot class with an exposure as parameter
 
         Parameters
@@ -210,11 +178,13 @@ class Plot(ABC):
         results: `Plot`
             Plot instance with the array inside exposure as image data
         """
-        return ImagePlot(exposure.image.array)
+        return ImagePlot(exposure)
 
     @staticmethod
-    def from_cal_exp_data(cal_exp_data: CalExpData, title: str = "No title",
-                          xlabel: str = "X", ylabel: str = "Y"):
+    def from_cal_exp_data(cal_exp_data: CalExpData, title: str = None,
+                          xlabel: str = "X", ylabel: str = "Y",
+                          image_options: ImageOptions = ImageOptions(),
+                          points_options: PointsOptions = PointsOptions()):
         """
         """
         return CalExpDataPlot(cal_exp_data)
@@ -228,7 +198,7 @@ class Plot(ABC):
 
 class PointsPlot(Plot):
 
-    _options = None
+    options = PointsOptions
 
     def __init__(self, points: tuple[Series]):
         super().__init__()
@@ -244,26 +214,20 @@ class PointsPlot(Plot):
             },
         )
 
-    @staticmethod
-    @property
-    @_DocstringProperty("points")
-    def options():
-        """"""
-        if PointsPlot._options is None:
-            PointsPlot._options = _get_options("points")
-        return PointsPlot._options
-
+    @abstractmethod
     def render(
         self,
-        options: _BokehPointsOptions = _BokehPointsOptions(),
+        options: PointsOptions = PointsOptions(),
     ):
         """.env"""
-        self._img = hv.Points(self._points).opts(**options.to_dict(), tools=[self._hover_tool])
+        self._img = hv.Points(self._points).opts(options.to_dict(), tools=[self._hover_tool])
 
+    @abstractmethod
     def show(self):
         """.env"""
         return self._img
 
+    @abstractmethod
     def rasterize(self):
         """.env"""
         raise NotImplementedError()
@@ -276,50 +240,40 @@ class ImagePlot(Plot):
     ----------
     image_array: `np.ndarray`
         image array to be show in the plot
-
+    title: `str`
+        title of the plot
+    xlabel: `str`
+        label for the x coordinates
+    ylabel: `str`
+        label for the y coordinates
+    options: `Options`
+        Options for the underlying plot object
     """
-    _options = None
+    _options = ImageOptions
 
-    def __init__(self, image_array: np.ndarray, title: str = "No title",
+    def __init__(self, exposure: ExposureF, title: str = "No title",
                  xlabel: str = "X", ylabel: str = "Y"):
-        self._image_array = image_array
+        self._exposure = exposure
         self._title = title
         self._xlabel = xlabel
         self._ylabel = ylabel
         self._img = None
 
-    @staticmethod
-    @property
-    @_DocstringProperty("image")
-    def options():
-        """"""
-        if ImagePlot._options is None:
-            ImagePlot._options = _get_options("image")
-        return ImagePlot._options
-
-    def render(
-        self,
-        options: _BokehImageOptions = _BokehImageOptions(),
-    ):
+    def render(self):
         """Renders the array converting the array data into an holoviews Image
-        Parameters
-        ----------
-        title: `str`
-            title of the plot
-        xlabel: `str`
-            label for the x coordinates
-        ylabel: `str`
-            label for the y coordinates
-        options: `Options`
-            Options for the underlying plot object
         """
-        assert isinstance(options, _BokehImageOptions)
         assert self._img is None
-        self._img = hv.Image(self._image_array, kdims=[self._xlabel, self._ylabel]).opts(
+        if self._image_options.image_bounds is None:
+            self._image_options.image_bounds = (0, 0,
+                                                self._exposure.getDimensions()[0],
+                                                self._exposure.getDimensions()[1])
+        image_actions = ImageActions(self._exposure.image.array)
+        array = image_actions.do_actions(["flip_columns", "scale"])
+        self._img = hv.Image(array, kdims=[self._xlabel, self._ylabel]).opts(
             title=self._title,
             xlabel=self._xlabel,
             ylabel=self._ylabel,
-            **options.to_dict(),
+            **self._options.to_dict(),
         )
 
     def show(self):
@@ -356,41 +310,37 @@ class ImagePlot(Plot):
 class CalExpDataPlot(Plot):
     """"""
 
-    _options = None
+    options = ImageOptions
+    detect_options = PointsOptions
 
     def __init__(self, exposure_data: CalExpData, title: str = "No title",
                  xlabel: str = "X", ylabel: str = "Y", show_detections: bool = True,
-                 source_options: _BokehPointsOptions = _BokehPointsOptions()):
+                 image_options: ImageOptions = ImageOptions(),
+                 source_options: PointsOptions = PointsOptions()):
         super().__init__()
         self._exposure_data = exposure_data
         self._title = title
         self._xlabel = xlabel
         self._ylabel = ylabel
         self._source_options = source_options
-        self._img = None
+        self._image_options = image_options
         self._detections = None
         self._show_detections = show_detections
-        self._options = _get_options("exposure_data")
 
-    @_DocstringProperty(_get_options("exposure_data"))
-    @staticmethod
-    @property
-    def options():
+    def render(self):
         """"""
-        if CalExpDataPlot._options is None:
-            CalExpDataPlot._options = _get_options("exposure_data")
-        return CalExpDataPlot._options
-
-    def render(
-        self,
-        options: _BokehImageOptions = _BokehImageOptions(),
-    ):
-        """"""
-        assert isinstance(options, _BokehImageOptions)
         assert self._img is None
         assert self._detections is None
-        self._img = Plot.from_exposure(self._exposure_data.get_calexp())
-        self._img.render(options)
+        if not self._title:
+            title = self._exposure_data.cal_exp_id
+        if self._image_options.image_bounds is None:
+            self._image_options.image_bounds = self._exposure_data.get_image_bounds()
+        self._img = Plot.from_exposure(exposure=self._exposure_data.get_calexp(),
+                                       title=title,
+                                       xlabel=self._xlabel,
+                                       ylabel=self._ylabel,
+                                       image_options=self._image_options)
+        self._img.render(self._image_options)
         if self._show_detections:
             self._detections = Plot.from_points(self._exposure_data.get_sources())
             self._detections.render(self._source_options)
@@ -400,7 +350,7 @@ class CalExpDataPlot(Plot):
         assert self._img is not None
         if self._show_detections:
             assert self._detections is not None
-            return self._img.show() # * self._detections.show()
+            return self._img.show() * self._detections.show()
         else:
             return self._img.show()
 
@@ -409,12 +359,12 @@ class CalExpDataPlot(Plot):
         assert self._img is not None
         if self._show_detections:
             assert self._detections is not None
-            return self._img.show() # * self._detections.show()
+            return self._img.show() * self._detections.show()
         else:
             return self._img.rasterize()
 
     def delete(self):
         """.env"""
-        assert self._detections is not None
-        self._detections.delete()
+        if self._detections is not None:
+            self._detections.delete()
         super().delete()

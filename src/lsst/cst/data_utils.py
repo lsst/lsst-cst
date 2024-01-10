@@ -4,6 +4,7 @@ from astropy.visualization import AsinhStretch, ZScaleInterval
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from enum import Enum
+from typing import List
 
 
 _log = logging.getLogger(__name__)
@@ -72,6 +73,11 @@ class CalExpData(ABC):
         """"""
         raise NotImplementedError()
 
+    @abstractmethod
+    def get_image_bounds(self):
+        """"""
+        raise NotImplementedError()
+
 
 class ButlerExposureFactory:
     """"""
@@ -96,21 +102,29 @@ class ButlerCalExpData(CalExpData):
         super().__init__()
         self._exposure_id = exposure_id
         self._butler = butler
+        self._calexp = None
 
     def get_calexp(self):
         """"""
-        calexp = self._butler.get('calexp', dataId=self._exposure_id.as_dict())
-        return calexp
+        if self._calexp is None:
+            self._calexp = self._butler.get('calexp', dataId=self._exposure_id.as_dict())
+        return self._calexp
 
     def get_sources(self):
         """"""
         exp_sources = self._butler.get('sourceTable', dataId=self._exposure_id.as_dict())
         return exp_sources
 
+    def get_image_bounds(self):
+        """"""
+        if self._calexp is None:
+            self.get_calexp()
+        return (0, 0, self._calexp.getDimensions()[0], self._calexp.getDimensions()[1])
+
     @property
-    def exposure_id(self):
+    def cal_exp_id(self):
         """.env"""
-        return self._exposure_id
+        return str(self._exposure_id)
 
     def __str__(self):
         """"""
@@ -122,13 +136,26 @@ class ButlerCalExpData(CalExpData):
         return self.__str__()
 
 
-def flip_columns(array: np.ndarray) -> np.array:
-    """"""
-    return np.flipup(array)
+class ImageActions:
 
+    def __init__(self, image_array: np.ndarray):
+        self._image_array = image_array
+        self._actions = {"scale": self._scale_image,
+                         "column_flip": self._flip_columns}
 
-def scale_image(array: np.ndarray) -> np.array:
-    """"""
-    transform = AsinhStretch() + ZScaleInterval()
-    scaled_image = transform(array)
-    return scaled_image
+    def do_actions(self, actions: List[str]):
+        """"""
+        for action in actions:
+            function_action = self._actions.get(action, None)
+            if function_action:
+                self._image_array = function_action()
+        return self._image_array
+
+    def _flip_columns(self, array: np.ndarray) -> None:
+        """"""
+        self._image_array = np.flipup(array)
+
+    def _scale_image(self, array: np.ndarray) -> None:
+        """"""
+        transform = AsinhStretch() + ZScaleInterval()
+        self._image_array = transform(array)
