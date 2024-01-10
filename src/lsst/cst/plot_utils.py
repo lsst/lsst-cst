@@ -49,6 +49,9 @@ def set_extension(extension: str):
     _bokeh_extension_set = extension
 
 
+set_extension("bokeh")
+
+
 class Options(ABC):
     """
     """
@@ -250,20 +253,17 @@ class PointsPlot(Plot):
             PointsPlot._options = _get_options("points")
         return PointsPlot._options
 
-    @abstractmethod
     def render(
         self,
         options: _BokehPointsOptions = _BokehPointsOptions(),
     ):
         """.env"""
-        self._img = hv.Points(self._points).opts(options.to_dict(), tools=[self._hover_tool])
+        self._img = hv.Points(self._points).opts(**options.to_dict(), tools=[self._hover_tool])
 
-    @abstractmethod
     def show(self):
         """.env"""
         return self._img
 
-    @abstractmethod
     def rasterize(self):
         """.env"""
         raise NotImplementedError()
@@ -370,10 +370,11 @@ class CalExpDataPlot(Plot):
         self._img = None
         self._detections = None
         self._show_detections = show_detections
+        self._options = _get_options("exposure_data")
 
+    @_DocstringProperty(_get_options("exposure_data"))
     @staticmethod
     @property
-    @_DocstringProperty("exposure_data")
     def options():
         """"""
         if CalExpDataPlot._options is None:
@@ -399,7 +400,7 @@ class CalExpDataPlot(Plot):
         assert self._img is not None
         if self._show_detections:
             assert self._detections is not None
-            return self._img.show() * self._detections.show()
+            return self._img.show() # * self._detections.show()
         else:
             return self._img.show()
 
@@ -408,7 +409,7 @@ class CalExpDataPlot(Plot):
         assert self._img is not None
         if self._show_detections:
             assert self._detections is not None
-            return self._img.show() * self._detections.show()
+            return self._img.show() # * self._detections.show()
         else:
             return self._img.rasterize()
 
