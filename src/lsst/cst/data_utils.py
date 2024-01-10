@@ -140,22 +140,22 @@ class ImageTransform:
 
     def __init__(self, image_array: np.ndarray):
         self._image_array = image_array
-        self._actions = {"scale": self._scale_image,
-                         "column_flip": self._flip_columns}
+        self._transformation = {"scale": self._scale_image,
+                                "column_flip": self._flip_columns}
 
     def transform(self, actions: List[str]):
         """"""
         for action in actions:
-            function_action = self._actions.get(action, None)
+            function_action = self._transformation.get(action, None)
             if function_action:
                 self._image_array = function_action()
         return self._image_array
 
-    def _flip_columns(self, array: np.ndarray) -> None:
+    def _flip_columns(self) -> None:
         """"""
-        self._image_array = np.flipup(array)
+        self._image_array = np.flipup(self._image_array)
 
-    def _scale_image(self, array: np.ndarray) -> None:
+    def _scale_image(self) -> None:
         """"""
         transform = AsinhStretch() + ZScaleInterval()
-        self._image_array = transform(array)
+        self._image_array = transform(self._image_array)
