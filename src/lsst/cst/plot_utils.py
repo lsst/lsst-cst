@@ -217,7 +217,7 @@ class PointsPlot(Plot):
 
     def render(self):
         """.env"""
-        self._img = hv.Points(self._points).opts(self._options.to_dict(), tools=[self._hover_tool])
+        self._img = hv.Points(self._points).opts(**self._options.to_dict(), tools=[self._hover_tool])
 
     def show(self):
         """.env"""
