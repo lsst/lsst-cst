@@ -12,9 +12,9 @@ from holoviews.operation.datashader import rasterize
 from bokeh.models import HoverTool
 
 from lsst.afw.image._exposure import ExposureF
-from lsst.cst.data_utils import CalExpData, ImageActions
+from lsst.cst.data_utils import CalExpData, ImageTransform
 
-__all__ = ["Plot", "CalExpDataPlot", "ImagePlot", "set_extension"]
+__all__ = ["Plot", "CalExpPlot", "ImagePlot", "set_extension"]
 
 _bokeh_extension_set = None
 _extension_available = ["bokeh"]
@@ -187,7 +187,7 @@ class Plot(ABC):
                           points_options: PointsOptions = PointsOptions()):
         """
         """
-        return CalExpDataPlot(cal_exp_data)
+        return CalExpPlot(cal_exp_data)
 
     @staticmethod
     def from_points(sources: tuple[Series]):
@@ -267,8 +267,8 @@ class ImagePlot(Plot):
             self._image_options.image_bounds = (0, 0,
                                                 self._exposure.getDimensions()[0],
                                                 self._exposure.getDimensions()[1])
-        image_actions = ImageActions(self._exposure.image.array)
-        array = image_actions.do_actions(["flip_columns", "scale"])
+        image_transform = ImageTransform(self._exposure.image.array)
+        array = image_transform.transform(["flip_columns", "scale"])
         self._img = hv.Image(array, kdims=[self._xlabel, self._ylabel]).opts(
             title=self._title,
             xlabel=self._xlabel,
@@ -307,7 +307,7 @@ class ImagePlot(Plot):
         hv.save(self._img, outputFile, backend=_bokeh_extension_set())
 
 
-class CalExpDataPlot(Plot):
+class CalExpPlot(Plot):
     """"""
 
     options = ImageOptions
@@ -332,11 +332,11 @@ class CalExpDataPlot(Plot):
         assert self._img is None
         assert self._detections is None
         if not self._title:
-            title = self._exposure_data.cal_exp_id
+            self._title = self._exposure_data.cal_exp_id
         if self._image_options.image_bounds is None:
             self._image_options.image_bounds = self._exposure_data.get_image_bounds()
         self._img = Plot.from_exposure(exposure=self._exposure_data.get_calexp(),
-                                       title=title,
+                                       title=self._title,
                                        xlabel=self._xlabel,
                                        ylabel=self._ylabel,
                                        image_options=self._image_options)

@@ -136,14 +136,14 @@ class ButlerCalExpData(CalExpData):
         return self.__str__()
 
 
-class ImageActions:
+class ImageTransform:
 
     def __init__(self, image_array: np.ndarray):
         self._image_array = image_array
         self._actions = {"scale": self._scale_image,
                          "column_flip": self._flip_columns}
 
-    def do_actions(self, actions: List[str]):
+    def transform(self, actions: List[str]):
         """"""
         for action in actions:
             function_action = self._actions.get(action, None)
