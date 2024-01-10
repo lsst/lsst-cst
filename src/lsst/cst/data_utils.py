@@ -113,7 +113,7 @@ class ButlerCalExpData(CalExpData):
     def get_sources(self):
         """"""
         exp_sources = self._butler.get('sourceTable', dataId=self._exposure_id.as_dict())
-        return exp_sources
+        return exp_sources.x, exp_sources.y
 
     def get_image_bounds(self):
         """"""

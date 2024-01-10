@@ -309,7 +309,7 @@ class CalExpPlot(Plot):
     options = ImageOptions
     detect_options = PointsOptions
 
-    def __init__(self, exposure_data: CalExpData, title: str = "No title",
+    def __init__(self, exposure_data: CalExpData, title: str = None,
                  xlabel: str = "X", ylabel: str = "Y", show_detections: bool = True,
                  image_options: ImageOptions = ImageOptions(),
                  source_options: PointsOptions = PointsOptions()):
