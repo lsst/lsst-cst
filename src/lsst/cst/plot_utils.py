@@ -190,19 +190,20 @@ class Plot(ABC):
         return CalExpPlot(cal_exp_data)
 
     @staticmethod
-    def from_points(sources: tuple[Series]):
+    def from_points(sources: tuple[Series], options: PointsOptions = PointsOptions()):
         """
         """
-        return PointsPlot(sources)
+        return PointsPlot(sources, options)
 
 
 class PointsPlot(Plot):
 
     options = PointsOptions
 
-    def __init__(self, points: tuple[Series]):
+    def __init__(self, points: tuple[Series], options: PointsOptions = PointsOptions()):
         super().__init__()
         self._points = points
+        self._options = options
         self._hover_tool = HoverTool(
             tooltips=[
                 ('X', '@x{0.2f}'),
@@ -215,12 +216,9 @@ class PointsPlot(Plot):
         )
 
     @abstractmethod
-    def render(
-        self,
-        options: PointsOptions = PointsOptions(),
-    ):
+    def render(self):
         """.env"""
-        self._img = hv.Points(self._points).opts(options.to_dict(), tools=[self._hover_tool])
+        self._img = hv.Points(self._points).opts(self._options.to_dict(), tools=[self._hover_tool])
 
     @abstractmethod
     def show(self):
@@ -340,10 +338,10 @@ class CalExpPlot(Plot):
                                        xlabel=self._xlabel,
                                        ylabel=self._ylabel,
                                        image_options=self._image_options)
-        self._img.render(self._image_options)
+        self._img.render()
         if self._show_detections:
-            self._detections = Plot.from_points(self._exposure_data.get_sources())
-            self._detections.render(self._source_options)
+            self._detections = Plot.from_points(self._exposure_data.get_sources(), self._source_options)
+            self._detections.render()
 
     def show(self):
         """"""
