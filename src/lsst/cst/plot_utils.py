@@ -116,7 +116,6 @@ class ImageOptions(Options):
     toolbar: str = "right"
     show_grid: bool = True
     tools: List[str] = field(default_factory=lambda: [])
-    image_bounds: tuple[float, float, float, float] = None
 
     def to_dict(self):
         return dict(
@@ -130,7 +129,6 @@ class ImageOptions(Options):
             colorbar=self.colorbar,
             toolbar=self.toolbar,
             show_grid=self.show_grid,
-            image_bounds=self.image_bounds,
             tools=self.tools,
         )
 
@@ -256,6 +254,7 @@ class ImagePlot(Plot):
         self._img = None
         self._options = options
         self._image_transform = NoImageTransform()
+        self._image_bounds = None
 
     def _set_image_transform(self, image_transform: ImageTransform):
         """"""
@@ -266,12 +265,12 @@ class ImagePlot(Plot):
         """Renders the array converting the array data into an holoviews Image
         """
         assert self._img is None
-        if self._options.image_bounds is None:
-            self._options.image_bounds = (0, 0,
-                                          self._exposure.getDimensions()[0],
-                                          self._exposure.getDimensions()[1])
+        if self._image_bounds is None:
+            self._image_bounds = (0, 0,
+                                  self._exposure.getDimensions()[0],
+                                  self._exposure.getDimensions()[1])
         array = self._image_transform.transform(self._exposure.image.array)
-        self._img = hv.Image(array, kdims=[self._xlabel, self._ylabel]).opts(
+        self._img = hv.Image(array, bounds=self._image_bounds, kdims=[self._xlabel, self._ylabel]).opts(
             title=self._title,
             xlabel=self._xlabel,
             ylabel=self._ylabel,
@@ -337,8 +336,6 @@ class CalExpPlot(Plot):
         assert self._detections is None
         if self._title is None:
             self._title = self._exposure_data.cal_exp_id
-        if self._image_options.image_bounds is None:
-            self._image_options.image_bounds = self._exposure_data.get_image_bounds()
         self._img = Plot.from_exposure(exposure=self._exposure_data.get_calexp(),
                                        title=self._title,
                                        xlabel=self._xlabel,
