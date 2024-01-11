@@ -166,11 +166,11 @@ class StandardImageTransform(ImageTransform):
             image_array = transformation_function(image_array)
         return image_array
 
-    def _flip_columns(self) -> None:
+    def _flip_columns(self, image_array: np.ndarray) -> None:
         """"""
-        return np.flipup(self._image_array)
+        return np.flipup(image_array)
 
-    def _scale_image(self) -> None:
+    def _scale_image(self, image_array: np.ndarray) -> None:
         """"""
         transform = AsinhStretch() + ZScaleInterval()
-        return transform(self._image_array)
+        return transform(image_array)
