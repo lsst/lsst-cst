@@ -4,7 +4,6 @@ from astropy.visualization import AsinhStretch, ZScaleInterval
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from enum import Enum
-from typing import List
 
 
 _log = logging.getLogger(__name__)

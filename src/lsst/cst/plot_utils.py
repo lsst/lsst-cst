@@ -12,7 +12,7 @@ from holoviews.operation.datashader import rasterize
 from bokeh.models import HoverTool
 
 from lsst.afw.image._exposure import ExposureF
-from lsst.cst.data_utils import CalExpData, ImageStandardTransform, NoImageTransform, ImageTransform
+from lsst.cst.data_utils import CalExpData, StandardImageTransform, NoImageTransform, ImageTransform
 
 __all__ = ["Plot", "CalExpPlot", "ImagePlot", "set_extension"]
 
@@ -338,7 +338,7 @@ class CalExpPlot(Plot):
             self._title = self._exposure_data.cal_exp_id
         if self._image_options.image_bounds is None:
             self._image_options.image_bounds = self._exposure_data.get_image_bounds()
-        self._img.image_transform = ImageStandardTransform()
+        self._img.image_transform = StandardImageTransform()
         self._img = Plot.from_exposure(exposure=self._exposure_data.get_calexp(),
                                        title=self._title,
                                        xlabel=self._xlabel,
