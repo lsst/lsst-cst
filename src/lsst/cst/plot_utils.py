@@ -1,6 +1,7 @@
 """plot science utils"""
 
 import gc
+import logging
 import os
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
@@ -13,6 +14,8 @@ from bokeh.models import HoverTool
 
 from lsst.afw.image._exposure import ExposureF
 from lsst.cst.data_utils import CalExpData, StandardImageTransform, NoImageTransform, ImageTransform
+
+_log = logging.getLogger(__name__)
 
 __all__ = ["Plot", "CalExpPlot", "ImagePlot", "set_extension"]
 

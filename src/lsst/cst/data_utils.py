@@ -105,6 +105,7 @@ class ButlerCalExpData(CalExpData):
 
     def get_calexp(self):
         """"""
+        _log.debug("Getting Image from Butler")
         if self._calexp is None:
             self._calexp = self._butler.get('calexp', dataId=self._exposure_id.as_dict())
         return self._calexp
@@ -141,7 +142,8 @@ class ImageTransform(ABC):
         super().__init__()
 
     @abstractmethod
-    def transform(self, ):
+    def transform(self, image_array: np.ndarray):
+        """"""
         raise NotImplementedError
 
 
@@ -151,6 +153,7 @@ class NoImageTransform(ImageTransform):
         super().__init__()
 
     def transform(self, image_array: np.ndarray) -> np.ndarray:
+        """"""
         return image_array
 
 
