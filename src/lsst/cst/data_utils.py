@@ -168,7 +168,7 @@ class StandardImageTransform(ImageTransform):
 
     def _flip_columns(self, image_array: np.ndarray) -> None:
         """"""
-        return np.flipup(image_array)
+        return np.flipud(image_array)
 
     def _scale_image(self, image_array: np.ndarray) -> None:
         """"""
