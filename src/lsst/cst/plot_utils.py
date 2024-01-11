@@ -338,12 +338,12 @@ class CalExpPlot(Plot):
             self._title = self._exposure_data.cal_exp_id
         if self._image_options.image_bounds is None:
             self._image_options.image_bounds = self._exposure_data.get_image_bounds()
-        self._img.image_transform = StandardImageTransform()
         self._img = Plot.from_exposure(exposure=self._exposure_data.get_calexp(),
                                        title=self._title,
                                        xlabel=self._xlabel,
                                        ylabel=self._ylabel,
                                        image_options=self._image_options)
+        self._img.image_transform = StandardImageTransform()
         self._img.render()
         if self._show_detections:
             self._detections = Plot.from_points(self._exposure_data.get_sources(), self._source_options)
