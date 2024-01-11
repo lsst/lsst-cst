@@ -12,7 +12,7 @@ from holoviews.operation.datashader import rasterize
 from bokeh.models import HoverTool
 
 from lsst.afw.image._exposure import ExposureF
-from lsst.cst.data_utils import CalExpData, ImageTransform
+from lsst.cst.data_utils import CalExpData, ImageStandardTransform, NoImageTransform, ImageTransform
 
 __all__ = ["Plot", "CalExpPlot", "ImagePlot", "set_extension"]
 
@@ -254,6 +254,12 @@ class ImagePlot(Plot):
         self._ylabel = ylabel
         self._img = None
         self._options = options
+        self._image_transform = NoImageTransform()
+
+    def _set_image_transform(self, image_transform: ImageTransform):
+        """"""
+        assert isinstance(image_transform, ImageTransform), ""
+        self._image_transform = image_transform
 
     def render(self):
         """Renders the array converting the array data into an holoviews Image
@@ -263,8 +269,7 @@ class ImagePlot(Plot):
             self._options.image_bounds = (0, 0,
                                           self._exposure.getDimensions()[0],
                                           self._exposure.getDimensions()[1])
-        image_transform = ImageTransform(self._exposure.image.array)
-        array = image_transform.transform(["flip_columns", "scale"])
+        array = self._image_transform.transform(self._exposure.image.array)
         self._img = hv.Image(array, kdims=[self._xlabel, self._ylabel]).opts(
             title=self._title,
             xlabel=self._xlabel,
@@ -302,6 +307,8 @@ class ImagePlot(Plot):
         outputFile = os.path.join(output_dir, output_file_base_name)
         hv.save(self._img, outputFile, backend=_bokeh_extension_set())
 
+    image_transform = property(fget=None, fset=_set_image_transform)
+
 
 class CalExpPlot(Plot):
     """"""
@@ -331,6 +338,7 @@ class CalExpPlot(Plot):
             self._title = self._exposure_data.cal_exp_id
         if self._image_options.image_bounds is None:
             self._image_options.image_bounds = self._exposure_data.get_image_bounds()
+        self._img.image_transform = ImageStandardTransform()
         self._img = Plot.from_exposure(exposure=self._exposure_data.get_calexp(),
                                        title=self._title,
                                        xlabel=self._xlabel,

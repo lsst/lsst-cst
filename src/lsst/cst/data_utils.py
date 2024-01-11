@@ -136,26 +136,42 @@ class ButlerCalExpData(CalExpData):
         return self.__str__()
 
 
-class ImageTransform:
+class ImageTransform(ABC):
 
-    def __init__(self, image_array: np.ndarray):
-        self._image_array = image_array
-        self._transformation = {"scale": self._scale_image,
-                                "column_flip": self._flip_columns}
+    def __init__(self):
+        super().__init__()
 
-    def transform(self, actions: List[str]):
+    @abstractmethod
+    def transform(self, ):
+        raise NotImplementedError
+
+
+class NoImageTransform(ImageTransform):
+
+    def __init__(self):
+        super().__init__()
+
+    def transform(self, image_array: np.ndarray) -> np.ndarray:
+        return image_array
+
+
+class StandardImageTransform(ImageTransform):
+
+    def __init__(self):
+        super().__init__()
+        self._transformation = [self._scale_image, self._flip_columns]
+
+    def transform(self, image_array: np.ndarray) -> np.ndarray:
         """"""
-        for action in actions:
-            function_action = self._transformation.get(action, None)
-            if function_action:
-                self._image_array = function_action()
-        return self._image_array
+        for transformation_function in self._transformation:
+            image_array = transformation_function(image_array)
+        return image_array
 
     def _flip_columns(self) -> None:
         """"""
-        self._image_array = np.flipup(self._image_array)
+        return np.flipup(self._image_array)
 
     def _scale_image(self) -> None:
         """"""
         transform = AsinhStretch() + ZScaleInterval()
-        self._image_array = transform(self._image_array)
+        return transform(self._image_array)
