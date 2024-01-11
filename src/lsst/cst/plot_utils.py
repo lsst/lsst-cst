@@ -116,7 +116,7 @@ class ImageOptions(Options):
     toolbar: str = "right"
     show_grid: bool = True
     tools: List[str] = field(default_factory=lambda: [])
-    image_bounds: tuple[float] = None
+    image_bounds: tuple[float, float, float, float] = None
 
     def to_dict(self):
         return dict(
@@ -130,6 +130,7 @@ class ImageOptions(Options):
             colorbar=self.colorbar,
             toolbar=self.toolbar,
             show_grid=self.show_grid,
+            image_bounds=self.image_bounds,
             tools=self.tools,
         )
 
@@ -363,7 +364,7 @@ class CalExpPlot(Plot):
         assert self._img is not None
         if self._show_detections:
             assert self._detections is not None
-            return self._img.show() * self._detections.show()
+            return self._img.rasterize() * self._detections.show()
         else:
             return self._img.rasterize()
 
