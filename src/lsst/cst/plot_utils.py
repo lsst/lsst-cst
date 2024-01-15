@@ -35,14 +35,14 @@ def _set_extension(extension: Extension = Extension.BOKEH):
     by the holoviews module.
     (Nowadays only 'bokeh' extension is available)
     """
-    global _bokeh_extension_set
-    if _bokeh_extension_set is not None:
+    global _extension_set
+    if _extension_set is not None:
         raise Exception("Extension already set")
     if extension not in _extension_available:
         raise Exception(f"Unknown extension: {extension}")
     hv.extension(extension)
     output_notebook()
-    _bokeh_extension_set = extension
+    _extension_set = extension
 
 
 _set_extension()
