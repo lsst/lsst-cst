@@ -5,25 +5,32 @@ import logging
 import os
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
+from enum import Enum
 from typing import Dict, List
 from pandas import Series
 
 import holoviews as hv
 from holoviews.operation.datashader import rasterize
 from bokeh.models import HoverTool
+from bokeh.io import output_notebook
 
 from lsst.afw.image._exposure import ExposureF
 from lsst.cst.data_utils import CalExpData, StandardImageTransform, NoImageTransform, ImageTransform
 
 _log = logging.getLogger(__name__)
 
-__all__ = ["Plot", "CalExpPlot", "ImagePlot", "set_extension"]
-
-_bokeh_extension_set = None
-_extension_available = ["bokeh"]
+__all__ = ["Plot", "CalExpPlot", "ImagePlot"]
 
 
-def set_extension(extension: str):
+class Extension(Enum):
+    BOKEH = 1
+
+
+_extension_set = None
+_extension_available = [Extension.BOKEH]
+
+
+def _set_extension(extension: Extension = Extension.BOKEH):
     """Function to set the extension used
     by the holoviews module.
     (Nowadays only 'bokeh' extension is available)
@@ -34,19 +41,27 @@ def set_extension(extension: str):
     if extension not in _extension_available:
         raise Exception(f"Unknown extension: {extension}")
     hv.extension(extension)
+    output_notebook()
     _bokeh_extension_set = extension
 
 
+_set_extension()
+
+
 class Options(ABC):
-    """
+    """Interface with the indispensable methods of how an Option
+    class should act like
     """
     @abstractmethod
     def to_dict(self):
+        """Returns a dictionary with the keys as option name and the values
+        as the option value
+        """
         NotImplementedError()
 
 
 class NoOptions(Options):
-    """
+    """No Options
     """
     def to_dict(self):
         return {}
@@ -68,7 +83,7 @@ def _get_options(options_type: str) -> Options:
 
 @dataclass
 class PointsOptions(Options):
-    """.env"""
+    """Points plot options"""
     fill_color: str = None
     size: int = 9
     color: str = "darkorange"
@@ -79,7 +94,7 @@ class PointsOptions(Options):
 
 @dataclass
 class ImageOptions(Options):
-    """Image options class
+    """Image plot options
     Parameters
     ----------
     cmap: `str`
@@ -137,7 +152,8 @@ class ImageOptions(Options):
 
 
 class Plot(ABC):
-    """.env"""
+    """Plot interface image. Describe how class should work to be
+    consifered a plot"""
 
     def __init__(self):
         super().__init__()
@@ -145,17 +161,17 @@ class Plot(ABC):
 
     @abstractmethod
     def render(self):
-        """.env"""
+        """Render the image"""
         raise NotImplementedError()
 
     @abstractmethod
     def show(self):
-        """.env"""
+        """Show the image"""
         raise NotImplementedError()
 
     @abstractmethod
     def rasterize(self):
-        """.env"""
+        """Rasterize the image"""
         raise NotImplementedError()
 
     def delete(self):

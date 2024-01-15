@@ -1,8 +1,14 @@
 """Rubin LSST Community Science Tools"""
 
+import logging
+
 from importlib.metadata import PackageNotFoundError, version
 
-from .mpl_utils import remove_figure
+
+def initialize_log(level: int):
+    logger = logging.getLogger("lsst.cst")
+    logger.setLevel(level)
+
 
 __version__: str
 """The version string of lsst
@@ -10,7 +16,7 @@ __version__: str
 """
 
 
-__all__ = ["__version__", "remove_figure"]
+__all__ = ["__version__"]
 
 
 try:

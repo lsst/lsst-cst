@@ -17,23 +17,27 @@ except ImportError:
 
 
 class Collection(Enum):
-    """"""
+    """Collections available:
+        - i22: 2.2i/runs/DP0.2
+    """
     i22 = '2.2i/runs/DP0.2'
 
 
 class Configuration(Enum):
-    """"""
+    """ Butler configurations available
+        - DP02: dp02
+    """
     DP02 = {'name': 'dp02', 'collections_available': [Collection.i22]}
 
 
 class Band(Enum):
-    """"""
+    """Exposure bands available"""
     i = 'i'
 
 
 @dataclass
 class ExposureId:
-    """Exposition information
+    """Exposure information
 
     Parameters
     ----------
