@@ -23,10 +23,10 @@ __all__ = ["Plot", "CalExpPlot", "ImagePlot"]
 
 
 class Extension(Enum):
-    BOKEH = 1
+    BOKEH = "bokeh"
 
 
-_extension_set = None
+_extension_set = None  # type: Extension
 _extension_available = [Extension.BOKEH]
 
 
@@ -40,7 +40,7 @@ def _set_extension(extension: Extension = Extension.BOKEH):
         raise Exception("Extension already set")
     if extension not in _extension_available:
         raise Exception(f"Unknown extension: {extension}")
-    hv.extension(extension)
+    hv.extension(extension.value)
     output_notebook()
     _extension_set = extension
 
@@ -71,9 +71,9 @@ def _get_options(options_type: str) -> Options:
     """
     Get options to modify the underlying Holoviews plot
     """
-    if _bokeh_extension_set is None:
+    if _extension_set is None:
         raise Exception("Extension not set")
-    if _bokeh_extension_set == "bokeh":
+    if _extension_set == Extension.BOKEH:
         if options_type == "image":
             return ImageOptions
         elif options_type == "points":
