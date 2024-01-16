@@ -82,7 +82,7 @@ class CalExpData(ABC):
     @abstractmethod
     def get_sources(self, calexp_id: CalExpId):
         """Calexp sources
-        
+
         Returns
         -------
         sources: `pandas.DataFrame`
@@ -134,7 +134,7 @@ class ButlerExposureFactory:
 
         Raises
         ------
-        ValueError: 
+        ValueError:
             When the Exposure could not be found inside the butler collection
         Returns
         -------
@@ -229,7 +229,7 @@ class ImageTransform(ABC):
         ----------
         image_array: `np.array`
             Array to be transformed
-        
+
         Return
         ------
         transformed_image_array: `np.array`
@@ -277,7 +277,7 @@ class StandardImageTransform(ImageTransform):
         ----------
         image_array: `np.array`
             Array to be transformed
-        
+
         Returns
         ------
         transformed_image_array: `np.array`

@@ -90,7 +90,7 @@ class PointsOptions(Options):
     def to_dict(self):
         """
         Points options as dictionary
-        
+
         Returns
         -------
         options: `dict[str, Any]`
@@ -295,7 +295,7 @@ class ExposurePlot(Plot):
         Parameters
         ----------
         image_transform: `ImageTransform`
-            New image transformation image to be applied when 
+            New image transformation image to be applied when
             rendering the plot
         """
         assert isinstance(image_transform, ImageTransform), ""
@@ -383,7 +383,7 @@ class CalExpPlot(Plot):
         assert self._detections is None
         if self._title is None:
             self._title = self._cal_exp_data.cal_exp_id
-        self._img = Plot.from_exposure(exposure=self._exposure_data.get_calexp(),
+        self._img = Plot.from_exposure(exposure=self._cal_exp_data.get_calexp(),
                                        title=self._title,
                                        xlabel=self._xlabel,
                                        ylabel=self._ylabel,
@@ -391,7 +391,7 @@ class CalExpPlot(Plot):
         self._img.image_transform = StandardImageTransform()
         self._img.render()
         if self._show_detections:
-            self._detections = Plot.from_points(self._exposure_data.get_sources(), self._source_options)
+            self._detections = Plot.from_points(self._cal_exp_data.get_sources(), self._source_options)
             self._detections.render()
 
     def show(self):
