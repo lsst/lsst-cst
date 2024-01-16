@@ -12,14 +12,14 @@ from pandas import Series
 import holoviews as hv
 from holoviews.operation.datashader import rasterize
 from bokeh.models import HoverTool
-from bokeh.io import output_notebook
 
 from lsst.afw.image._exposure import ExposureF
 from lsst.cst.data_utils import CalExpData, StandardImageTransform, NoImageTransform, ImageTransform
 
 _log = logging.getLogger(__name__)
 
-__all__ = ["Plot", "CalExpPlot", "ImagePlot"]
+
+__all__ = ["Plot", "CalExpPlot", "ExposurePlot"]
 
 
 class Extension(Enum):
@@ -41,7 +41,6 @@ def _set_extension(extension: Extension = Extension.BOKEH):
     if extension not in _extension_available:
         raise Exception(f"Unknown extension: {extension}")
     hv.extension(extension.value)
-    output_notebook()
     _extension_set = extension
 
 
@@ -89,6 +88,14 @@ class PointsOptions(Options):
     color: str = "darkorange"
 
     def to_dict(self):
+        """
+        Points options as dictionary
+        
+        Returns
+        -------
+        options: `dict[str, Any]`
+            Selected options as a dictionary
+        """
         return dict(fill_color=self.fill_color, size=self.size, color=self.color)
 
 
@@ -196,7 +203,7 @@ class Plot(ABC):
         results: `Plot`
             Plot instance with the array inside exposure as image data
         """
-        return ImagePlot(exposure, title, xlabel, ylabel, image_options)
+        return ExposurePlot(exposure, title, xlabel, ylabel, image_options)
 
     @staticmethod
     def from_cal_exp_data(cal_exp_data: CalExpData, title: str = None,
@@ -234,21 +241,28 @@ class PointsPlot(Plot):
         )
 
     def render(self):
-        """.env"""
+        """Renders the plots converting the data
+        into an holoviews point Plot
+        """
         self._img = hv.Points(self._points).opts(**self._options.to_dict(), tools=[self._hover_tool])
 
     def show(self):
-        """.env"""
+        """Returns the rendered plot.
+
+        Returns
+        -------
+        rendered_plot: `hv.DynamicMap`
+        """
         return self._img
 
     def rasterize(self):
-        """.env"""
         raise NotImplementedError()
 
 
-class ImagePlot(Plot):
+class ExposurePlot(Plot):
     """
-    Basic plot class
+    Create plots out of an ExposureF
+
     Parameters
     ----------
     image_array: `np.ndarray`
@@ -276,12 +290,20 @@ class ImagePlot(Plot):
         self._image_bounds = None
 
     def _set_image_transform(self, image_transform: ImageTransform):
-        """"""
+        """Setter to change the image transformer before rendering the image
+
+        Parameters
+        ----------
+        image_transform: `ImageTransform`
+            New image transformation image to be applied when 
+            rendering the plot
+        """
         assert isinstance(image_transform, ImageTransform), ""
         self._image_transform = image_transform
 
     def render(self):
-        """Renders the array converting the array data into an holoviews Image
+        """Renders the image array converting the array data into
+        an holoviews Image
         """
         assert self._img is None
         if self._image_bounds is None:
@@ -297,17 +319,23 @@ class ImagePlot(Plot):
         )
 
     def show(self):
-        """.env"""
-        assert self._img is not None
-        return self._img
-
-    def rasterize(self):
-        """Show image into a notebook, the output_notebook must be enabled.
+        """Returns the rendered plot.
         The image is rasterized, in order to optimize the rendering of plots
 
         Returns
         -------
-        results: `hv.DynamicMap`
+        rendered_plot: `hv.DynamicMap`
+        """
+        assert self._img is not None
+        return self._img
+
+    def rasterize(self):
+        """Returns the rendered plot.
+        The image is rasterized, in order to optimize the rendering of plots
+
+        Returns
+        -------
+        rendered_plot: `hv.DynamicMap`
         """
         assert self._img is not None
         return rasterize(self._img)
@@ -317,14 +345,14 @@ class ImagePlot(Plot):
 
         Parameters
         ----------
-        filename: `str``
+        filename: `str`
             Name and path of the file where the image will be saved
         """
         assert self._img is not None
         output_dir = os.path.expanduser("~")
         output_file_base_name = f"{filename}.html"
         outputFile = os.path.join(output_dir, output_file_base_name)
-        hv.save(self._img, outputFile, backend=_bokeh_extension_set())
+        hv.save(self._img, outputFile, backend=_extension_set)
 
     image_transform = property(fget=None, fset=_set_image_transform)
 
@@ -335,12 +363,12 @@ class CalExpPlot(Plot):
     options = ImageOptions
     detect_options = PointsOptions
 
-    def __init__(self, exposure_data: CalExpData, title: str = None,
+    def __init__(self, cal_exp_data: CalExpData, title: str = None,
                  xlabel: str = "X", ylabel: str = "Y", show_detections: bool = True,
                  image_options: ImageOptions = ImageOptions(),
                  source_options: PointsOptions = PointsOptions()):
         super().__init__()
-        self._exposure_data = exposure_data
+        self._cal_exp_data = cal_exp_data
         self._title = title
         self._xlabel = xlabel
         self._ylabel = ylabel

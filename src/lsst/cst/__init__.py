@@ -5,7 +5,23 @@ import logging
 from importlib.metadata import PackageNotFoundError, version
 
 
-def initialize_log(level: int = logging.ERROR):
+logger = logging.getLogger("lsst.cst")
+logger.setLevel(logging.WARNING)
+
+
+def set_log_level(level: int = logging.ERROR):
+    """Initialize package logging
+
+    Parameters
+    ----------
+    level: `int`, Optional
+        logging level, should be one of next values:
+            logging.CRITICAL
+            logging.ERROR -> default level value
+            logging.WARNING
+            logging.INFO
+            logging.DEBUG
+    """
     logger = logging.getLogger("lsst.cst")
     logger.setLevel(level)
 
