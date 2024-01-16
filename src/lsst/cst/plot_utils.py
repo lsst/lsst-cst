@@ -382,7 +382,7 @@ class CalExpPlot(Plot):
         assert self._img is None
         assert self._detections is None
         if self._title is None:
-            self._title = self._exposure_data.cal_exp_id
+            self._title = self.cal_exp_data.cal_exp_id
         self._img = Plot.from_exposure(exposure=self._exposure_data.get_calexp(),
                                        title=self._title,
                                        xlabel=self._xlabel,
