@@ -358,7 +358,26 @@ class ExposurePlot(Plot):
 
 
 class CalExpPlot(Plot):
-    """"""
+    """
+    Plot using Calexp data, includes the image and also the sources
+
+    Parameters
+    ----------
+    cal_exp_data:
+
+    title:
+
+    xlabel:
+
+    ylabel:
+
+    show_detections:
+
+    image_options:
+
+    source_options:
+
+    """
 
     options = ImageOptions
     detect_options = PointsOptions
@@ -378,7 +397,9 @@ class CalExpPlot(Plot):
         self._show_detections = show_detections
 
     def render(self):
-        """"""
+        """Renders the calexp image data and plots the sources is asked with the options
+        set as constructor arguments
+        """
         assert self._img is None
         assert self._detections is None
         if self._title is None:
@@ -395,7 +416,13 @@ class CalExpPlot(Plot):
             self._detections.render()
 
     def show(self):
-        """"""
+        """Returns the rendered plot.
+        The image is rasterized, in order to optimize the rendering of plots
+
+        Returns
+        -------
+        rendered_plot: `hv.DynamicMap`
+        """
         assert self._img is not None
         if self._show_detections:
             assert self._detections is not None
@@ -404,7 +431,13 @@ class CalExpPlot(Plot):
             return self._img.show()
 
     def rasterize(self):
-        """"""
+        """Returns the rendered plot.
+        The image is rasterized, in order to optimize the rendering of plots
+
+        Returns
+        -------
+        rendered_plot: `hv.DynamicMap`
+        """
         assert self._img is not None
         if self._show_detections:
             assert self._detections is not None
@@ -413,7 +446,7 @@ class CalExpPlot(Plot):
             return self._img.rasterize()
 
     def delete(self):
-        """.env"""
+        """"""
         if self._detections is not None:
             self._detections.delete()
         super().delete()
