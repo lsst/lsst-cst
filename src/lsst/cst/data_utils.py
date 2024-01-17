@@ -23,26 +23,26 @@ except ImportError:
 
 class Collection(Enum):
     """Collections available:
-        - i22: 2.2i/runs/DP0.2
+        - i22: 2.2i/runs/DP0.2 .
     """
     i22 = '2.2i/runs/DP0.2'
 
 
 class Configuration(Enum):
     """ Butler configurations available
-        - DP02: dp02
+        - DP02: dp02.
     """
     DP02 = {'name': 'dp02', 'collections_available': [Collection.i22]}
 
 
 class Band(Enum):
-    """Exposure bands available"""
+    """Exposure bands available."""
     i = 'i'
 
 
 @dataclass
 class CalExpId:
-    """Calexp information
+    """Calexp information.
 
     Parameters
     ----------
@@ -56,53 +56,57 @@ class CalExpId:
         self._band = band
 
     def as_dict(self):
-        """"""
+        """Return CalExpId as a dictionary
+
+        Returns
+        -------
+        cal_exp_id: `dict`
+            CalExpId information as a dictionary
+        """
         return {'visit': self._visit, 'detector': self._detector, 'band': self._band.value}
 
     def __str__(self):
-        """"""
         return f"visit: {self._visit} detector: {self._detector} band: {self._band.value}"
 
     def __repr__(self):
-        """"""
         return self.__str__
 
 
 class CalExpData(ABC):
-    """Interface to get information from a Calexp
+    """Interface to get information from a Calexp.
     """
 
     @abstractmethod
-    def get_calexp(self, calexp_id: CalExpId):
+    def get_calexp(self):
         """
-        Exposure calexp data
+        Exposure calexp data.
 
         Returns
         -------
         calexp: `ExposureF`
-            Exposure data from calexp
+            Exposure data from calexp.
         """
         raise NotImplementedError()
 
     @abstractmethod
-    def get_sources(self, calexp_id: CalExpId):
-        """Calexp sources
+    def get_sources(self):
+        """Calexp sources.
 
         Returns
         -------
         sources: `pandas.DataFrame`
-            Sources from the calexp
+            Sources from the calexp.
         """
         raise NotImplementedError()
 
     @abstractmethod
     def get_image_bounds(self):
-        """Exposure Image bounds
+        """Exposure Image bounds.
 
         Returns
         -------
         image_bounds: `tuple[float]`
-            Bounds of the cal exp image
+            Bounds of the cal_exp Exposure.
         """
         raise NotImplementedError()
 
@@ -114,32 +118,32 @@ class CalExpDataFactory:
 
     def get_cal_exp_data(self, calexp_id: CalExpId):
         """Check for the exposure and returns a handler to
-        get exposure information
+        get exposure information.
 
         Parameters
         ----------
         calexp_id: `CalExpId`
-            CalExp information to search for
+            CalExp information to search for.
 
         Raises
         ------
         ValueError:
-            When the Exposure could not be found
+            When the CalExp data could not be found.
         Returns
         -------
         exposure_data: `CalExpData`
-            Instance of a CalExpData which can be used to obtain exposure data
+            Instance of a CalExpData which can be used to obtain exposure data.
         """
         raise NotImplementedError()
 
 
 class ButlerCalExpDataFactory(CalExpDataFactory):
-    """Factory of calexp from a Butler
+    """Factory of calexp from a Butler.
 
     Parameters
     ----------
     configuration: `Configuration`
-        Configuration available for a butler
+        Configuration available for a butler.
     collection: `Collection`
         Collection to be searched (in order) when reading datasets.
     """
@@ -157,21 +161,21 @@ class ButlerCalExpDataFactory(CalExpDataFactory):
 
     def get_cal_exp_data(self, calexp_id: CalExpId):
         """Check for the exposure in the Butler collection and returns
-        a handler to get exposure information
+        a handler to get exposure information.
 
         Parameters
         ----------
         calexp_id: `CalExpId`
-            CalExp information to search for
+            CalExp information to search for.
 
         Raises
         ------
         ValueError:
-            When the Exposure could not be found inside the butler collection
+            When the Exposure could not be found inside the butler collection.
         Returns
         -------
         exposure_data: `CalExpData`
-            Instance of a CalExpData which can be used to obtain exposure data
+            Instance of a CalExpData which can be used to obtain exposure data.
         """
         if self._butler.exists('calexp', calexp_id.as_dict()) != DatasetExistence.RECORDED.VERIFIED:
             raise ValueError(f"Unrecognized Exposure: {calexp_id}")
@@ -180,7 +184,7 @@ class ButlerCalExpDataFactory(CalExpDataFactory):
 
 class _ButlerCalExpData(CalExpData):
     """Wrapp to retrieve information from an exposure,
-       for example the calexp, the sources or the image bounds
+       for example the calexp, the sources or the image bounds.
     """
     def __init__(self, butler: Butler, calexp_id: CalExpId):
         super().__init__()
@@ -190,12 +194,12 @@ class _ButlerCalExpData(CalExpData):
 
     def get_calexp(self):
         """
-        Exposure calexp data
+        Exposure calexp data.
 
         Returns
         -------
         calexp: `ExposureF`
-            Exposure data from calexp
+            Exposure data from calexp.
         """
         _log.debug(f"Getting CalExp from {self._calexp_id}")
         if self._calexp is None:
@@ -204,12 +208,12 @@ class _ButlerCalExpData(CalExpData):
         return self._calexp
 
     def get_sources(self):
-        """Calexp sources
+        """Calexp sources.
 
         Returns
         -------
         sources: `pandas.DataFrame`
-            Sources from the calexp
+            Sources from the calexp.
         """
         _log.debug(f"Getting Sources from {self._calexp_id}")
         exp_sources = self._butler.get('sourceTable', dataId=self._calexp_id.as_dict())
@@ -217,12 +221,12 @@ class _ButlerCalExpData(CalExpData):
         return exp_sources.x, exp_sources.y
 
     def get_image_bounds(self):
-        """Exposure Image bounds
+        """Exposure Image bounds.
 
         Returns
         -------
         image_bounds: `tuple[float]`
-            Bounds of the cal exp image
+            Bounds of the cal exp image.
         """
         if self._calexp is None:
             self.get_calexp()
@@ -235,7 +239,7 @@ class _ButlerCalExpData(CalExpData):
         Returns
         -------
         exposure_id: `ExposureId`
-            Information of the exposure
+            Information of the exposure.
         """
         return str(self._calexp_id)
 
@@ -247,7 +251,7 @@ class _ButlerCalExpData(CalExpData):
 
 
 class ImageTransform(ABC):
-    """Interface to make modifications on an image before rendering into a plot
+    """Interface to make modifications on an image before rendering into a plot.
     """
 
     def __init__(self):
@@ -255,7 +259,7 @@ class ImageTransform(ABC):
 
     @abstractmethod
     def transform(self, image_array: np.ndarray):
-        """Transform an image executing a series of actions over it
+        """Transform an image executing a series of actions over it.
 
         Parameters
         ----------
@@ -265,20 +269,20 @@ class ImageTransform(ABC):
         Return
         ------
         transformed_image_array: `np.array`
-            Array modified after all transformation has been applied
+            Array modified after all transformation has been applied.
         """
         raise NotImplementedError
 
 
 class NoImageTransform(ImageTransform):
     """No transformation class, mainly used when no transformation
-    is wanted on the image array
+    is wanted on the image array.
     """
     def __init__(self):
         super().__init__()
 
     def transform(self, image_array: np.ndarray) -> np.ndarray:
-        """Do no transformation on image_array
+        """Do no transformation on image_array.
 
         Parameters
         ----------
@@ -295,7 +299,7 @@ class NoImageTransform(ImageTransform):
 
 class StandardImageTransform(ImageTransform):
     """Standard Image modificacions. When executing transform the image will be
-    fliped vertically and dynamic range will be reduced
+    fliped vertically and dynamic range will be reduced.
     """
     def __init__(self):
         super().__init__()
@@ -303,44 +307,44 @@ class StandardImageTransform(ImageTransform):
 
     def transform(self, image_array: np.ndarray) -> np.ndarray:
         """Transform an image executing vertical flip
-        and dynamic range reduction
+        and dynamic range reduction.
 
         Parameters
         ----------
         image_array: `np.array`
-            Array to be transformed
+            Array to be transformed.
 
         Returns
         ------
         transformed_image_array: `np.array`
-            Array modified after all transformation has been applied
+            Array modified after all transformation has been applied.
         """
         for transformation_function in self._transformation:
             image_array = transformation_function(image_array)
         return image_array
 
     def _flip_columns(self, image_array: np.ndarray) -> None:
-        """Flips vertically an image array
+        """Flips vertically an image array.
 
         Parameters
         ----------
         image_array: `np.ndarray`
-            Array to be vertically flip
+            Array to be vertically flip.
 
         Returns
         -------
         transformed_image_array: `np.array`
-            Array vertically flipped
+            Array vertically flipped.
         """
         return np.flipud(image_array)
 
     def _scale_image(self, image_array: np.ndarray) -> None:
-        """Reduce dynamic range of an image array
+        """Reduce dynamic range of an image array.
 
         Parameters
         ----------
         image_array: `np.ndarray`
-            Array to reduce dynamic range
+            Array to reduce dynamic range.
 
         Returns
         -------

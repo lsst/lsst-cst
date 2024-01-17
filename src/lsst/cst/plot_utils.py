@@ -33,7 +33,7 @@ _extension_available = [Extension.BOKEH]
 def _set_extension(extension: Extension = Extension.BOKEH):
     """Function to set the extension used
     by the holoviews module.
-    (Nowadays only 'bokeh' extension is available)
+    (Nowadays only 'bokeh' extension is available).
     """
     global _extension_set
     if _extension_set is not None:
@@ -49,18 +49,18 @@ _set_extension()
 
 class Options(ABC):
     """Interface with the indispensable methods of how an Option
-    class should act like
+    class should act like.
     """
     @abstractmethod
     def to_dict(self):
         """Returns a dictionary with the keys as option name and the values
-        as the option value
+        as the option value.
         """
         NotImplementedError()
 
 
 class NoOptions(Options):
-    """No Options
+    """No Options.
     """
     def to_dict(self):
         return {}
@@ -68,7 +68,7 @@ class NoOptions(Options):
 
 def _get_options(options_type: str) -> Options:
     """
-    Get options to modify the underlying Holoviews plot
+    Get options to modify the underlying Holoviews plot.
     """
     if _extension_set is None:
         raise Exception("Extension not set")
@@ -89,44 +89,44 @@ class PointsOptions(Options):
 
     def to_dict(self):
         """
-        Points options as dictionary
+        Points options as dictionary.
 
         Returns
         -------
         options: `dict[str, Any]`
-            Selected options as a dictionary
+            Selected options as a dictionary.
         """
         return dict(fill_color=self.fill_color, size=self.size, color=self.color)
 
 
 @dataclass
 class ImageOptions(Options):
-    """Image plot options
+    """Image plot options.
     Parameters
     ----------
     cmap: `str`
         sets the colormap of the image, for example:
-        Greys_r, viridis, plasma, inferno, magma, cividis or rainbow
+        Greys_r, viridis, plasma, inferno, magma, cividis or rainbow.
     height: `int`
-        Height of the plot in pixels
+        Height of the plot in pixels.
     width: `int``
-        Width of the plot in pixels
+        Width of the plot in pixels.
     xaxis: `str`
-        Position of the xaxis 'bottom', 'top'
+        Position of the xaxis 'bottom', 'top'.
     yaxis: `str`
-        Position of the yaxis
+        Position of the yaxis.
     padding: `float`
-        space around the plot
+        space around the plot.
     font_size: `dict`
-        Font size for axis labels, titles, and legend
+        Font size for axis labels, titles, and legend.
     colorbar: `bool`
-        adds a colorbar to the plot
+        adds a colorbar to the plot.
     toolbar: `str``
-        toolbar position 'left', 'right', 'above', bellow'
+        toolbar position 'left', 'right', 'above', bellow'.
     show_grid: `bool`
         displays grid lines on the plot.
     tools: `List[str]`
-        List of Bokeh tools to include to the default ones
+        List of Bokeh tools to include to the default ones.
         []
     """
 
@@ -160,7 +160,7 @@ class ImageOptions(Options):
 
 class Plot(ABC):
     """Plot interface image. Describe how class should work to be
-    consifered a plot"""
+    consifered a plot."""
 
     def __init__(self):
         super().__init__()
@@ -168,21 +168,21 @@ class Plot(ABC):
 
     @abstractmethod
     def render(self):
-        """Render the image"""
+        """Render the image."""
         raise NotImplementedError()
 
     @abstractmethod
     def show(self):
-        """Show the image"""
+        """Show the image."""
         raise NotImplementedError()
 
     @abstractmethod
     def rasterize(self):
-        """Rasterize the image"""
+        """Rasterize the image."""
         raise NotImplementedError()
 
     def delete(self):
-        """Delete underlying image"""
+        """Delete underlying image."""
         assert self._img is not None
         del self._img
         gc.collect()
@@ -191,17 +191,17 @@ class Plot(ABC):
     def from_exposure(exposure: ExposureF, title: str = "No title",
                       xlabel: str = "X", ylabel: str = "Y",
                       image_options: ImageOptions = ImageOptions()):
-        """Create a basic plot class with an exposure as parameter
+        """Create a basic plot class with an exposure as parameter.
 
         Parameters
         ----------
         exposure: `exposureF`
-            exposure instance returned from butler
+            exposure instance returned from butler.
 
         Returns
         -------
         results: `Plot`
-            Plot instance with the array inside exposure as image data
+            Plot instance with the array inside exposure as image data.
         """
         return ExposurePlot(exposure, title, xlabel, ylabel, image_options)
 
@@ -209,10 +209,10 @@ class Plot(ABC):
     def from_cal_exp_data(cal_exp_data: CalExpData, title: str = None,
                           xlabel: str = "X", ylabel: str = "Y",
                           image_options: ImageOptions = ImageOptions(),
-                          points_options: PointsOptions = PointsOptions()):
+                          sources_options: PointsOptions = PointsOptions()):
         """
         """
-        return CalExpPlot(cal_exp_data)
+        return CalExpPlot(cal_exp_data, title, xlabel, ylabel, image_options, sources_options)
 
     @staticmethod
     def from_points(sources: tuple[Series], options: PointsOptions = PointsOptions()):
@@ -222,7 +222,16 @@ class Plot(ABC):
 
 
 class PointsPlot(Plot):
+    """
+    Plot for selected points
 
+    Parameters
+    ----------
+    points: `tuple[Series]`
+        Points to be add to the plot.
+    options: `PointsOptions`, Optional
+        Points plot options
+    """
     options = PointsOptions
 
     def __init__(self, points: tuple[Series], options: PointsOptions = PointsOptions()):
@@ -242,7 +251,7 @@ class PointsPlot(Plot):
 
     def render(self):
         """Renders the plots converting the data
-        into an holoviews point Plot
+        into an holoviews point Plot.
         """
         self._img = hv.Points(self._points).opts(**self._options.to_dict(), tools=[self._hover_tool])
 
@@ -266,15 +275,15 @@ class ExposurePlot(Plot):
     Parameters
     ----------
     image_array: `np.ndarray`
-        image array to be show in the plot
+        image array to be show in the plot.
     title: `str`
-        title of the plot
+        title of the plot.
     xlabel: `str`
-        label for the x coordinates
+        label for the x coordinates.
     ylabel: `str`
-        label for the y coordinates
+        label for the y coordinates.
     options: `Options`
-        Options for the underlying plot object
+        Options for the underlying plot object.
     """
     _options = ImageOptions
 
@@ -290,7 +299,7 @@ class ExposurePlot(Plot):
         self._image_bounds = None
 
     def _set_image_transform(self, image_transform: ImageTransform):
-        """Setter to change the image transformer before rendering the image
+        """Setter to change the image transformer before rendering the image.
 
         Parameters
         ----------
@@ -303,7 +312,7 @@ class ExposurePlot(Plot):
 
     def render(self):
         """Renders the image array converting the array data into
-        an holoviews Image
+        an holoviews Image.
         """
         assert self._img is None
         if self._image_bounds is None:
@@ -320,7 +329,7 @@ class ExposurePlot(Plot):
 
     def show(self):
         """Returns the rendered plot.
-        The image is rasterized, in order to optimize the rendering of plots
+        The image is rasterized, in order to optimize the rendering of plots.
 
         Returns
         -------
@@ -331,7 +340,7 @@ class ExposurePlot(Plot):
 
     def rasterize(self):
         """Returns the rendered plot.
-        The image is rasterized, in order to optimize the rendering of plots
+        The image is rasterized, in order to optimize the rendering of plots.
 
         Returns
         -------
@@ -346,7 +355,7 @@ class ExposurePlot(Plot):
         Parameters
         ----------
         filename: `str`
-            Name and path of the file where the image will be saved
+            Name and path of the file where the image will be saved.
         """
         assert self._img is not None
         output_dir = os.path.expanduser("~")
@@ -359,24 +368,25 @@ class ExposurePlot(Plot):
 
 class CalExpPlot(Plot):
     """
-    Plot using Calexp data, includes the image and also the sources
+    Plot using Calexp data, includes the image and also the sources.
 
     Parameters
     ----------
-    cal_exp_data:
+    cal_exp_data: `CalExpData`
+        cal exp data to be plot
 
-    title:
-
-    xlabel:
-
-    ylabel:
-
-    show_detections:
-
-    image_options:
-
-    source_options:
-
+    title: `str`, Optional
+        Plot title. Default value: CalExpId information.
+    xlabel: `str`, Optional
+        Plot xlabel. Default value: 'X'.
+    ylabel: `str`, Optional
+        Plot ylabel. Default value: 'Y'.
+    show_detections: `bool`, Optional
+        True if detections should be added to the plot. Default value: True.
+    image_options: `ImageOptions`, Optional
+        Image options.
+    source_options: `PointsOptions`, Optional
+        Source options.
     """
 
     options = ImageOptions
