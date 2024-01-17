@@ -207,12 +207,18 @@ class Plot(ABC):
 
     @staticmethod
     def from_cal_exp_data(cal_exp_data: CalExpData, title: str = None,
-                          xlabel: str = "X", ylabel: str = "Y",
+                          xlabel: str = "X", ylabel: str = "Y", show_detections: bool = True,
                           image_options: ImageOptions = ImageOptions(),
                           sources_options: PointsOptions = PointsOptions()):
         """
         """
-        return CalExpPlot(cal_exp_data, title, xlabel, ylabel, image_options, sources_options)
+        return CalExpPlot(cal_exp_data, 
+                          title, 
+                          xlabel, 
+                          ylabel, 
+                          show_detections, 
+                          image_options, 
+                          sources_options)
 
     @staticmethod
     def from_points(sources: tuple[Series], options: PointsOptions = PointsOptions()):
