@@ -102,17 +102,27 @@ class CalExpData(ABC):
         raise NotImplementedError()
 
 
-class ButlerExposureFactory:
+class CalExpFactory:
+
+    def __init__(self):
+        super().__init__()
+
+    def get_exp_data(self, calexp_id: CalExpId):
+        raise NotImplementedError()
+
+
+class ButlerCalExpFactory(CalExpFactory):
     """Factory of calexp from a Butler
 
     Parameters
     ----------
     configuration: `Configuration`
         Configuration available for a butler
-    collection: `Collection``
+    collection: `Collection`
         Collection to be searched (in order) when reading datasets.
     """
     def __init__(self, configuration: Configuration, collection: Collection):
+        super().__init__()
         if not _lsst_butler_ready:
             raise Exception("Unable to instantiate class ButlerCalExpData")
         _configuration = configuration.value
@@ -123,14 +133,14 @@ class ButlerExposureFactory:
         self._collection = collection.value
         self._butler = Butler(self._configuration, collections=self._collection)
 
-    def get_exposure(self, calexp_id: CalExpId):
-        """Using the exposure_id argument check for the exposure using butler
+    def get_cal_exp_data(self, calexp_id: CalExpId):
+        """Check for the exposure using butler
         and returns a handler to get information from that exposure
 
         Parameters
         ----------
-        exposure_id: `ExposureId`
-            Exposure information to search for
+        calexp_id: `CalExpId`
+            CalExp information to search for
 
         Raises
         ------
@@ -147,7 +157,7 @@ class ButlerExposureFactory:
 
 
 class _ButlerCalExpData(CalExpData):
-    """Wrapp class to retrieve information from an exposure,
+    """Wrapp to retrieve information from an exposure,
        for example the calexp, the sources or the image bounds
     """
     def __init__(self, butler: Butler, calexp_id: CalExpId):
