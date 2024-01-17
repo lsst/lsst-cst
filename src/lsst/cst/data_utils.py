@@ -141,7 +141,7 @@ class ButlerExposureFactory:
         exposure_data: `CalExpData`
             Instance of a CalExpData which can be used to obtain exposure data
         """
-        if self._butler.exists('calexp', calexp_id.as_dict() == DatasetExistence.RECORDED.VERIFIED):
+        if self._butler.exists('calexp', calexp_id.as_dict()) != DatasetExistence.RECORDED.VERIFIED:
             raise ValueError(f"Unrecognized Exposure: {calexp_id}")
         return _ButlerCalExpData(self._butler, calexp_id)
 
