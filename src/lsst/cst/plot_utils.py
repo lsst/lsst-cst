@@ -397,8 +397,8 @@ class CalExpPlot(Plot):
         self._show_detections = show_detections
 
     def render(self):
-        """Renders the calexp image data and plots the sources is asked with the options
-        set as constructor arguments
+        """Renders the calexp image data including the sources
+        with the options passed as constructor arguments
         """
         assert self._img is None
         assert self._detections is None

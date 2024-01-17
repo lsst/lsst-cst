@@ -5,6 +5,11 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from enum import Enum
 
+__all__ = ["Collection",
+           "Configuration",
+           "CalExpId",
+           "Band",
+           "ButlerCalExpDataFactory"]
 
 _log = logging.getLogger(__name__)
 _lsst_butler_ready = True
@@ -102,16 +107,33 @@ class CalExpData(ABC):
         raise NotImplementedError()
 
 
-class CalExpFactory:
-
+class CalExpDataFactory:
+    """Interface for the CalExp Factories"""
     def __init__(self):
         super().__init__()
 
-    def get_exp_data(self, calexp_id: CalExpId):
+    def get_cal_exp_data(self, calexp_id: CalExpId):
+        """Check for the exposure and returns a handler to
+        get exposure information
+
+        Parameters
+        ----------
+        calexp_id: `CalExpId`
+            CalExp information to search for
+
+        Raises
+        ------
+        ValueError:
+            When the Exposure could not be found
+        Returns
+        -------
+        exposure_data: `CalExpData`
+            Instance of a CalExpData which can be used to obtain exposure data
+        """
         raise NotImplementedError()
 
 
-class ButlerCalExpFactory(CalExpFactory):
+class ButlerCalExpDataFactory(CalExpDataFactory):
     """Factory of calexp from a Butler
 
     Parameters
@@ -134,8 +156,8 @@ class ButlerCalExpFactory(CalExpFactory):
         self._butler = Butler(self._configuration, collections=self._collection)
 
     def get_cal_exp_data(self, calexp_id: CalExpId):
-        """Check for the exposure using butler
-        and returns a handler to get information from that exposure
+        """Check for the exposure in the Butler collection and returns
+        a handler to get exposure information
 
         Parameters
         ----------
