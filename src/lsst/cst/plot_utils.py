@@ -86,7 +86,7 @@ class PointsOptions(Options):
     fill_color: str = None
     size: int = 9
     color: str = "darkorange"
-    marker: str = "^"
+    marker: str = "o"
 
     def to_dict(self):
         """
