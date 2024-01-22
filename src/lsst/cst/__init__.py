@@ -1,9 +1,7 @@
 """Rubin LSST Community Science Tools"""
 
 import logging
-
 from importlib.metadata import PackageNotFoundError, version
-
 
 logger = logging.getLogger("lsst.cst")
 logger.setLevel(logging.WARNING)

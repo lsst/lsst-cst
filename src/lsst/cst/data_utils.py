@@ -1,15 +1,18 @@
-import numpy as np
 import logging
-from astropy.visualization import AsinhStretch, ZScaleInterval
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from enum import Enum
 
-__all__ = ["Collection",
-           "Configuration",
-           "CalExpId",
-           "Band",
-           "ButlerCalExpDataFactory"]
+import numpy as np
+from astropy.visualization import AsinhStretch, ZScaleInterval
+
+__all__ = [
+    "Collection",
+    "Configuration",
+    "CalExpId",
+    "Band",
+    "ButlerCalExpDataFactory",
+]
 
 _log = logging.getLogger(__name__)
 _lsst_butler_ready = True
@@ -23,21 +26,24 @@ except ImportError:
 
 class Collection(Enum):
     """Collections available:
-        - i22: 2.2i/runs/DP0.2 .
+    - i22: 2.2i/runs/DP0.2 .
     """
-    i22 = '2.2i/runs/DP0.2'
+
+    i22 = "2.2i/runs/DP0.2"
 
 
 class Configuration(Enum):
-    """ Butler configurations available
-        - DP02: dp02.
+    """Butler configurations available
+    - DP02: dp02.
     """
-    DP02 = {'name': 'dp02', 'collections_available': [Collection.i22]}
+
+    DP02 = {"name": "dp02", "collections_available": [Collection.i22]}
 
 
 class Band(Enum):
     """Exposure bands available."""
-    i = 'i'
+
+    i = "i"
 
 
 @dataclass
@@ -50,6 +56,7 @@ class CalExpId:
     detector: `int`
     band: `Band`
     """
+
     def __init__(self, visit: int, detector: int, band: Band):
         self._visit = visit
         self._detector = detector
@@ -63,23 +70,29 @@ class CalExpId:
         cal_exp_id: `dict`
             CalExpId information as a dictionary
         """
-        return {'visit': self._visit, 'detector': self._detector, 'band': self._band.value}
+        return {
+            "visit": self._visit,
+            "detector": self._detector,
+            "band": self._band.value,
+        }
 
     def __str__(self):
-        return f"visit: {self._visit} detector: {self._detector} band: {self._band.value}"
+        return (
+            f"visit: {self._visit}"
+            f"detector: {self._detector}"
+            f"band: {self._band.value}"
+        )
 
     def __repr__(self):
         return self.__str__
 
 
 class CalExpData(ABC):
-    """Interface to get information from a Calexp.
-    """
+    """Interface to get information from a Calexp."""
 
     @abstractmethod
     def get_calexp(self):
-        """
-        Exposure calexp data.
+        """Exposure calexp data.
 
         Returns
         -------
@@ -113,6 +126,7 @@ class CalExpData(ABC):
 
 class CalExpDataFactory:
     """Interface for the CalExp Factories"""
+
     def __init__(self):
         super().__init__()
 
@@ -129,6 +143,7 @@ class CalExpDataFactory:
         ------
         ValueError:
             When the CalExp data could not be found.
+
         Returns
         -------
         exposure_data: `CalExpData`
@@ -147,17 +162,22 @@ class ButlerCalExpDataFactory(CalExpDataFactory):
     collection: `Collection`
         Collection to be searched (in order) when reading datasets.
     """
+
     def __init__(self, configuration: Configuration, collection: Collection):
         super().__init__()
         if not _lsst_butler_ready:
             raise Exception("Unable to instantiate class ButlerCalExpData")
         _configuration = configuration.value
-        if collection not in _configuration['collections_available']:
-            raise Exception(f'''Collection {collection} not compatible with configuration:
-                            {_configuration['name']}''')
-        self._configuration = _configuration['name']
+        if collection not in _configuration["collections_available"]:
+            raise Exception(
+                f"""Collection {collection} not compatible with configuration:
+                            {_configuration['name']}"""
+            )
+        self._configuration = _configuration["name"]
         self._collection = collection.value
-        self._butler = Butler(self._configuration, collections=self._collection)
+        self._butler = Butler(
+            self._configuration, collections=self._collection
+        )
 
     def get_cal_exp_data(self, calexp_id: CalExpId):
         """Check for the exposure in the Butler collection and returns
@@ -172,20 +192,25 @@ class ButlerCalExpDataFactory(CalExpDataFactory):
         ------
         ValueError:
             When the Exposure could not be found inside the butler collection.
+
         Returns
         -------
         exposure_data: `CalExpData`
             Instance of a CalExpData which can be used to obtain exposure data.
         """
-        if self._butler.exists('calexp', calexp_id.as_dict()) != DatasetExistence.RECORDED.VERIFIED:
+        if (
+            self._butler.exists("calexp", calexp_id.as_dict())
+            != DatasetExistence.RECORDED.VERIFIED
+        ):
             raise ValueError(f"Unrecognized Exposure: {calexp_id}")
         return _ButlerCalExpData(self._butler, calexp_id)
 
 
 class _ButlerCalExpData(CalExpData):
-    """Wrapp to retrieve information from an exposure,
-       for example the calexp, the sources or the image bounds.
+    """Wrap to retrieve information from an exposure,
+    for example the calexp, the sources or the image bounds.
     """
+
     def __init__(self, butler: Butler, calexp_id: CalExpId):
         super().__init__()
         self._calexp_id = calexp_id
@@ -193,8 +218,7 @@ class _ButlerCalExpData(CalExpData):
         self._calexp = None
 
     def get_calexp(self):
-        """
-        Exposure calexp data.
+        """Exposure calexp data.
 
         Returns
         -------
@@ -203,7 +227,9 @@ class _ButlerCalExpData(CalExpData):
         """
         _log.debug(f"Getting CalExp from {self._calexp_id}")
         if self._calexp is None:
-            self._calexp = self._butler.get('calexp', dataId=self._calexp_id.as_dict())
+            self._calexp = self._butler.get(
+                "calexp", dataId=self._calexp_id.as_dict()
+            )
         _log.debug(f"Found CalExp {self._calexp_id}")
         return self._calexp
 
@@ -216,7 +242,9 @@ class _ButlerCalExpData(CalExpData):
             Sources from the calexp.
         """
         _log.debug(f"Getting Sources from {self._calexp_id}")
-        exp_sources = self._butler.get('sourceTable', dataId=self._calexp_id.as_dict())
+        exp_sources = self._butler.get(
+            "sourceTable", dataId=self._calexp_id.as_dict()
+        )
         _log.debug(f"Found Sources from {self._calexp_id}")
         return exp_sources.x, exp_sources.y
 
@@ -230,7 +258,12 @@ class _ButlerCalExpData(CalExpData):
         """
         if self._calexp is None:
             self.get_calexp()
-        return (0, 0, self._calexp.getDimensions()[0], self._calexp.getDimensions()[1])
+        return (
+            0,
+            0,
+            self._calexp.getDimensions()[0],
+            self._calexp.getDimensions()[1],
+        )
 
     @property
     def cal_exp_id(self):
@@ -244,14 +277,15 @@ class _ButlerCalExpData(CalExpData):
         return str(self._calexp_id)
 
     def __str__(self):
-        return f'''Butler exposure data {self._exposure_id}'''
+        return f"""Butler exposure data {self._exposure_id}"""
 
     def __repr__(self):
         return self.__str__()
 
 
 class ImageTransform(ABC):
-    """Interface to make modifications on an image before rendering into a plot.
+    """Interface to make modifications on an image
+    before rendering into a plot.
     """
 
     def __init__(self):
@@ -278,6 +312,7 @@ class NoImageTransform(ImageTransform):
     """No transformation class, mainly used when no transformation
     is wanted on the image array.
     """
+
     def __init__(self):
         super().__init__()
 
@@ -301,6 +336,7 @@ class StandardImageTransform(ImageTransform):
     """Standard Image modificacions. When executing transform the image will be
     fliped vertically and dynamic range will be reduced.
     """
+
     def __init__(self):
         super().__init__()
         self._transformation = [self._scale_image, self._flip_columns]
@@ -315,7 +351,7 @@ class StandardImageTransform(ImageTransform):
             Array to be transformed.
 
         Returns
-        ------
+        -------
         transformed_image_array: `np.array`
             Array modified after all transformation has been applied.
         """

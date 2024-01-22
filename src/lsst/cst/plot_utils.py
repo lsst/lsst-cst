@@ -73,9 +73,7 @@ class NoOptions(Options):
 
 
 def _get_options(options_type: str) -> Options:
-    """
-    Get options to modify the underlying Holoviews plot.
-    """
+    # Helper function to get options type
     if _extension_set is None:
         raise Exception("Extension not set")
     if _extension_set == Extension.BOKEH:
@@ -96,8 +94,7 @@ class PointsOptions(Options):
     marker: str = "o"
 
     def to_dict(self):
-        """
-        Points options as dictionary.
+        """Points options as dictionary.
 
         Returns
         -------
@@ -115,6 +112,7 @@ class PointsOptions(Options):
 @dataclass
 class ImageOptions(Options):
     """Image plot options.
+
     Parameters
     ----------
     cmap: `str`
@@ -173,7 +171,8 @@ class ImageOptions(Options):
 
 class Plot(ABC):
     """Plot interface image. Describe how class should work to be
-    consifered a plot."""
+    consifered a plot.
+    """
 
     def __init__(self):
         super().__init__()
@@ -208,17 +207,25 @@ class Plot(ABC):
         ylabel: str = "Y",
         image_options: ImageOptions = ImageOptions(),
     ):
-        """Create a basic plot class with an exposure as parameter.
+        """Create a Plot class for the exposureF image.
 
         Parameters
         ----------
         exposure: `exposureF`
             exposure instance returned from butler.
+        title: `str`
+            title of the plot.
+        xlabel: `str`
+            label for the x coordinates.
+        ylabel: `str`
+            label for the y coordinates.
+        image_options: `Options`
+            Options for the underlying plot object.
 
         Returns
         -------
         results: `Plot`
-            Plot instance with the array inside exposure as image data.
+            Plot instance for the exposureF
         """
         return ExposurePlot(exposure, title, xlabel, ylabel, image_options)
 
@@ -232,7 +239,28 @@ class Plot(ABC):
         image_options: ImageOptions = ImageOptions(),
         sources_options: PointsOptions = PointsOptions(),
     ):
-        """ """
+        """Create a Plot class for CalExpData.
+
+        Parameters
+        ----------
+        exposure: `exposureF`
+            exposure instance returned from butler.
+        title: `str`
+            title of the plot.
+        xlabel: `str`
+            label for the x coordinates.
+        ylabel: `str`
+            label for the y coordinates.
+        image_options: `ImageOptions`
+            Options for the underlying plot object.
+        sources_options: `PointsOptions``
+            Options for the underlying sources plot object.
+
+        Returns
+        -------
+        results: `Plot`
+            Plot instance for the exposureF including sources.
+        """
         return CalExpPlot(
             cal_exp_data,
             title,
@@ -247,13 +275,25 @@ class Plot(ABC):
     def from_points(
         sources: tuple[Series], options: PointsOptions = PointsOptions()
     ):
-        """ """
+        """Create a Plot for the sources
+
+        Parameters
+        ----------
+        sources: `tuple`
+            Points to be plotted.
+        options: `PointsOptions`
+            Options for the points to be plotted.
+
+        Returns
+        -------
+        results: `Plot`
+            Plot of the points.
+        """
         return PointsPlot(sources, options)
 
 
 class PointsPlot(Plot):
-    """
-    Plot for selected points
+    """Plot for selected points
 
     Parameters
     ----------
@@ -304,8 +344,7 @@ class PointsPlot(Plot):
 
 
 class ExposurePlot(Plot):
-    """
-    Create plots out of an ExposureF
+    """Plot for an ExposureF
 
     Parameters
     ----------
@@ -416,8 +455,7 @@ class ExposurePlot(Plot):
 
 
 class CalExpPlot(Plot):
-    """
-    Plot using Calexp data, includes the image and also the sources.
+    """Plot using Calexp data, includes the image and also the sources.
 
     Parameters
     ----------
@@ -515,7 +553,7 @@ class CalExpPlot(Plot):
             return self._img.rasterize()
 
     def delete(self):
-        """"""
+        """Delete underlying images."""
         if self._detections is not None:
             self._detections.delete()
         super().delete()
