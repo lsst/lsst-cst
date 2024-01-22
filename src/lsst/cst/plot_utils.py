@@ -7,14 +7,19 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Dict, List
-from pandas import Series
 
 import holoviews as hv
-from holoviews.operation.datashader import rasterize
 from bokeh.models import HoverTool
+from holoviews.operation.datashader import rasterize
+from pandas import Series
 
 from lsst.afw.image._exposure import ExposureF
-from lsst.cst.data_utils import CalExpData, StandardImageTransform, NoImageTransform, ImageTransform
+from lsst.cst.data_utils import (
+    CalExpData,
+    ImageTransform,
+    NoImageTransform,
+    StandardImageTransform,
+)
 
 _log = logging.getLogger(__name__)
 
@@ -51,6 +56,7 @@ class Options(ABC):
     """Interface with the indispensable methods of how an Option
     class should act like.
     """
+
     @abstractmethod
     def to_dict(self):
         """Returns a dictionary with the keys as option name and the values
@@ -60,8 +66,8 @@ class Options(ABC):
 
 
 class NoOptions(Options):
-    """No Options.
-    """
+    """No Options."""
+
     def to_dict(self):
         return {}
 
@@ -83,6 +89,7 @@ def _get_options(options_type: str) -> Options:
 @dataclass
 class PointsOptions(Options):
     """Points plot options"""
+
     fill_color: str = None
     size: int = 9
     color: str = "darkorange"
@@ -97,7 +104,12 @@ class PointsOptions(Options):
         options: `dict[str, Any]`
             Selected options as a dictionary.
         """
-        return dict(fill_color=self.fill_color, size=self.size, color=self.color, marker=self.marker)
+        return dict(
+            fill_color=self.fill_color,
+            size=self.size,
+            color=self.color,
+            marker=self.marker,
+        )
 
 
 @dataclass
@@ -189,9 +201,13 @@ class Plot(ABC):
         gc.collect()
 
     @staticmethod
-    def from_exposure(exposure: ExposureF, title: str = "No title",
-                      xlabel: str = "X", ylabel: str = "Y",
-                      image_options: ImageOptions = ImageOptions()):
+    def from_exposure(
+        exposure: ExposureF,
+        title: str = "No title",
+        xlabel: str = "X",
+        ylabel: str = "Y",
+        image_options: ImageOptions = ImageOptions(),
+    ):
         """Create a basic plot class with an exposure as parameter.
 
         Parameters
@@ -207,24 +223,31 @@ class Plot(ABC):
         return ExposurePlot(exposure, title, xlabel, ylabel, image_options)
 
     @staticmethod
-    def from_cal_exp_data(cal_exp_data: CalExpData, title: str = None,
-                          xlabel: str = "X", ylabel: str = "Y", show_detections: bool = True,
-                          image_options: ImageOptions = ImageOptions(),
-                          sources_options: PointsOptions = PointsOptions()):
-        """
-        """
-        return CalExpPlot(cal_exp_data, 
-                          title, 
-                          xlabel, 
-                          ylabel, 
-                          show_detections, 
-                          image_options, 
-                          sources_options)
+    def from_cal_exp_data(
+        cal_exp_data: CalExpData,
+        title: str = None,
+        xlabel: str = "X",
+        ylabel: str = "Y",
+        show_detections: bool = True,
+        image_options: ImageOptions = ImageOptions(),
+        sources_options: PointsOptions = PointsOptions(),
+    ):
+        """ """
+        return CalExpPlot(
+            cal_exp_data,
+            title,
+            xlabel,
+            ylabel,
+            show_detections,
+            image_options,
+            sources_options,
+        )
 
     @staticmethod
-    def from_points(sources: tuple[Series], options: PointsOptions = PointsOptions()):
-        """
-        """
+    def from_points(
+        sources: tuple[Series], options: PointsOptions = PointsOptions()
+    ):
+        """ """
         return PointsPlot(sources, options)
 
 
@@ -239,20 +262,23 @@ class PointsPlot(Plot):
     options: `PointsOptions`, Optional
         Points plot options
     """
+
     options = PointsOptions
 
-    def __init__(self, points: tuple[Series], options: PointsOptions = PointsOptions()):
+    def __init__(
+        self, points: tuple[Series], options: PointsOptions = PointsOptions()
+    ):
         super().__init__()
         self._points = points
         self._options = options
         self._hover_tool = HoverTool(
             tooltips=[
-                ('X', '@x{0.2f}'),
-                ('Y', '@y{0.2f}'),
+                ("X", "@x{0.2f}"),
+                ("Y", "@y{0.2f}"),
             ],
             formatters={
-                'X': 'printf',
-                'Y': 'printf',
+                "X": "printf",
+                "Y": "printf",
             },
         )
 
@@ -260,7 +286,9 @@ class PointsPlot(Plot):
         """Renders the plots converting the data
         into an holoviews point Plot.
         """
-        self._img = hv.Points(self._points).opts(**self._options.to_dict(), tools=[self._hover_tool])
+        self._img = hv.Points(self._points).opts(
+            **self._options.to_dict(), tools=[self._hover_tool]
+        )
 
     def show(self):
         """Returns the rendered plot.
@@ -292,10 +320,17 @@ class ExposurePlot(Plot):
     options: `Options`
         Options for the underlying plot object.
     """
+
     _options = ImageOptions
 
-    def __init__(self, exposure: ExposureF, title: str = None,
-                 xlabel: str = "X", ylabel: str = "Y", options: ImageOptions = ImageOptions()):
+    def __init__(
+        self,
+        exposure: ExposureF,
+        title: str = None,
+        xlabel: str = "X",
+        ylabel: str = "Y",
+        options: ImageOptions = ImageOptions(),
+    ):
         self._exposure = exposure
         self._title = title
         self._xlabel = xlabel
@@ -323,15 +358,22 @@ class ExposurePlot(Plot):
         """
         assert self._img is None
         if self._image_bounds is None:
-            self._image_bounds = (0, 0,
-                                  self._exposure.getDimensions()[0],
-                                  self._exposure.getDimensions()[1])
+            self._image_bounds = (
+                0,
+                0,
+                self._exposure.getDimensions()[0],
+                self._exposure.getDimensions()[1],
+            )
         array = self._image_transform.transform(self._exposure.image.array)
-        self._img = hv.Image(array, bounds=self._image_bounds, kdims=[self._xlabel, self._ylabel]).opts(
+        self._img = hv.Image(
+            array,
+            bounds=self._image_bounds,
+            kdims=[self._xlabel, self._ylabel],
+        ).opts(
             title=self._title,
             xlabel=self._xlabel,
             ylabel=self._ylabel,
-            **self._options.to_dict()
+            **self._options.to_dict(),
         )
 
     def show(self):
@@ -399,10 +441,16 @@ class CalExpPlot(Plot):
     options = ImageOptions
     detect_options = PointsOptions
 
-    def __init__(self, cal_exp_data: CalExpData, title: str = None,
-                 xlabel: str = "X", ylabel: str = "Y", show_detections: bool = True,
-                 image_options: ImageOptions = ImageOptions(),
-                 source_options: PointsOptions = PointsOptions()):
+    def __init__(
+        self,
+        cal_exp_data: CalExpData,
+        title: str = None,
+        xlabel: str = "X",
+        ylabel: str = "Y",
+        show_detections: bool = True,
+        image_options: ImageOptions = ImageOptions(),
+        source_options: PointsOptions = PointsOptions(),
+    ):
         super().__init__()
         self._cal_exp_data = cal_exp_data
         self._title = title
@@ -421,15 +469,19 @@ class CalExpPlot(Plot):
         assert self._detections is None
         if self._title is None:
             self._title = self._cal_exp_data.cal_exp_id
-        self._img = Plot.from_exposure(exposure=self._cal_exp_data.get_calexp(),
-                                       title=self._title,
-                                       xlabel=self._xlabel,
-                                       ylabel=self._ylabel,
-                                       image_options=self._image_options)
+        self._img = Plot.from_exposure(
+            exposure=self._cal_exp_data.get_calexp(),
+            title=self._title,
+            xlabel=self._xlabel,
+            ylabel=self._ylabel,
+            image_options=self._image_options,
+        )
         self._img.image_transform = StandardImageTransform()
         self._img.render()
         if self._show_detections:
-            self._detections = Plot.from_points(self._cal_exp_data.get_sources(), self._source_options)
+            self._detections = Plot.from_points(
+                self._cal_exp_data.get_sources(), self._source_options
+            )
             self._detections.render()
 
     def show(self):
