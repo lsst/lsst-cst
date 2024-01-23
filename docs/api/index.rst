@@ -6,5 +6,9 @@
 Python API reference
 ####################
 
-.. automodapi:: lsst.cst
-   :no-inheritance-diagram:
+.. toctree::
+   :maxdepth: 1
+   :caption: Contents:
+
+   Plot utils <plot_utils.rst>
+   Data utils <data_utils.rst>

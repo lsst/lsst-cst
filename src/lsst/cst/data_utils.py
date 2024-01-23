@@ -9,9 +9,10 @@ from astropy.visualization import AsinhStretch, ZScaleInterval
 __all__ = [
     "Collection",
     "Configuration",
+    "CalExpData",
     "CalExpId",
     "Band",
-    "ButlerCalExpDataFactory",
+    "ButlerCalExpDataFactory"
 ]
 
 _log = logging.getLogger(__name__)
@@ -41,7 +42,8 @@ class Configuration(Enum):
 
 
 class Band(Enum):
-    """Exposure bands available."""
+    """Exposure bands available.
+    """
 
     i = "i"
 
@@ -88,7 +90,8 @@ class CalExpId:
 
 
 class CalExpData(ABC):
-    """Interface to get information from a Calexp."""
+    """Interface to get information from a Calexp.
+    """
 
     @abstractmethod
     def get_calexp(self):
@@ -96,7 +99,7 @@ class CalExpData(ABC):
 
         Returns
         -------
-        calexp: `ExposureF`
+        calexp: `lsst.afw.image._exposure.ExposureF`
             Exposure data from calexp.
         """
         raise NotImplementedError()
@@ -118,7 +121,7 @@ class CalExpData(ABC):
 
         Returns
         -------
-        image_bounds: `tuple[float]`
+        image_bounds: Tuple[float]
             Bounds of the cal_exp Exposure.
         """
         raise NotImplementedError()
@@ -190,7 +193,7 @@ class ButlerCalExpDataFactory(CalExpDataFactory):
 
         Raises
         ------
-        ValueError:
+        ValueError
             When the Exposure could not be found inside the butler collection.
 
         Returns
@@ -211,7 +214,7 @@ class _ButlerCalExpData(CalExpData):
     for example the calexp, the sources or the image bounds.
     """
 
-    def __init__(self, butler: Butler, calexp_id: CalExpId):
+    def __init__(self, butler: "Butler", calexp_id: CalExpId):
         super().__init__()
         self._calexp_id = calexp_id
         self._butler = butler
@@ -222,7 +225,7 @@ class _ButlerCalExpData(CalExpData):
 
         Returns
         -------
-        calexp: `ExposureF`
+        calexp: `~lsst.afw.image._exposure.ExposureF`
             Exposure data from calexp.
         """
         _log.debug(f"Getting CalExp from {self._calexp_id}")
@@ -253,7 +256,7 @@ class _ButlerCalExpData(CalExpData):
 
         Returns
         -------
-        image_bounds: `tuple[float]`
+        image_bounds: `tuple`
             Bounds of the cal exp image.
         """
         if self._calexp is None:

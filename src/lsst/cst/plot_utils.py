@@ -1,4 +1,4 @@
-"""plot science utils"""
+"""Plot science utils."""
 
 import gc
 import logging
@@ -24,7 +24,7 @@ from lsst.cst.data_utils import (
 _log = logging.getLogger(__name__)
 
 
-__all__ = ["Plot", "CalExpPlot", "ExposurePlot"]
+__all__ = ["Plot", "CalExpPlot", "ExposurePlot", "ImageOptions", "PointsOptions", "Options"]
 
 
 class Extension(Enum):
@@ -86,9 +86,21 @@ def _get_options(options_type: str) -> Options:
 
 @dataclass
 class PointsOptions(Options):
-    """Points plot options"""
+    """Points plot options
 
-    fill_color: str = None
+    Parameters
+    ----------
+    fill_color: `str`
+        Marker fill color.
+    size: `int`
+        Marker size
+    color: `int`
+        Marker color.
+    marker: `str`
+        Marker type.
+    """
+
+    fill_color: str = None  # "this is it"
     size: int = 9
     color: str = "darkorange"
     marker: str = "o"
@@ -98,7 +110,7 @@ class PointsOptions(Options):
 
         Returns
         -------
-        options: `dict[str, Any]`
+        options: `dict`
             Selected options as a dictionary.
         """
         return dict(
@@ -120,7 +132,7 @@ class ImageOptions(Options):
         Greys_r, viridis, plasma, inferno, magma, cividis or rainbow.
     height: `int`
         Height of the plot in pixels.
-    width: `int``
+    width: `int`
         Width of the plot in pixels.
     xaxis: `str`
         Position of the xaxis 'bottom', 'top'.
@@ -132,11 +144,11 @@ class ImageOptions(Options):
         Font size for axis labels, titles, and legend.
     colorbar: `bool`
         adds a colorbar to the plot.
-    toolbar: `str``
+    toolbar: `str`
         toolbar position 'left', 'right', 'above', bellow'.
     show_grid: `bool`
         displays grid lines on the plot.
-    tools: `List[str]`
+    tools: `list`
         List of Bokeh tools to include to the default ones.
         []
     """
@@ -170,8 +182,7 @@ class ImageOptions(Options):
 
 
 class Plot(ABC):
-    """Plot interface image. Describe how class should work to be
-    consifered a plot.
+    """Plot interface image.
     """
 
     def __init__(self):
@@ -180,21 +191,25 @@ class Plot(ABC):
 
     @abstractmethod
     def render(self):
-        """Render the image."""
+        """Render the image.
+        """
         raise NotImplementedError()
 
     @abstractmethod
     def show(self):
-        """Show the image."""
+        """Show the image.
+        """
         raise NotImplementedError()
 
     @abstractmethod
     def rasterize(self):
-        """Rasterize the image."""
+        """Rasterize the image.
+        """
         raise NotImplementedError()
 
     def delete(self):
-        """Delete underlying image."""
+        """Delete underlying image.
+        """
         assert self._img is not None
         del self._img
         gc.collect()
@@ -211,7 +226,7 @@ class Plot(ABC):
 
         Parameters
         ----------
-        exposure: `exposureF`
+        exposure: `~lsst.afw.image._exposure.ExposureF`
             exposure instance returned from butler.
         title: `str`
             title of the plot.
@@ -219,7 +234,7 @@ class Plot(ABC):
             label for the x coordinates.
         ylabel: `str`
             label for the y coordinates.
-        image_options: `Options`
+        image_options: `ImageOptions`
             Options for the underlying plot object.
 
         Returns
@@ -243,7 +258,7 @@ class Plot(ABC):
 
         Parameters
         ----------
-        exposure: `exposureF`
+        exposure: `~lsst.afw.image._exposure.ExposureF`
             exposure instance returned from butler.
         title: `str`
             title of the plot.
@@ -253,7 +268,7 @@ class Plot(ABC):
             label for the y coordinates.
         image_options: `ImageOptions`
             Options for the underlying plot object.
-        sources_options: `PointsOptions``
+        sources_options: `PointsOptions`
             Options for the underlying sources plot object.
 
         Returns
@@ -335,7 +350,7 @@ class PointsPlot(Plot):
 
         Returns
         -------
-        rendered_plot: `hv.DynamicMap`
+        rendered_plot: `~holoviews.DynamicMap`
         """
         return self._img
 
@@ -348,7 +363,7 @@ class ExposurePlot(Plot):
 
     Parameters
     ----------
-    image_array: `np.ndarray`
+    image_array: `numpy.ndarray`
         image array to be show in the plot.
     title: `str`
         title of the plot.
@@ -421,7 +436,7 @@ class ExposurePlot(Plot):
 
         Returns
         -------
-        rendered_plot: `hv.DynamicMap`
+        rendered_plot:  `~holoviews.DynamicMap`
         """
         assert self._img is not None
         return self._img
@@ -432,7 +447,7 @@ class ExposurePlot(Plot):
 
         Returns
         -------
-        rendered_plot: `hv.DynamicMap`
+        rendered_plot:  `~holoviews.DynamicMap`
         """
         assert self._img is not None
         return rasterize(self._img)
@@ -461,7 +476,6 @@ class CalExpPlot(Plot):
     ----------
     cal_exp_data: `CalExpData`
         cal exp data to be plot
-
     title: `str`, Optional
         Plot title. Default value: CalExpId information.
     xlabel: `str`, Optional
@@ -528,7 +542,7 @@ class CalExpPlot(Plot):
 
         Returns
         -------
-        rendered_plot: `hv.DynamicMap`
+        rendered_plot: `~holoviews.DynamicMap`
         """
         assert self._img is not None
         if self._show_detections:
@@ -543,7 +557,7 @@ class CalExpPlot(Plot):
 
         Returns
         -------
-        rendered_plot: `hv.DynamicMap`
+        rendered_plot: `~holoviews.DynamicMap`
         """
         assert self._img is not None
         if self._show_detections:
