@@ -81,8 +81,8 @@ class CalExpId:
     def __str__(self):
         return (
             f"visit: {self._visit}"
-            f"detector: {self._detector}"
-            f"band: {self._band.value}"
+            f" detector: {self._detector}"
+            f" band: {self._band.value}"
         )
 
     def __repr__(self):
