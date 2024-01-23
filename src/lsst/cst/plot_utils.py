@@ -338,20 +338,11 @@ class PointsPlot(Plot):
         )
 
     def render(self):
-        """Renders the plots converting the data
-        into an holoviews point Plot.
-        """
         self._img = hv.Points(self._points).opts(
             **self._options.to_dict(), tools=[self._hover_tool]
         )
 
     def show(self):
-        """Returns the rendered plot.
-
-        Returns
-        -------
-        rendered_plot: `~holoviews.DynamicMap`
-        """
         return self._img
 
     def rasterize(self):
@@ -407,9 +398,6 @@ class ExposurePlot(Plot):
         self._image_transform = image_transform
 
     def render(self):
-        """Renders the image array converting the array data into
-        an holoviews Image.
-        """
         assert self._img is None
         if self._image_bounds is None:
             self._image_bounds = (
@@ -431,40 +419,12 @@ class ExposurePlot(Plot):
         )
 
     def show(self):
-        """Returns the rendered plot.
-        The image is rasterized, in order to optimize the rendering of plots.
-
-        Returns
-        -------
-        rendered_plot:  `~holoviews.DynamicMap`
-        """
         assert self._img is not None
         return self._img
 
     def rasterize(self):
-        """Returns the rendered plot.
-        The image is rasterized, in order to optimize the rendering of plots.
-
-        Returns
-        -------
-        rendered_plot:  `~holoviews.DynamicMap`
-        """
         assert self._img is not None
         return rasterize(self._img)
-
-    def save_to_html(self, filename: str):
-        """Save image as html in filename.
-
-        Parameters
-        ----------
-        filename: `str`
-            Name and path of the file where the image will be saved.
-        """
-        assert self._img is not None
-        output_dir = os.path.expanduser("~")
-        output_file_base_name = f"{filename}.html"
-        outputFile = os.path.join(output_dir, output_file_base_name)
-        hv.save(self._img, outputFile, backend=_extension_set)
 
     image_transform = property(fget=None, fset=_set_image_transform)
 
@@ -514,9 +474,6 @@ class CalExpPlot(Plot):
         self._show_detections = show_detections
 
     def render(self):
-        """Renders the calexp image data including the sources
-        with the options passed as constructor arguments
-        """
         assert self._img is None
         assert self._detections is None
         if self._title is None:
@@ -537,13 +494,6 @@ class CalExpPlot(Plot):
             self._detections.render()
 
     def show(self):
-        """Returns the rendered plot.
-        The image is rasterized, in order to optimize the rendering of plots
-
-        Returns
-        -------
-        rendered_plot: `~holoviews.DynamicMap`
-        """
         assert self._img is not None
         if self._show_detections:
             assert self._detections is not None
@@ -552,13 +502,6 @@ class CalExpPlot(Plot):
             return self._img.show()
 
     def rasterize(self):
-        """Returns the rendered plot.
-        The image is rasterized, in order to optimize the rendering of plots
-
-        Returns
-        -------
-        rendered_plot: `~holoviews.DynamicMap`
-        """
         assert self._img is not None
         if self._show_detections:
             assert self._detections is not None
@@ -567,7 +510,37 @@ class CalExpPlot(Plot):
             return self._img.rasterize()
 
     def delete(self):
-        """Delete underlying images."""
         if self._detections is not None:
             self._detections.delete()
         super().delete()
+
+
+class PlotSaver(ABC):
+
+    def __init__(self):
+        super().__init__(output_dir: str = os.path.expanduser("~"))
+        self._output_dir = output_dir
+
+    @abstractmethod
+    def save(self):
+        raise NotImplementedError()
+
+
+class HTMLSaver(PlotSaver):
+
+    def __init__(self):
+        super().__init__()
+
+
+    def save(self, plot: Plot, filename: str):
+        """Save image as html in filename.
+
+        Parameters
+        ----------
+        filename: `str`
+            Name and path of the file where the image will be saved.
+        """
+        img = plot._img.rasterize()
+        output_file_base_name = f"{filename}.html"
+        outputFile = os.path.join(self._output_dir, output_file_base_name)
+        hv.save(img, outputFile, backend=_extension_set)
