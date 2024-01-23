@@ -517,8 +517,8 @@ class CalExpPlot(Plot):
 
 class PlotSaver(ABC):
 
-    def __init__(self):
-        super().__init__(output_dir: str = os.path.expanduser("~"))
+    def __init__(self, output_dir: str = os.path.expanduser("~")):
+        super().__init__()
         self._output_dir = output_dir
 
     @abstractmethod
@@ -527,10 +527,11 @@ class PlotSaver(ABC):
 
 
 class HTMLSaver(PlotSaver):
+    """HTML plot saver
+    """
 
-    def __init__(self):
-        super().__init__()
-
+    def __init__(self, output_dir: str = os.path.expanduser("~")):
+        super().__init__(output_dir)
 
     def save(self, plot: Plot, filename: str):
         """Save image as html in filename.
