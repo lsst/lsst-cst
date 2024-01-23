@@ -541,7 +541,7 @@ class HTMLSaver(PlotSaver):
         filename: `str`
             Name and path of the file where the image will be saved.
         """
-        img = plot._img.rasterize()
+        img = plot.rasterize()
         output_file_base_name = f"{filename}.html"
         outputFile = os.path.join(self._output_dir, output_file_base_name)
         hv.save(img, outputFile, backend=_extension_set.value)
