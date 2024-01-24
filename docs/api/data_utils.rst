@@ -1,5 +1,5 @@
 Data utils
 =============
 
-.. automodule:: lsst.cst.data_utils
+.. automodule:: lsst.cst.data
    :members:

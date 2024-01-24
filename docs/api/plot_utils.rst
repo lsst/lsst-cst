@@ -1,5 +1,5 @@
 Plot utils
 =============
 
-.. automodule:: lsst.cst.plot_utils
+.. automodule:: lsst.cst.plot
    :members:
