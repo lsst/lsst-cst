@@ -7,9 +7,12 @@ from .plotting import (
     Options
 )
 
+from .savers import HTMLSaver
+
 __all__ = ["Plot",
            "CalExpPlot",
            "ExposurePlot",
            "ImageOptions",
            "PointsOptions",
-           "Options"]
+           "Options",
+           "HTMLSaver"]
