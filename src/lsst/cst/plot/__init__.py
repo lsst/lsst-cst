@@ -8,8 +8,8 @@ from .plotters import (
 )
 
 from .interactors import (
-    HoverSources, 
-    BoxInteract, 
+    HoverSources,
+    BoxInteract,
     TapInteract
 )
 
@@ -22,6 +22,6 @@ __all__ = ["Plot",
            "PointsOptions",
            "Options",
            "HTMLSaver",
-           "HoverSources", 
-           "BoxInteract", 
+           "HoverSources",
+           "BoxInteract",
            "TapInteract"]
