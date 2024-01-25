@@ -2,10 +2,9 @@ import os
 
 from abc import ABC, abstractmethod
 from lsst.cst.plot import Plot
-from lsst.cst.plot.plotters import Plot, get_extension
+from lsst.cst.plot import get_extension
 from lsst.cst.plot.interactors import _InteractivePlot
 import holoviews as hv
-import panel as pn
 
 __all__ = "HTMLSaver"
 
