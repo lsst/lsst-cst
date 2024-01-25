@@ -8,15 +8,12 @@ from enum import Enum
 from typing import Dict, List
 
 import holoviews as hv
-from bokeh.models import HoverTool
 from holoviews.operation.datashader import rasterize
-from pandas import Series
 
 from lsst.afw.image._exposure import ExposureF
 from lsst.cst.data.utils import (
     CalExpData,
     ImageTransform,
-    NoImageTransform,
     StandardImageTransform,
 )
 
@@ -27,7 +24,6 @@ __all__ = ["Plot",
            "CalExpPlot",
            "ExposurePlot",
            "ImageOptions",
-           "PointsOptions",
            "Options"]
 
 
@@ -87,46 +83,7 @@ def _get_options(options_type: str) -> Options:
     if _extension_set == Extension.BOKEH:
         if options_type == "image":
             return ImageOptions
-        elif options_type == "points":
-            return PointsOptions
     return NoOptions
-
-
-@dataclass
-class PointsOptions(Options):
-    """Points plot options
-
-    Parameters
-    ----------
-    fill_color: `str`
-        Marker fill color.
-    size: `int`
-        Marker size
-    color: `int`
-        Marker color.
-    marker: `str`
-        Marker type.
-    """
-
-    fill_color: str = None  # "this is it"
-    size: int = 9
-    color: str = "darkorange"
-    marker: str = "o"
-
-    def to_dict(self):
-        """Points options as dictionary.
-
-        Returns
-        -------
-        options: `dict`
-            Selected options as a dictionary.
-        """
-        return dict(
-            fill_color=self.fill_color,
-            size=self.size,
-            color=self.color,
-            marker=self.marker,
-        )
 
 
 @dataclass
@@ -215,6 +172,20 @@ class Plot(ABC):
         """
         raise NotImplementedError()
 
+    @property
+    @abstractmethod
+    def image(self):
+        """
+        """
+        raise NotImplementedError()
+
+    @property
+    @abstractmethod
+    def sources(self):
+        """
+        """
+        raise NotImplementedError()
+
     def delete(self):
         """Delete underlying image.
         """
@@ -259,8 +230,7 @@ class Plot(ABC):
         xlabel: str = "X",
         ylabel: str = "Y",
         show_detections: bool = True,
-        image_options: ImageOptions = ImageOptions(),
-        sources_options: PointsOptions = PointsOptions(),
+        image_options: ImageOptions = ImageOptions()
     ):
         """Create a Plot class for CalExpData.
 
@@ -290,71 +260,8 @@ class Plot(ABC):
             xlabel,
             ylabel,
             show_detections,
-            image_options,
-            sources_options,
+            image_options
         )
-
-    @staticmethod
-    def from_points(
-        sources: tuple[Series], options: PointsOptions = PointsOptions()
-    ):
-        """Create a Plot for the sources
-
-        Parameters
-        ----------
-        sources: `tuple`
-            Points to be plotted.
-        options: `PointsOptions`
-            Options for the points to be plotted.
-
-        Returns
-        -------
-        results: `Plot`
-            Plot of the points.
-        """
-        return PointsPlot(sources, options)
-
-
-class PointsPlot(Plot):
-    """Plot for selected points
-
-    Parameters
-    ----------
-    points: `tuple[Series]`
-        Points to be add to the plot.
-    options: `PointsOptions`, Optional
-        Points plot options
-    """
-
-    options = PointsOptions
-
-    def __init__(
-        self, points: tuple[Series], options: PointsOptions = PointsOptions()
-    ):
-        super().__init__()
-        self._points = points
-        self._options = options
-        self._hover_tool = HoverTool(
-            tooltips=[
-                ("X", "@x{0.2f}"),
-                ("Y", "@y{0.2f}"),
-            ],
-            formatters={
-                "X": "printf",
-                "Y": "printf",
-            },
-        )
-
-    def render(self):
-        self._img = hv.Points(self._points).opts(
-            **self._options.to_dict(), tools=[self._hover_tool]
-        )
-
-    def show(self):
-        return self._img
-
-    def rasterize(self):
-        raise NotImplementedError()
 
 
 class ExposurePlot(Plot):
@@ -390,7 +297,7 @@ class ExposurePlot(Plot):
         self._ylabel = ylabel
         self._img = None
         self._options = options
-        self._image_transform = NoImageTransform()
+        self._image_transform = StandardImageTransform()
         self._image_bounds = None
 
     def _set_image_transform(self, image_transform: ImageTransform):
@@ -406,7 +313,8 @@ class ExposurePlot(Plot):
         self._image_transform = image_transform
 
     def render(self):
-        assert self._img is None
+        if self._img is not None:
+            return
         if self._image_bounds is None:
             self._image_bounds = (
                 0,
@@ -434,6 +342,14 @@ class ExposurePlot(Plot):
         assert self._img is not None
         return rasterize(self._img)
 
+    @property
+    def image(self):
+        self._exposure.image.array
+
+    @property
+    def sources(self):
+        return tuple[(), ()]
+
     image_transform = property(fget=None, fset=_set_image_transform)
 
 
@@ -454,12 +370,9 @@ class CalExpPlot(Plot):
         True if detections should be added to the plot. Default value: True.
     image_options: `ImageOptions`, Optional
         Image options.
-    source_options: `PointsOptions`, Optional
-        Source options.
     """
 
     options = ImageOptions
-    detect_options = PointsOptions
 
     def __init__(
         self,
@@ -469,21 +382,19 @@ class CalExpPlot(Plot):
         ylabel: str = "Y",
         show_detections: bool = True,
         image_options: ImageOptions = ImageOptions(),
-        source_options: PointsOptions = PointsOptions(),
     ):
         super().__init__()
         self._cal_exp_data = cal_exp_data
         self._title = title
         self._xlabel = xlabel
         self._ylabel = ylabel
-        self._source_options = source_options
         self._image_options = image_options
         self._detections = None
         self._show_detections = show_detections
 
     def render(self):
-        assert self._img is None
-        assert self._detections is None
+        if self._img is not None:
+            return
         if self._title is None:
             self._title = self._cal_exp_data.cal_exp_id
         self._img = Plot.from_exposure(
@@ -493,31 +404,21 @@ class CalExpPlot(Plot):
             ylabel=self._ylabel,
             image_options=self._image_options,
         )
-        self._img.image_transform = StandardImageTransform()
         self._img.render()
-        if self._show_detections:
-            self._detections = Plot.from_points(
-                self._cal_exp_data.get_sources(), self._source_options
-            )
-            self._detections.render()
 
     def show(self):
-        assert self._img is not None
-        if self._show_detections:
-            assert self._detections is not None
-            return self._img.show() * self._detections.show()
-        else:
-            return self._img.show()
+        return self._img.show()
 
     def rasterize(self):
-        assert self._img is not None
-        if self._show_detections:
-            assert self._detections is not None
-            return self._img.rasterize() * self._detections.show()
-        else:
-            return self._img.rasterize()
+        return self._img.rasterize()
 
     def delete(self):
-        if self._detections is not None:
-            self._detections.delete()
         super().delete()
+
+    @property
+    def image(self):
+        self._cal_exp_data.get_calexp().image.array
+
+    @property
+    def sources(self):
+        return self._cal_exp_data.get_sources()
