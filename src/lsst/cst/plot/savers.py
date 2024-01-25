@@ -1,7 +1,8 @@
 import os
 
 from abc import ABC, abstractmethod
-from lsst.cst.plot.plotting import Plot, get_extension
+from lsst.cst.plot import Plot
+from lsst.cst.plot.plotters import get_extension
 import holoviews as hv
 
 
