@@ -1,4 +1,4 @@
-from .plotting import (
+from .plotters import (
     Plot,
     CalExpPlot,
     ExposurePlot,
@@ -6,6 +6,12 @@ from .plotting import (
     PointsOptions,
     Options
 )
+
+from .interactors import {
+    HoverSources, 
+    BoxInteract, 
+    TapInteract
+}
 
 from .savers import HTMLSaver
 
@@ -15,4 +21,7 @@ __all__ = ["Plot",
            "ImageOptions",
            "PointsOptions",
            "Options",
-           "HTMLSaver"]
+           "HTMLSaver",
+           "HoverSources", 
+           "BoxInteract", 
+           "TapInteract"]

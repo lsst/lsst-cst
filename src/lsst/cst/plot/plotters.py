@@ -281,7 +281,7 @@ class ExposurePlot(Plot):
         Options for the underlying plot object.
     """
 
-    _options = ImageOptions
+    options = ImageOptions
 
     def __init__(
         self,

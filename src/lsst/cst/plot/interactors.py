@@ -7,6 +7,9 @@ from bokeh.models import HoverTool
 from lsst.cst.plot import Plot, Options
 
 
+__all__ = ["HoverSources", "BoxInteract", "TapInteract"]
+
+
 @dataclass
 class PointsOptions(Options):
     """Points plot options
@@ -52,6 +55,9 @@ class HoverSources:
     options: `PointsOptions`, Optional
         Points plot options
     """
+
+    options = PointsOptions
+
     def __init__(self, plot: Plot, options=PointsOptions()):
         self._plot = plot
         self._options = options
@@ -84,6 +90,9 @@ class BoxInteractOptions:
 class BoxInteract:
     """
     """
+
+    options = BoxInteractOptions
+
     def __init__(self, plot: Plot, options=BoxInteractOptions()):
         self._boundsxy = (0, 0, 0, 0)
         self._box = streams.BoundsXY(bounds=self._boundsxy)
@@ -115,6 +124,10 @@ class TapInteractOptions:
 
 
 class TapInteract:
+    """
+    """
+
+    options = TapInteractOptions
 
     def __init__(self, plot: Plot, options=TapInteractOptions()):
         self._boundsxy = (0, 0, 0, 0)
