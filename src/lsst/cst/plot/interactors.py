@@ -95,7 +95,7 @@ class HoverSources(_InteractivePlot):
 
 
 @dataclass
-class BoxInteractOptions(_InteractivePlot):
+class BoxInteractOptions:
     """Interactive plot including the sources over the plot.
 
     Parameters
@@ -107,7 +107,7 @@ class BoxInteractOptions(_InteractivePlot):
     color: str = 'red'
 
 
-class BoxInteract():
+class BoxInteract(_InteractivePlot):
     """Interactive plot with a selectable box tool to show extra information.
 
     Parameters
