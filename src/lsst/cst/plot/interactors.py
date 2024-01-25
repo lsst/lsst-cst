@@ -98,6 +98,8 @@ class BoxInteract:
         self._box = streams.BoundsXY(bounds=self._boundsxy)
         self._plot = plot
         self._options = options
+        self._text_area_input = pn.widgets.TextAreaInput(name='Selected box bounds:',
+                                                         disabled=True, rows=2, width=500)
 
     def _set_bounds(self, bounds):
         self._text_area_input.value = str(bounds)
@@ -107,8 +109,6 @@ class BoxInteract:
         """
         """
         dynamic_map = hv.DynamicMap(self._set_bounds, streams=[self._box]).opts(color='red')
-        self._text_area_input = pn.widgets.TextAreaInput(name='Selected box bounds:',
-                                                         disabled=True, rows=2, width=500)
         interactive_plot = self._plot.rasterize().opts(tools=['box_select']) * dynamic_map
         layout = pn.Row(interactive_plot, self._text_area_input)
         return layout.servable()
@@ -134,6 +134,8 @@ class TapInteract:
         self._posxy = hv.streams.Tap(x=0, y=0)
         self._plot = plot
         self._options = options
+        self._text_area_input = pn.widgets.TextAreaInput(name='Selected box bounds:',
+                                                         disabled=True, rows=2, width=500)
 
     def _set_x_y(self, x, y):
         """
