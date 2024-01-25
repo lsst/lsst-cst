@@ -3,7 +3,6 @@ from .plotters import (
     CalExpPlot,
     ExposurePlot,
     ImageOptions,
-    PointsOptions,
     Options
 )
 
@@ -19,7 +18,6 @@ __all__ = ["Plot",
            "CalExpPlot",
            "ExposurePlot",
            "ImageOptions",
-           "PointsOptions",
            "Options",
            "HTMLSaver",
            "HoverSources",
