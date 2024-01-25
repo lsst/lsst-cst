@@ -73,6 +73,7 @@ class HoverSources(_InteractivePlot):
 
     def __init__(self, plot: Plot, options=PointsOptions()):
         super().__init__()
+        assert isinstance(plot, Plot), f"Could not create an interactive plot from: {type(plot)}"
         self._plot = plot
         self._options = options
         self._hover_tool = HoverTool(
@@ -124,6 +125,7 @@ class BoxInteract(_InteractivePlot):
 
     def __init__(self, plot: Plot, options=BoxInteractOptions()):
         super().__init__()
+        assert isinstance(plot, Plot), f"Could not create an interactive plot from: {type(plot)}"
         self._boundsxy = (0, 0, 0, 0)
         self._box = streams.BoundsXY(bounds=self._boundsxy)
         self._plot = plot
@@ -166,6 +168,7 @@ class TapInteract(_InteractivePlot):
 
     def __init__(self, plot: Plot, options=TapInteractOptions()):
         super().__init__()
+        assert isinstance(plot, Plot), f"Could not create an interactive plot from: {type(plot)}"
         self._posxy = hv.streams.Tap(x=0, y=0)
         self._plot = plot
         self._options = options
