@@ -44,7 +44,7 @@ class PanelHtmlLayoutSaver(PlotSaver):
         self._interactive_plot = interactive_plot
 
     def save(self, filename):
-        pn.save(self.__interactive_plot.show(), filename, embed=True)
+        self._interactive_plot.show().save(filename, embed=True)
 
 
 class HTMLSaver(Saver):
