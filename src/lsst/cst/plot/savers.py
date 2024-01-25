@@ -2,11 +2,15 @@ import os
 
 from abc import ABC, abstractmethod
 from lsst.cst.plot import Plot
-from lsst.cst.plot.plotters import get_extension
+from lsst.cst.plot.plotters import Plot, get_extension
+from lsst.cst.plot.interactors import _InteractivePlot
 import holoviews as hv
+import panel as pn
+
+__all__ = "HTMLSaver"
 
 
-class PlotSaver(ABC):
+class Saver(ABC):
 
     def __init__(self, output_dir: str = os.path.expanduser("~")):
         super().__init__()
@@ -17,14 +21,41 @@ class PlotSaver(ABC):
         raise NotImplementedError()
 
 
-class HTMLSaver(PlotSaver):
+class PlotSaver(ABC):
+
+    @abstractmethod
+    def save(self):
+        raise NotImplementedError()
+
+
+class HVHtmlPlotSaver(PlotSaver):
+
+    def __init__(self, plot: Plot):
+        self._plot = plot
+
+    def save(self, filename):
+        img = self._plot.rasterize()
+        hv.save(img, filename, backend=get_extension().value)
+
+
+class PanelHtmlLayoutSaver(PlotSaver):
+
+    def __init__(self, interactive_plot: _InteractivePlot):
+        self._interactive_plot = interactive_plot
+
+    def save(self, filename):
+        pn.save(self.__interactive_plot.show(), filename, embed=True)
+
+
+class HTMLSaver(Saver):
     """HTML plot saver
     """
+    _extension = "html"
 
     def __init__(self, output_dir: str = os.path.expanduser("~")):
         super().__init__(output_dir)
 
-    def save(self, plot: Plot, filename: str):
+    def save(self, plot: Plot | _InteractivePlot, filename: str):
         """Save image as html in filename.
 
         Parameters
@@ -32,7 +63,12 @@ class HTMLSaver(PlotSaver):
         filename: `str`
             Name and path of the file where the image will be saved.
         """
-        img = plot.rasterize()
-        output_file_base_name = f"{filename}.html"
-        outputFile = os.path.join(self._output_dir, output_file_base_name)
-        hv.save(img, outputFile, backend=get_extension().value)
+        output_file_base_name = f"{filename}.{HTMLSaver._extension}"
+        output_file = os.path.join(self._output_dir, output_file_base_name)
+        if isinstance(plot, Plot):
+            saver = HVHtmlPlotSaver(plot)
+        elif isinstance(plot, _InteractivePlot):
+            saver = PanelHtmlLayoutSaver(plot)
+        else:
+            raise Exception("Unable to save plot of this type")
+        saver.save(output_file)

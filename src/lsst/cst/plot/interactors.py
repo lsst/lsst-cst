@@ -1,5 +1,6 @@
 import holoviews as hv
 from holoviews import streams
+from abc import ABC, abstractmethod
 import panel as pn
 from dataclasses import dataclass
 
@@ -8,6 +9,17 @@ from lsst.cst.plot import Plot, Options
 
 
 __all__ = ["HoverSources", "BoxInteract", "TapInteract"]
+
+
+class _InteractivePlot(ABC):
+
+    def __init__(self):
+        super().__init__()
+
+    @abstractmethod
+    def show(self):
+        """Show interactive plot.
+        """
 
 
 @dataclass
@@ -47,7 +59,7 @@ class PointsOptions(Options):
         )
 
 
-class HoverSources:
+class HoverSources(_InteractivePlot):
     """Interactive plot including the sources over the plot.
 
     Parameters
@@ -59,6 +71,7 @@ class HoverSources:
     options = PointsOptions
 
     def __init__(self, plot: Plot, options=PointsOptions()):
+        super().__init__()
         self._plot = plot
         self._options = options
         self._hover_tool = HoverTool(
@@ -73,8 +86,6 @@ class HoverSources:
         )
 
     def show(self):
-        """Show interactive plot.
-        """
         self._plot.render()
         points = self._plot.sources
         self._img = hv.Points(points).opts(
@@ -84,7 +95,7 @@ class HoverSources:
 
 
 @dataclass
-class BoxInteractOptions:
+class BoxInteractOptions(_InteractivePlot):
     """Interactive plot including the sources over the plot.
 
     Parameters
@@ -96,7 +107,7 @@ class BoxInteractOptions:
     color: str = 'red'
 
 
-class BoxInteract:
+class BoxInteract():
     """Interactive plot with a selectable box tool to show extra information.
 
     Parameters
@@ -108,6 +119,7 @@ class BoxInteract:
     options = BoxInteractOptions
 
     def __init__(self, plot: Plot, options=BoxInteractOptions()):
+        super().__init__()
         self._boundsxy = (0, 0, 0, 0)
         self._box = streams.BoundsXY(bounds=self._boundsxy)
         self._plot = plot
@@ -121,8 +133,6 @@ class BoxInteract:
         return hv.Bounds(bounds)
 
     def show(self):
-        """Show interactive plot.
-        """
         self._plot.render()
         dynamic_map = hv.DynamicMap(self._set_bounds, streams=[self._box]).opts(color='red')
         interactive_plot = self._plot.rasterize().opts(tools=['box_select']) * dynamic_map
@@ -139,7 +149,7 @@ class TapInteractOptions:
     size: int = 20
 
 
-class TapInteract:
+class TapInteract(_InteractivePlot):
     """Interactive plot with a tap tool to show extra information.
 
     Parameters
@@ -151,6 +161,7 @@ class TapInteract:
     options = TapInteractOptions
 
     def __init__(self, plot: Plot, options=TapInteractOptions()):
+        super().__init__()
         self._posxy = hv.streams.Tap(x=0, y=0)
         self._plot = plot
         self._options = options
@@ -165,8 +176,6 @@ class TapInteract:
         return hv.Points([(x, y)])
 
     def show(self):
-        """Show interactive plot.
-        """
         self._plot.render()
         marker = hv.DynamicMap(self._set_x_y, streams=[self._posxy])
         interactive_plot = self._plot.rasterize() * marker.opts(color=self._options.color,
