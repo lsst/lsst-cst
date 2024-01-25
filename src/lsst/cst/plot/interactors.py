@@ -20,6 +20,7 @@ class _InteractivePlot(ABC):
     def show(self):
         """Show interactive plot.
         """
+        raise NotImplementedError()
 
 
 @dataclass
@@ -38,7 +39,7 @@ class PointsOptions(Options):
         Marker type.
     """
 
-    fill_color: str = None  # "this is it"
+    fill_color: str = None
     size: int = 9
     color: str = "darkorange"
     marker: str = "o"
@@ -91,7 +92,10 @@ class HoverSources(_InteractivePlot):
         self._img = hv.Points(points).opts(
             **self._options.to_dict(), tools=[self._hover_tool]
         )
-        return self._plot.rasterize() * self._img
+        return pn.Row(self._plot.rasterize() * self._img)
+
+    def layout(self):
+        raise NotImplementedError()
 
 
 @dataclass
@@ -137,7 +141,7 @@ class BoxInteract(_InteractivePlot):
         dynamic_map = hv.DynamicMap(self._set_bounds, streams=[self._box]).opts(color='red')
         interactive_plot = self._plot.rasterize().opts(tools=['box_select']) * dynamic_map
         layout = pn.Row(interactive_plot, self._text_area_input)
-        return layout.servable()
+        return layout
 
 
 @dataclass
@@ -182,4 +186,4 @@ class TapInteract(_InteractivePlot):
                                                                 marker=self._options.marker,
                                                                 size=self._options.size)
         layout = pn.Row(interactive_plot, self._text_area_input)
-        return layout.servable()
+        return layout
