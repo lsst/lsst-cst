@@ -7,11 +7,11 @@ from .plotters import (
     Options
 )
 
-from .interactors import {
+from .interactors import (
     HoverSources, 
     BoxInteract, 
     TapInteract
-}
+)
 
 from .savers import HTMLSaver
 
