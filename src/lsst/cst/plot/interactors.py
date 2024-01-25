@@ -73,6 +73,7 @@ class HoverSources:
         )
 
     def show(self):
+        self._plot.render()
         points = self._plot.sources
         self._img = hv.Points(points).opts(
             **self._options.to_dict(), tools=[self._hover_tool]
@@ -108,6 +109,7 @@ class BoxInteract:
     def show(self):
         """
         """
+        self._plot.render()
         dynamic_map = hv.DynamicMap(self._set_bounds, streams=[self._box]).opts(color='red')
         interactive_plot = self._plot.rasterize().opts(tools=['box_select']) * dynamic_map
         layout = pn.Row(interactive_plot, self._text_area_input)
@@ -130,7 +132,6 @@ class TapInteract:
     options = TapInteractOptions
 
     def __init__(self, plot: Plot, options=TapInteractOptions()):
-        self._boundsxy = (0, 0, 0, 0)
         self._posxy = hv.streams.Tap(x=0, y=0)
         self._plot = plot
         self._options = options
@@ -148,6 +149,7 @@ class TapInteract:
     def show(self):
         """
         """
+        self._plot.render()
         marker = hv.DynamicMap(self._set_x_y, streams=[self._posxy])
         interactive_plot = self._plot.rasterize() * marker.opts(color=self._options.color,
                                                                 marker=self._options.marker,

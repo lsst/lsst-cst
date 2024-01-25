@@ -351,11 +351,11 @@ class ExposurePlot(Plot):
 
     @property
     def image(self):
-        self._exposure.image.array
+        return self._exposure.image.array
 
     @property
     def transformed_image(self):
-        self._transformed_image
+        return self._transformed_image
 
     @property
     def sources(self):
@@ -428,11 +428,11 @@ class CalExpPlot(Plot):
 
     @property
     def image(self):
-        self._cal_exp_data.get_calexp().image.array
+        return self._cal_exp_data.get_calexp().image.array
 
     @property
     def transformed_image(self):
-        self._img.transformed_image
+        return self._img.transformed_image
 
     @property
     def sources(self):
