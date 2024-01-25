@@ -140,6 +140,9 @@ class TapInteract:
     def _set_x_y(self, x, y):
         """
         """
+        self._text_area_input.value = f"The scaled/raw value at position ({x:.3f}, {y:.3f}) is"\
+                                      f"{self._plot.image[-int(y), int(x)]}"\
+                                      f"{self._plot.image[-int(y), int(x)]}"
         return hv.Points([(x, y)])
 
     def show(self):

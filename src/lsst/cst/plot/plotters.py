@@ -180,6 +180,12 @@ class Plot(ABC):
         raise NotImplementedError()
 
     @property
+    def transformed_image(self):
+        """
+        """
+        raise NotImplementedError()
+
+    @property
     @abstractmethod
     def sources(self):
         """
@@ -299,6 +305,7 @@ class ExposurePlot(Plot):
         self._options = options
         self._image_transform = StandardImageTransform()
         self._image_bounds = None
+        self._transformed_image = None
 
     def _set_image_transform(self, image_transform: ImageTransform):
         """Setter to change the image transformer before rendering the image.
@@ -322,9 +329,9 @@ class ExposurePlot(Plot):
                 self._exposure.getDimensions()[0],
                 self._exposure.getDimensions()[1],
             )
-        array = self._image_transform.transform(self._exposure.image.array)
+        self._transformed_image = self._image_transform.transform(self._exposure.image.array)
         self._img = hv.Image(
-            array,
+            self._transformed_image,
             bounds=self._image_bounds,
             kdims=[self._xlabel, self._ylabel],
         ).opts(
@@ -345,6 +352,10 @@ class ExposurePlot(Plot):
     @property
     def image(self):
         self._exposure.image.array
+
+    @property
+    def transformed_image(self):
+        self._transformed_image
 
     @property
     def sources(self):
@@ -418,6 +429,10 @@ class CalExpPlot(Plot):
     @property
     def image(self):
         self._cal_exp_data.get_calexp().image.array
+
+    @property
+    def transformed_image(self):
+        self._img.transformed_image
 
     @property
     def sources(self):
