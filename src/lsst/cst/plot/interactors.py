@@ -12,7 +12,7 @@ __all__ = ["HoverSources", "BoxInteract", "TapInteract"]
 
 @dataclass
 class PointsOptions(Options):
-    """Points plot options
+    """Points plot options.
 
     Parameters
     ----------
@@ -48,12 +48,12 @@ class PointsOptions(Options):
 
 
 class HoverSources:
-    """
+    """Interactive plot including the sources over the plot.
 
     Parameters
     ----------
     options: `PointsOptions`, Optional
-        Points plot options
+        Points plot options.
     """
 
     options = PointsOptions
@@ -73,6 +73,8 @@ class HoverSources:
         )
 
     def show(self):
+        """Show interactive plot.
+        """
         self._plot.render()
         points = self._plot.sources
         self._img = hv.Points(points).opts(
@@ -83,13 +85,24 @@ class HoverSources:
 
 @dataclass
 class BoxInteractOptions:
+    """Interactive plot including the sources over the plot.
+
+    Parameters
+    ----------
+    options: `PointsOptions`, Optional
+        Points plot options.
     """
-    """
+
     color: str = 'red'
 
 
 class BoxInteract:
-    """
+    """Interactive plot with a selectable box tool to show extra information.
+
+    Parameters
+    ----------
+    options: `BoxInteractOptions`, Optional
+        Box plot options
     """
 
     options = BoxInteractOptions
@@ -103,11 +116,12 @@ class BoxInteract:
                                                          disabled=True, rows=2, width=500)
 
     def _set_bounds(self, bounds):
+        #  Helper function to use as callback when box is created.
         self._text_area_input.value = str(bounds)
         return hv.Bounds(bounds)
 
     def show(self):
-        """
+        """Show interactive plot.
         """
         self._plot.render()
         dynamic_map = hv.DynamicMap(self._set_bounds, streams=[self._box]).opts(color='red')
@@ -126,7 +140,12 @@ class TapInteractOptions:
 
 
 class TapInteract:
-    """
+    """Interactive plot with a tap tool to show extra information.
+
+    Parameters
+    ----------
+    options: `BoxInteractOptions`, Optional
+        Box plot options.
     """
 
     options = TapInteractOptions
@@ -139,15 +158,14 @@ class TapInteract:
                                                          disabled=True, rows=2, width=500)
 
     def _set_x_y(self, x, y):
-        """
-        """
-        self._text_area_input.value = f"The scaled/raw value at position ({x:.3f}, {y:.3f}) is"\
-                                      f"{self._plot.image[-int(y), int(x)]}"\
-                                      f"{self._plot.transformed_image[-int(y), int(x)]}"
+        #  Helper function to use as callback when plot is tap
+        self._text_area_input.value = f"The scaled/raw value at position ({x:.3f}, {y:.3f}) is:\n"\
+                                      f"{self._plot.image[-int(y), int(x)]:.3f}/"\
+                                      f"{self._plot.transformed_image[-int(y), int(x)]:.3f}"
         return hv.Points([(x, y)])
 
     def show(self):
-        """
+        """Show interactive plot.
         """
         self._plot.render()
         marker = hv.DynamicMap(self._set_x_y, streams=[self._posxy])

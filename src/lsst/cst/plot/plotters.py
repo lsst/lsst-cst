@@ -175,20 +175,35 @@ class Plot(ABC):
     @property
     @abstractmethod
     def image(self):
-        """
+        """Underlying image.
+
+        Returns
+        -------
+        image: `np.ndarray`
+            Underlying image used to create the plot.
         """
         raise NotImplementedError()
 
     @property
     def transformed_image(self):
-        """
+        """Underlying transformed image.
+
+        Returns
+        -------
+        image: `np.ndarray`
+            Underlying transformed image shown in the plot.
         """
         raise NotImplementedError()
 
     @property
     @abstractmethod
     def sources(self):
-        """
+        """Exposure sources.
+
+        Returns
+        -------
+        sources: Tuple[pandas.Series]
+            Sources from the exposure
         """
         raise NotImplementedError()
 
