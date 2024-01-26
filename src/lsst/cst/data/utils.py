@@ -242,7 +242,7 @@ class _ButlerCalExpData(CalExpData):
 
     def get_image(self):
         if self._calexp is None:
-            self.get_calexp()
+            self._get_calexp()
         return self._calexp.image.array
 
     def get_sources(self):
@@ -255,7 +255,7 @@ class _ButlerCalExpData(CalExpData):
 
     def get_image_bounds(self):
         if self._calexp is None:
-            self.get_calexp()
+            self._get_calexp()
         return (
             0,
             0,
