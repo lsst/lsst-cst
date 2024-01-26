@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 import holoviews as hv
 
-from lsst.cst.plot import ImagePlot, get_extension
+from lsst.cst.plot.plotters import ImagePlot, get_extension
 from lsst.cst.plot.interactors import _InteractivePlot
 
 __all__ = "HTMLSaver"
