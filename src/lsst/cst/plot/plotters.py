@@ -429,7 +429,7 @@ class CalExpPlot(ImagePlot):
 
     @property
     def image(self):
-        return self._cal_exp_data.get_calexp().image.array
+        return self._cal_exp_data.get_image()
 
     @property
     def transformed_image(self):
