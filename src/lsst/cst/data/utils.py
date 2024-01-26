@@ -114,7 +114,7 @@ class CalExpData(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def get_image_bvounds(self):
+    def get_image_bounds(self):
         """Exposure Image bounds.
 
         Returns
