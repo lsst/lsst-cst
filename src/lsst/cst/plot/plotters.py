@@ -416,7 +416,7 @@ class CalExpPlot(ImagePlot):
             self._title = self._cal_exp_data.cal_exp_id
         self._img = ImagePlot.from_image_array(
             image=self._cal_exp_data.get_image(),
-            bounds=self.get_image_bounds(),
+            bounds=self._cal_exp_data.get_image_bounds(),
             title=self._title,
             xlabel=self._xlabel,
             ylabel=self._ylabel,
