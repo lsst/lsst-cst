@@ -296,6 +296,7 @@ class ImageArrayPlot(ImagePlot):
     def __init__(
         self,
         image: np.array,
+        bounds: tuple[float],
         title: str = None,
         xlabel: str = "X",
         ylabel: str = "Y",
@@ -308,7 +309,7 @@ class ImageArrayPlot(ImagePlot):
         self._img = None
         self._options = options
         self._image_transform = StandardImageTransform()
-        self._image_bounds = None
+        self._image_bounds = bounds
         self._transformed_image = None
 
     def _set_image_transform(self, image_transform: ImageTransform):
@@ -326,13 +327,6 @@ class ImageArrayPlot(ImagePlot):
     def render(self):
         if self._img is not None:
             return
-        if self._image_bounds is None:
-            self._image_bounds = (
-                0,
-                0,
-                self._exposure.getDimensions()[0],
-                self._exposure.getDimensions()[1],
-            )
         self._transformed_image = self._image_transform.transform(
             self._exposure.image.array
         )
