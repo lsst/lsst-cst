@@ -67,3 +67,4 @@ class HTMLSaver(Saver):
         else:
             raise Exception("Unable to save plot of this type")
         saver.save(output_file)
+        return output_file

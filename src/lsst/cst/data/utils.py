@@ -12,6 +12,7 @@ __all__ = [
     "CalExpData",
     "CalExpId",
     "Band",
+    "CalExpDataFactory",
     "ButlerCalExpDataFactory",
 ]
 
