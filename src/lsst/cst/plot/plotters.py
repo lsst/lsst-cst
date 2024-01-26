@@ -328,7 +328,7 @@ class ImageArrayPlot(ImagePlot):
         if self._img is not None:
             return
         self._transformed_image = self._image_transform.transform(
-            self._exposure.image.array
+            self._image
         )
         self._img = hv.Image(
             self._transformed_image,
@@ -351,7 +351,7 @@ class ImageArrayPlot(ImagePlot):
 
     @property
     def image(self):
-        return self._exposure.image.array
+        return self._image
 
     @property
     def transformed_image(self):
