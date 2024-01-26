@@ -1,12 +1,11 @@
 from .utils import (
-    Collection,
-    Configuration,
+    Band,
+    ButlerCalExpDataFactory,
     CalExpData,
     CalExpId,
-    Band,
-    ButlerCalExpDataFactory
+    Collection,
+    Configuration,
 )
-
 
 __all__ = [
     "Collection",
@@ -14,4 +13,5 @@ __all__ = [
     "CalExpData",
     "CalExpId",
     "Band",
-    "ButlerCalExpDataFactory"]
+    "ButlerCalExpDataFactory",
+]

@@ -2,6 +2,7 @@
 
 import gc
 import logging
+import numpy as np
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
@@ -10,7 +11,6 @@ from typing import Dict, List
 import holoviews as hv
 from holoviews.operation.datashader import rasterize
 
-from lsst.afw.image._exposure import ExposureF
 from lsst.cst.data.utils import (
     CalExpData,
     ImageTransform,
@@ -20,11 +20,7 @@ from lsst.cst.data.utils import (
 _log = logging.getLogger(__name__)
 
 
-__all__ = ["Plot",
-           "CalExpPlot",
-           "ExposurePlot",
-           "ImageOptions",
-           "Options"]
+__all__ = ["ImagePlot", "CalExpPlot", "ImageArrayPlot", "ImageOptions", "Options"]
 
 
 class Extension(Enum):
@@ -146,9 +142,8 @@ class ImageOptions(Options):
         )
 
 
-class Plot(ABC):
-    """Plot interface image.
-    """
+class ImagePlot(ABC):
+    """Plot interface image."""
 
     def __init__(self):
         super().__init__()
@@ -156,20 +151,17 @@ class Plot(ABC):
 
     @abstractmethod
     def render(self):
-        """Render the image.
-        """
+        """Render the image."""
         raise NotImplementedError()
 
     @abstractmethod
     def show(self):
-        """Show the image.
-        """
+        """Show the image."""
         raise NotImplementedError()
 
     @abstractmethod
     def rasterize(self):
-        """Rasterize the image.
-        """
+        """Rasterize the image."""
         raise NotImplementedError()
 
     @property
@@ -208,15 +200,15 @@ class Plot(ABC):
         raise NotImplementedError()
 
     def delete(self):
-        """Delete underlying image.
-        """
+        """Delete underlying image."""
         assert self._img is not None
         del self._img
         gc.collect()
 
     @staticmethod
-    def from_exposure(
-        exposure: ExposureF,
+    def from_image_array(
+        image: np.ndarray,
+        bounds: tuple[float],
         title: str = "No title",
         xlabel: str = "X",
         ylabel: str = "Y",
@@ -226,8 +218,10 @@ class Plot(ABC):
 
         Parameters
         ----------
-        exposure: `~lsst.afw.image._exposure.ExposureF`
-            exposure instance returned from butler.
+        image: `numpy.array`
+            image to be plotted.
+        bounds: tuple[float]
+            image bounds.
         title: `str`
             title of the plot.
         xlabel: `str`
@@ -242,7 +236,7 @@ class Plot(ABC):
         results: `Plot`
             Plot instance for the exposureF
         """
-        return ExposurePlot(exposure, title, xlabel, ylabel, image_options)
+        return ImageArrayPlot(image, bounds, title, xlabel, ylabel, image_options)
 
     @staticmethod
     def from_cal_exp_data(
@@ -251,13 +245,13 @@ class Plot(ABC):
         xlabel: str = "X",
         ylabel: str = "Y",
         show_detections: bool = True,
-        image_options: ImageOptions = ImageOptions()
+        image_options: ImageOptions = ImageOptions(),
     ):
         """Create a Plot class for CalExpData.
 
         Parameters
         ----------
-        exposure: `~lsst.afw.image._exposure.ExposureF`
+        cal_exp_data: `CalExpData`
             exposure instance returned from butler.
         title: `str`
             title of the plot.
@@ -276,21 +270,16 @@ class Plot(ABC):
             Plot instance for the exposureF including sources.
         """
         return CalExpPlot(
-            cal_exp_data,
-            title,
-            xlabel,
-            ylabel,
-            show_detections,
-            image_options
+            cal_exp_data, title, xlabel, ylabel, show_detections, image_options
         )
 
 
-class ExposurePlot(Plot):
+class ImageArrayPlot(ImagePlot):
     """Plot for an ExposureF
 
     Parameters
     ----------
-    image_array: `numpy.ndarray`
+    image: `numpy.ndarray`
         image array to be show in the plot.
     title: `str`
         title of the plot.
@@ -306,13 +295,13 @@ class ExposurePlot(Plot):
 
     def __init__(
         self,
-        exposure: ExposureF,
+        image: np.array,
         title: str = None,
         xlabel: str = "X",
         ylabel: str = "Y",
         options: ImageOptions = ImageOptions(),
     ):
-        self._exposure = exposure
+        self._image = image
         self._title = title
         self._xlabel = xlabel
         self._ylabel = ylabel
@@ -344,7 +333,9 @@ class ExposurePlot(Plot):
                 self._exposure.getDimensions()[0],
                 self._exposure.getDimensions()[1],
             )
-        self._transformed_image = self._image_transform.transform(self._exposure.image.array)
+        self._transformed_image = self._image_transform.transform(
+            self._exposure.image.array
+        )
         self._img = hv.Image(
             self._transformed_image,
             bounds=self._image_bounds,
@@ -379,7 +370,7 @@ class ExposurePlot(Plot):
     image_transform = property(fget=None, fset=_set_image_transform)
 
 
-class CalExpPlot(Plot):
+class CalExpPlot(ImagePlot):
     """Plot using Calexp data, includes the image and also the sources.
 
     Parameters
@@ -423,8 +414,9 @@ class CalExpPlot(Plot):
             return
         if self._title is None:
             self._title = self._cal_exp_data.cal_exp_id
-        self._img = Plot.from_exposure(
-            exposure=self._cal_exp_data.get_calexp(),
+        self._img = ImagePlot.from_image_array(
+            image=self._cal_exp_data.get_image(),
+            bounds=self.get_image_bounds(),
             title=self._title,
             xlabel=self._xlabel,
             ylabel=self._ylabel,

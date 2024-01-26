@@ -12,7 +12,7 @@ __all__ = [
     "CalExpData",
     "CalExpId",
     "Band",
-    "ButlerCalExpDataFactory"
+    "ButlerCalExpDataFactory",
 ]
 
 _log = logging.getLogger(__name__)
@@ -42,8 +42,7 @@ class Configuration(Enum):
 
 
 class Band(Enum):
-    """Exposure bands available.
-    """
+    """Exposure bands available."""
 
     i = "i"
 
@@ -90,16 +89,15 @@ class CalExpId:
 
 
 class CalExpData(ABC):
-    """Interface to get information from a Calexp.
-    """
+    """Interface to get information from a Calexp."""
 
     @abstractmethod
-    def get_calexp(self):
-        """Exposure calexp data.
+    def get_image(self):
+        """Plot image .
 
         Returns
         -------
-        calexp: `lsst.afw.image._exposure.ExposureF`
+        calexp: `numpy.ndarray`
             Exposure data from calexp.
         """
         raise NotImplementedError()
@@ -116,13 +114,25 @@ class CalExpData(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def get_image_bounds(self):
+    def get_image_bvounds(self):
         """Exposure Image bounds.
 
         Returns
         -------
         image_bounds: Tuple[float]
             Bounds of the cal_exp Exposure.
+        """
+        raise NotImplementedError()
+
+    @property
+    @abstractmethod
+    def cal_exp_id(self):
+        """Exposure Identifier
+
+        Returns
+        -------
+        exposure_id: `ExposureId`
+            Information of the exposure.
         """
         raise NotImplementedError()
 
@@ -220,14 +230,8 @@ class _ButlerCalExpData(CalExpData):
         self._butler = butler
         self._calexp = None
 
-    def get_calexp(self):
-        """Exposure calexp data.
-
-        Returns
-        -------
-        calexp: `~lsst.afw.image._exposure.ExposureF`
-            Exposure data from calexp.
-        """
+    def _get_calexp(self):
+        # Helper function that returns exposure calexp data.
         _log.debug(f"Getting CalExp from {self._calexp_id}")
         if self._calexp is None:
             self._calexp = self._butler.get(
@@ -236,14 +240,12 @@ class _ButlerCalExpData(CalExpData):
         _log.debug(f"Found CalExp {self._calexp_id}")
         return self._calexp
 
-    def get_sources(self):
-        """Calexp sources.
+    def get_image(self):
+        if self._calexp is None:
+            self.get_calexp()
+        return self._calexp.image.array
 
-        Returns
-        -------
-        sources: `pandas.DataFrame`
-            Sources from the calexp.
-        """
+    def get_sources(self):
         _log.debug(f"Getting Sources from {self._calexp_id}")
         exp_sources = self._butler.get(
             "sourceTable", dataId=self._calexp_id.as_dict()
@@ -252,13 +254,6 @@ class _ButlerCalExpData(CalExpData):
         return exp_sources.x, exp_sources.y
 
     def get_image_bounds(self):
-        """Exposure Image bounds.
-
-        Returns
-        -------
-        image_bounds: `tuple`
-            Bounds of the cal exp image.
-        """
         if self._calexp is None:
             self.get_calexp()
         return (
@@ -270,13 +265,6 @@ class _ButlerCalExpData(CalExpData):
 
     @property
     def cal_exp_id(self):
-        """Exposure Identifier
-
-        Returns
-        -------
-        exposure_id: `ExposureId`
-            Information of the exposure.
-        """
         return str(self._calexp_id)
 
     def __str__(self):
