@@ -6,7 +6,7 @@ import panel as pn
 from bokeh.models import HoverTool
 from holoviews import streams
 
-from lsst.cst.plot import Options, ImagePlot
+from lsst.cst.plot.plotters import ImagePlot, Options
 
 __all__ = ["HoverSources", "BoxInteract", "TapInteract"]
 
@@ -154,7 +154,7 @@ class BoxInteract(_InteractivePlot):
 
 
 @dataclass
-class TapInteractOptions:
+class OnClickInteractOptions:
     """ """
 
     color: str = "white"
@@ -162,7 +162,7 @@ class TapInteractOptions:
     size: int = 20
 
 
-class TapInteract(_InteractivePlot):
+class OnClickInteract(_InteractivePlot):
     """Interactive plot with a tap tool to show extra information.
 
     Parameters
@@ -171,9 +171,9 @@ class TapInteract(_InteractivePlot):
         Box plot options.
     """
 
-    options = TapInteractOptions
+    options = OnClickInteractOptions
 
-    def __init__(self, plot: ImagePlot, options=TapInteractOptions()):
+    def __init__(self, plot: ImagePlot, options=OnClickInteractOptions()):
         super().__init__()
         assert isinstance(
             plot, ImagePlot

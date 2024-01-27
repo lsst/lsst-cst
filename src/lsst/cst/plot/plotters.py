@@ -2,13 +2,13 @@
 
 import gc
 import logging
-import numpy as np
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Dict, List
 
 import holoviews as hv
+import numpy as np
 from holoviews.operation.datashader import rasterize
 
 from lsst.cst.data.utils import (
@@ -20,7 +20,13 @@ from lsst.cst.data.utils import (
 _log = logging.getLogger(__name__)
 
 
-__all__ = ["ImagePlot", "CalExpPlot", "ImageArrayPlot", "ImageOptions", "Options"]
+__all__ = [
+    "ImagePlot",
+    "CalExpPlot",
+    "ImageArrayPlot",
+    "ImageOptions",
+    "Options",
+]
 
 
 class Extension(Enum):
@@ -236,7 +242,9 @@ class ImagePlot(ABC):
         results: `Plot`
             Plot instance for the exposureF
         """
-        return ImageArrayPlot(image, bounds, title, xlabel, ylabel, image_options)
+        return ImageArrayPlot(
+            image, bounds, title, xlabel, ylabel, image_options
+        )
 
     @staticmethod
     def from_cal_exp_data(
@@ -327,9 +335,7 @@ class ImageArrayPlot(ImagePlot):
     def render(self):
         if self._img is not None:
             return
-        self._transformed_image = self._image_transform.transform(
-            self._image
-        )
+        self._transformed_image = self._image_transform.transform(self._image)
         self._img = hv.Image(
             self._transformed_image,
             bounds=self._image_bounds,

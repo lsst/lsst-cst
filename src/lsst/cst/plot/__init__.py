@@ -1,5 +1,11 @@
-from .plotters import CalExpPlot, ImageArrayPlot, ImageOptions, Options, ImagePlot
-from .interactors import BoxInteract, HoverSources, TapInteract
+from .interactors import BoxInteract, HoverSources, OnClickInteract
+from .plotters import (
+    CalExpPlot,
+    ImageArrayPlot,
+    ImageOptions,
+    ImagePlot,
+    Options,
+)
 from .savers import HTMLSaver
 
 __all__ = [
@@ -11,5 +17,5 @@ __all__ = [
     "HTMLSaver",
     "HoverSources",
     "BoxInteract",
-    "TapInteract",
+    "OnClickInteract",
 ]

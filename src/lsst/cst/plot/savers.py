@@ -3,19 +3,22 @@ from abc import ABC, abstractmethod
 
 import holoviews as hv
 
-from lsst.cst.plot.plotters import ImagePlot, get_extension
 from lsst.cst.plot.interactors import _InteractivePlot
+from lsst.cst.plot.plotters import ImagePlot, get_extension
 
 __all__ = "HTMLSaver"
 
 
 class Saver(ABC):
+    """Saver interface."""
+
     def __init__(self, output_dir: str = os.path.expanduser("~")):
         super().__init__()
         self._output_dir = output_dir
 
     @abstractmethod
     def save(self):
+        """ """
         raise NotImplementedError()
 
 
@@ -26,6 +29,8 @@ class PlotSaver(ABC):
 
 
 class HVHtmlPlotSaver(PlotSaver):
+    """ """
+
     def __init__(self, plot: ImagePlot):
         self._plot = plot
 
@@ -35,6 +40,8 @@ class HVHtmlPlotSaver(PlotSaver):
 
 
 class PanelHtmlLayoutSaver(PlotSaver):
+    """Save panel as html file."""
+
     def __init__(self, interactive_plot: _InteractivePlot):
         self._interactive_plot = interactive_plot
 
