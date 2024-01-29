@@ -21,9 +21,9 @@ _log = logging.getLogger(__name__)
 
 
 __all__ = [
-    "ImagePlot",
-    "CalExpPlot",
-    "ImageArrayPlot",
+    "ImageDisplay",
+    "CalExpImageDisplay",
+    "ImageArrayDisplay",
     "ImageOptions",
     "Options",
 ]
@@ -148,7 +148,7 @@ class ImageOptions(Options):
         )
 
 
-class ImagePlot(ABC):
+class ImageDisplay(ABC):
     """Plot interface image."""
 
     def __init__(self):
@@ -242,7 +242,7 @@ class ImagePlot(ABC):
         results: `Plot`
             Plot instance for the exposureF
         """
-        return ImageArrayPlot(
+        return ImageArrayDisplay(
             image, bounds, title, xlabel, ylabel, image_options
         )
 
@@ -277,12 +277,12 @@ class ImagePlot(ABC):
         results: `Plot`
             Plot instance for the exposureF including sources.
         """
-        return CalExpPlot(
+        return CalExpImageDisplay(
             cal_exp_data, title, xlabel, ylabel, show_detections, image_options
         )
 
 
-class ImageArrayPlot(ImagePlot):
+class ImageArrayDisplay(ImageDisplay):
     """Plot for an ExposureF
 
     Parameters
@@ -370,7 +370,7 @@ class ImageArrayPlot(ImagePlot):
     image_transform = property(fget=None, fset=_set_image_transform)
 
 
-class CalExpPlot(ImagePlot):
+class CalExpImageDisplay(ImageDisplay):
     """Plot using Calexp data, includes the image and also the sources.
 
     Parameters
@@ -414,7 +414,7 @@ class CalExpPlot(ImagePlot):
             return
         if self._title is None:
             self._title = self._cal_exp_data.cal_exp_id
-        self._img = ImagePlot.from_image_array(
+        self._img = ImageDisplay.from_image_array(
             image=self._cal_exp_data.get_image(),
             bounds=self._cal_exp_data.get_image_bounds(),
             title=self._title,
