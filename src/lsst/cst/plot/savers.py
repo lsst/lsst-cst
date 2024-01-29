@@ -10,27 +10,30 @@ __all__ = "HTMLSaver"
 
 
 class Saver(ABC):
-    """Saver interface."""
-
+    """Saver interface.
+    """
     def __init__(self, output_dir: str = os.path.expanduser("~")):
         super().__init__()
         self._output_dir = output_dir
 
     @abstractmethod
     def save(self):
-        """ """
+        """
+        """
         raise NotImplementedError()
 
 
 class PlotSaver(ABC):
+    """
+    """
     @abstractmethod
     def save(self):
         raise NotImplementedError()
 
 
 class HVHtmlPlotSaver(PlotSaver):
-    """ """
-
+    """
+    """
     def __init__(self, plot: ImagePlot):
         self._plot = plot
 
@@ -40,8 +43,8 @@ class HVHtmlPlotSaver(PlotSaver):
 
 
 class PanelHtmlLayoutSaver(PlotSaver):
-    """Save panel as html file."""
-
+    """Save panel as html file.
+    """
     def __init__(self, interactive_plot: _InteractivePlot):
         self._interactive_plot = interactive_plot
 
@@ -50,7 +53,8 @@ class PanelHtmlLayoutSaver(PlotSaver):
 
 
 class HTMLSaver(Saver):
-    """HTML plot saver"""
+    """HTML plot saver
+    """
 
     _extension = "html"
 

@@ -8,7 +8,7 @@ from holoviews import streams
 
 from lsst.cst.plot.plotters import ImagePlot, Options
 
-__all__ = ["HoverSources", "BoxInteract", "TapInteract"]
+__all__ = ["HoverSources", "BoxInteract", "OnClickInteract"]
 
 
 class _InteractivePlot(ABC):
