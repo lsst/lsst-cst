@@ -71,9 +71,10 @@ class HoverSources(_InteractiveDisplay):
 
     def __init__(self, image_display: ImageDisplay, options=PointsOptions()):
         super().__init__()
-        assert isinstance(
-            image_display, ImageDisplay
-        ), f"Could not create an interactive display from: {type(image_display)}"
+        assert isinstance(image_display, ImageDisplay), (
+            f"Could not create an interactive display from:"
+            f"{type(image_display)}"
+        )
         self._image_display = image_display
         self._options = options
         self._hover_tool = HoverTool(
@@ -108,6 +109,7 @@ class BoxInteractOptions:
     color: `str`, Optional
         Box color.
     """
+
     color: str = "red"
 
 
@@ -122,11 +124,14 @@ class BoxInteract(_InteractiveDisplay):
 
     options = BoxInteractOptions
 
-    def __init__(self, image_display: ImageDisplay, options=BoxInteractOptions()):
+    def __init__(
+        self, image_display: ImageDisplay, options=BoxInteractOptions()
+    ):
         super().__init__()
-        assert isinstance(
-            image_display, ImageDisplay
-        ), f"Could not create an interactive image_display from: {type(image_display)}"
+        assert isinstance(image_display, ImageDisplay), (
+            f"Could not create an interactive image_display from:"
+            f"{type(image_display)}"
+        )
         self._boundsxy = (0, 0, 0, 0)
         self._box = streams.BoundsXY(bounds=self._boundsxy)
         self._image_display = image_display
@@ -146,7 +151,8 @@ class BoxInteract(_InteractiveDisplay):
             self._set_bounds, streams=[self._box]
         ).opts(color="red")
         interactive_image_display = (
-            self._image_display.rasterize().opts(tools=["box_select"]) * dynamic_map
+            self._image_display.rasterize().opts(tools=["box_select"])
+            * dynamic_map
         )
         layout = pn.Row(interactive_image_display, self._text_area_input)
         return layout
@@ -154,8 +160,7 @@ class BoxInteract(_InteractiveDisplay):
 
 @dataclass
 class OnClickInteractOptions:
-    """
-    Onclick interact display options
+    """Onclick interact display options
 
     Parameters
     ----------
@@ -183,11 +188,14 @@ class OnClickInteract(_InteractiveDisplay):
 
     options = OnClickInteractOptions
 
-    def __init__(self, image_display: ImageDisplay, options=OnClickInteractOptions()):
+    def __init__(
+        self, image_display: ImageDisplay, options=OnClickInteractOptions()
+    ):
         super().__init__()
-        assert isinstance(
-            image_display, ImageDisplay
-        ), f"Could not create an interactive image display from: {type(image_display)}"
+        assert isinstance(image_display, ImageDisplay), (
+            f"Could not create an interactive image display from:"
+            f"{type(image_display)}"
+        )
         self._posxy = hv.streams.Tap(x=0, y=0)
         self._image_display = image_display
         self._options = options
@@ -207,10 +215,13 @@ class OnClickInteract(_InteractiveDisplay):
     def show(self):
         self._image_display.render()
         marker = hv.DynamicMap(self._set_x_y, streams=[self._posxy])
-        interactive_image_display = self._image_display.rasterize() * marker.opts(
-            color=self._options.color,
-            marker=self._options.marker,
-            size=self._options.size,
+        interactive_image_display = (
+            self._image_display.rasterize()
+            * marker.opts(
+                color=self._options.color,
+                marker=self._options.marker,
+                size=self._options.size,
+            )
         )
         layout = pn.Row(interactive_image_display, self._text_area_input)
         return layout

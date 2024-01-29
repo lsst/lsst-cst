@@ -3,37 +3,36 @@ from abc import ABC, abstractmethod
 
 import holoviews as hv
 
-from lsst.cst.visualization.image.interactors import _InteractiveDisplay
 from lsst.cst.visualization.image.displays import ImageDisplay, get_extension
+from lsst.cst.visualization.image.interactors import _InteractiveDisplay
 
 __all__ = "HTMLSaver"
 
 
 class Saver(ABC):
-    """Saver interface.
-    """
+    """Saver interface."""
+
     def __init__(self, output_dir: str = os.path.expanduser("~")):
         super().__init__()
         self._output_dir = output_dir
 
     @abstractmethod
     def save(self):
-        """
-        """
+        """Save Image display"""
         raise NotImplementedError()
 
 
 class _ImageDisplaySaver(ABC):
-    """
-    """
+    """Image display saver"""
+
     @abstractmethod
     def save(self):
         raise NotImplementedError()
 
 
 class _HVHtmlImageDisplaySaver(_ImageDisplaySaver):
-    """
-    """
+    """Image display saver"""
+
     def __init__(self, image_display: ImageDisplay):
         self._image_display = image_display
 
@@ -43,8 +42,8 @@ class _HVHtmlImageDisplaySaver(_ImageDisplaySaver):
 
 
 class _PanelHtmlLayoutSaver(_ImageDisplaySaver):
-    """Save panel as html file.
-    """
+    """Save panel as html file."""
+
     def __init__(self, interactive_display: _InteractiveDisplay):
         self._interactive_display = interactive_display
 
@@ -53,8 +52,7 @@ class _PanelHtmlLayoutSaver(_ImageDisplaySaver):
 
 
 class HTMLSaver(Saver):
-    """HTML plot saver
-    """
+    """HTML plot saver"""
 
     _extension = "html"
 

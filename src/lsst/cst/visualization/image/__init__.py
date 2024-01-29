@@ -1,16 +1,13 @@
+"""image visualization utils"""
+
 from .displays import (
     CalExpImageDisplay,
     ImageArrayDisplay,
-    ImageOptions,
     ImageDisplay,
-    Options
+    ImageOptions,
+    Options,
 )
-from .interactors import (
-    BoxInteract,
-    HoverSources,
-    OnClickInteract
-)
-
+from .interactors import BoxInteract, HoverSources, OnClickInteract
 
 __all__ = [
     "ImageDisplay",
