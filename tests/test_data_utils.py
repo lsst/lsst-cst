@@ -3,11 +3,7 @@ import unittest
 import numpy as np
 import pandas as pd
 
-from lsst.cst.data import (
-    ids_to_str,
-    shuffle_dataframe,
-    sort_dataframe,
-)
+from lsst.cst.data import ids_to_str, shuffle_dataframe, sort_dataframe
 
 
 class TestDataUtils(unittest.TestCase):

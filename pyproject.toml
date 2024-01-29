@@ -14,6 +14,7 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Intended Audience :: Developers",
     "Natural Language :: English",
@@ -67,7 +68,7 @@ include = ["lsst*"]
 
 [tool.black]
 line-length = 79
-target-version = ["py311"]
+target-version = ["py310"]
 exclude = '''
 /(
     \.eggs
