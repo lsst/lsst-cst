@@ -38,7 +38,7 @@ class _HVHtmlImageDisplaySaver(_ImageDisplaySaver):
         self._image_display = image_display
 
     def save(self, filename):
-        img = self._plot.rasterize()
+        img = self._image_display.rasterize()
         hv.save(img, filename, backend=get_extension().value)
 
 
