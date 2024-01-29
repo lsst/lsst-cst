@@ -10,5 +10,5 @@ Python API reference
    :maxdepth: 1
    :caption: Contents:
 
-   Plot utils <plot_utils.rst>
+   Visualization utils <visualization_utils.rst>
    Data utils <data_utils.rst>
