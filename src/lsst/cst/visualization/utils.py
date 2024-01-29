@@ -120,7 +120,7 @@ class CalExpData(ABC):
 
         Returns
         -------
-        image_bounds: Tuple[float]
+        image_bounds: Tuple[int]
             Bounds of the cal_exp Exposure.
         """
         raise NotImplementedError()

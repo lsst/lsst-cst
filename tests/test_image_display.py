@@ -51,7 +51,7 @@ class CalExpDataTest(CalExpData):
         cal_exp_id: CalExpId,
         image_path: str,
         sources_path: str,
-        bounds: tuple[float],
+        bounds: tuple[int],
     ):
         self._cal_exp_id = cal_exp_id
         self._image_path = image_path
