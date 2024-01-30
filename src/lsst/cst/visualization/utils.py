@@ -5,6 +5,8 @@ from enum import Enum
 
 import numpy as np
 from astropy.visualization import AsinhStretch, ZScaleInterval
+from astropy.coordinates import SkyCoord
+from lsst.rsp import get_tap_service
 
 __all__ = [
     "Collection",
@@ -381,3 +383,44 @@ class StandardImageTransform(ImageTransform):
         """
         transform = AsinhStretch() + ZScaleInterval()
         return transform(image_array)
+
+
+class ExposureData(ABC):
+
+    def __init__(self):
+        super().__init__()
+    
+    @abstractmethod
+    def query(self):
+        pass
+
+    def data(self):
+        pass
+
+
+class TAPExposureData:
+    _QUERY = "SELECT coord_ra, coord_dec, objectId, r_extendedness, "\
+        "scisql_nanojanskyToAbMag(g_cModelFlux) AS mag_g_cModel, "\
+        "scisql_nanojanskyToAbMag(r_cModelFlux) AS mag_r_cModel, "\
+        "scisql_nanojanskyToAbMag(i_cModelFlux) AS mag_i_cModel "\
+        "FROM dp02_dc2_catalogs.Object "\
+        "WHERE CONTAINS(POINT('ICRS', coord_ra, coord_dec),"\
+        "CIRCLE('ICRS', {} , {} , {} )) = 1 " \
+        "AND detect_isPrimary = 1 "\
+        "AND scisql_nanojanskyToAbMag(r_cModelFlux) < 27.0 "\
+        "AND r_extendedness IS NOT NULL"
+
+    def __init__(self, ra: np.float64, dec: np.float64, radius: np.float64):
+        self._ra = ra
+        self._dec = dec
+        self._radius = radius
+        self._query = TAPExposureData._QUERY.format(ra, dec, radius)
+
+    @classmethod
+    def from_sky_coord(cls, coord: SkyCoord, radius: np.float64):
+        """"""
+        return cls(coord.ra.value, coord.dec.value, radius)
+
+    def query(self):
+        service = get_tap_service("tap")
+        assert service is not None
