@@ -388,7 +388,7 @@ class StandardImageTransform(ImageTransform):
 
 class ExposureData:
 
-    def __init__(self, data: pd.Dataframe):
+    def __init__(self, data: pd.DataFrame):
         self._data = data
 
     @property
