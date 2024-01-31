@@ -404,8 +404,9 @@ class ExposureData:
         data = self._data.sample(frac=frac, axis='index')
         return data
 
+    @property
     def index(self):
-        self._data.columns.tolist()
+        return self._data.columns.tolist()
 
 
 class QueryExposureData(ABC):
