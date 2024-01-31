@@ -386,17 +386,35 @@ class StandardImageTransform(ImageTransform):
         return transform(image_array)
 
 
-class ExposureData(ABC):
+class ExposureData:
+
+    def __init__(self, data: pd.Dataframe):
+        self._data = data
+
+    @property
+    def data(self, frac: float = 1.0):
+        if frac == 1.0:
+            return self._data
+        data = self._data.sample(frac=frac, axis='index')
+        return data
+
+    def get_data(self, frac: float = 1.0):
+        if frac == 1.0:
+            return self._data
+        data = self._data.sample(frac=frac, axis='index')
+        return data
+
+    def index(self):
+        self._data.columns.tolist()
+
+
+class QueryExposureData(ABC):
 
     def __init__(self):
         super().__init__()
 
     @abstractmethod
     def query(self):
-        pass
-
-    @abstractmethod
-    def get_data(self, frac: float = 1.0):
         pass
 
 
@@ -421,7 +439,7 @@ class StandardDataHandler:
         return data
 
 
-class TAPExposureData:
+class QueryTAPExposureData:
     _QUERY = "SELECT coord_ra, coord_dec, objectId, r_extendedness, "\
         "scisql_nanojanskyToAbMag(g_cModelFlux) AS mag_g_cModel, "\
         "scisql_nanojanskyToAbMag(r_cModelFlux) AS mag_r_cModel, "\
@@ -437,7 +455,7 @@ class TAPExposureData:
         self._ra = ra
         self._dec = dec
         self._radius = radius
-        self._query = TAPExposureData._QUERY.format(ra, dec, radius)
+        self._query = QueryTAPExposureData._QUERY.format(ra, dec, radius)
         self._data = pd.DataFrame()
         self._data_handler = StandardDataHandler()
 
@@ -489,10 +507,9 @@ class TAPExposureData:
         """"""
         return self._query
 
-    def get_data(self, frac: float = 1.0):
-        if frac == 1.0:
-            return self._data
-        data20K = self._data.sample(frac=frac, axis='index')
-        return data20K
+    @property
+    def data(self, frac: float = 1.0):
+        assert self.has_data(), "Data is empty"
+        return ExposureData(self._data)
 
     data_handler = property(None, _set_data_handler, None, None)
