@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from enum import Enum
 
 import numpy as np
+import pandas as pd
 from astropy.visualization import AsinhStretch, ZScaleInterval
 from astropy.coordinates import SkyCoord
 from lsst.rsp import get_tap_service
@@ -389,13 +390,35 @@ class ExposureData(ABC):
 
     def __init__(self):
         super().__init__()
-    
+
     @abstractmethod
     def query(self):
         pass
 
-    def data(self):
+    @abstractmethod
+    def get_data(self, frac: float = 1.0):
         pass
+
+
+class DataHandler(ABC):
+
+    def __init__(self):
+        super().__init__()
+
+    @abstractmethod
+    def handle(self, data: pd.DataFrame) -> pd.DataFrame:
+        raise NotImplementedError()
+
+
+class StandardDataHandler:
+
+    def handle(self, data: pd.DataFrame):
+        data['gmi'] = data['mag_g_cModel'] - data['mag_i_cModel']
+        data['rmi'] = data['mag_r_cModel'] - data['mag_i_cModel']
+        data['gmr'] = data['mag_g_cModel'] - data['mag_r_cModel']
+        data['shape_type'] = data['r_extendedness'].map({0: 'point', 1: 'extended'})
+        data['objectId'] = np.array(data['objectId']).astype('str')
+        return data
 
 
 class TAPExposureData:
@@ -415,12 +438,61 @@ class TAPExposureData:
         self._dec = dec
         self._radius = radius
         self._query = TAPExposureData._QUERY.format(ra, dec, radius)
+        self._data = pd.DataFrame()
+        self._data_handler = StandardDataHandler()
+
+    def _set_data_handler(self, data_handler):
+        self._data_handler = data_handler
 
     @classmethod
     def from_sky_coord(cls, coord: SkyCoord, radius: np.float64):
-        """"""
+        """
+        """
         return cls(coord.ra.value, coord.dec.value, radius)
 
-    def query(self):
+    def __len__(self):
+        return len(self._data)
+
+    def has_data(self):
+        """
+        """
+        return not self._data.empty
+
+    def fetch(self):
+        """"""
+        data = self._launch_tap_fetch()
+        self._data = self._data_handler.handle(data)
+
+    def _launch_tap_fetch(self):
+        # Helper function to launch tap query
         service = get_tap_service("tap")
         assert service is not None
+        _log.info("Fetching Data")
+        job = service.submit_job(self._query)
+        job.run()
+        job.wait(phases=['COMPLETED', 'ERROR'])
+        self._check_status(job.phase)
+        _log.info("Converting result to Dataframe")
+        return job.fetch_result().to_table().to_pandas()
+
+    def _check_status(self, job_state: str):
+        # Helper function to check status
+        if job_state == 'COMPLETED':
+            _log.info("Job phase COMPLETED")
+        elif job_state == 'ERROR':
+            _log.error("Job phase finished with ERROR")
+        else:
+            _log.info(f"Job phase finished with status {job_state}")
+
+    @property
+    def query(self):
+        """"""
+        return self._query
+
+    def get_data(self, frac: float = 1.0):
+        if frac == 1.0:
+            return self._data
+        data20K = self._data.sample(frac=frac, axis='index')
+        return data20K
+
+    data_handler = property(None, _set_data_handler, None, None)
