@@ -3,10 +3,22 @@ import holoviews as hv
 from lsst.cst.visualization.utils import ExposureData
 from collections.abc import Sequence
 from typing import Optional
+from dataclasses import dataclass
 
 
+@dataclass
 class ScatterOptions:
-    pass
+    """Image plot options.
+
+    Parameters
+    ----------
+    height: `int`
+        Height of the plot in pixels.
+    width: `int`
+        Width of the plot in pixels.
+    """
+    height: int = 600
+    width: int = 700
 
 
 class DataImageDisplay:
@@ -20,7 +32,7 @@ class DataImageDisplay:
                      options: ScatterOptions = ScatterOptions()):
         data = self._exposure_data.get_data(frac)
         if columns is None:
-            return hv.Scatter(data).options(toolbar=None)
+            return hv.Scatter(data).options(**options.to_dict())
         index = self._exposure_data.index
         data_x = columns[0]
         data_y = columns[1]
