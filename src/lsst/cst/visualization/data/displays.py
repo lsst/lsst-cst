@@ -9,7 +9,7 @@ class ScatterOptions:
     pass
 
 
-class Scatter:
+class DataImageDisplay:
 
     def __init__(self, data: ExposureData):
         self._exposure_data = data
