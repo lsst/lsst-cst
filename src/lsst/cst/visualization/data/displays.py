@@ -20,6 +20,12 @@ class ScatterOptions:
     height: int = 600
     width: int = 700
 
+    def to_dict(self):
+        return dict(
+            height=self.height,
+            width=self.width,
+        )
+
 
 class DataImageDisplay:
 
