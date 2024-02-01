@@ -403,7 +403,7 @@ class ExposureData:
         return ExposureData(data)
 
     def histogram(self, field: str):
-        return np.histogram(field, bins='fd')
+        return np.histogram(self._data[field], bins='fd')
 
     @property
     def index(self):
