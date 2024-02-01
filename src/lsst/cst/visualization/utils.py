@@ -396,8 +396,7 @@ class ExposureData:
         loaded_df = pd.read_csv(file_path)
         return ExposureData(loaded_df)
 
-    @property
-    def data(self, frac: float = 1.0):
+    def get_data(self, frac: float = 1.0):
         if frac == 1.0:
             return self._data
         data = self._data.sample(frac=frac, axis='index')
