@@ -396,15 +396,22 @@ class ExposureData:
         loaded_df = pd.read_csv(file_path)
         return ExposureData(loaded_df)
 
-    def get_data(self, frac: float = 1.0):
+    def reduce_data(self, frac: float = 1.0):
         if frac == 1.0:
-            return self._data
+            return self
         data = self._data.sample(frac=frac, axis='index')
-        return data
+        return ExposureData(data)
+
+    def histogram(self, field: str):
+        return np.histogram(field, bins='fd')
 
     @property
     def index(self):
         return self._data.columns.tolist()
+
+    @property
+    def data(self):
+        return self._data
 
 
 class QueryExposureData(ABC):

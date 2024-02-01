@@ -17,14 +17,41 @@ class ScatterOptions:
     width: `int`
         Width of the plot in pixels.
     """
+    color: str = None
     height: int = 600
+    size: str = None
     width: int = 700
+    
 
     def to_dict(self):
-        return dict(
-            height=self.height,
-            width=self.width,
-        )
+        ret_dict = dict(color=self.color,
+                        height=self.height,
+                        size=self.size,
+                        width=self.width,
+                        )
+        filtered_dict = {key: value for key, value in ret_dict.items() if value is not None}
+        return filtered_dict
+
+
+@dataclass
+class HistogramOptions:
+    color: str = 'darkmagenta'
+    fontscale: float = 1.2
+    height: int = 600
+    title: str = "No title"
+    xlabel: str = 'X'
+    width: int = 400
+
+    def to_dict(self):
+        ret_dict = dict(color=self.color,
+                        height=self.height,
+                        fontscale=self.fontscale,
+                        title=self.title,
+                        width=self.width,
+                        xlabel=self.xlabel
+                        )
+        filtered_dict = {key: value for key, value in ret_dict.items() if value is not None}
+        return filtered_dict
 
 
 class DataImageDisplay:
@@ -34,9 +61,8 @@ class DataImageDisplay:
 
     def show_scatter(self,
                      columns: Optional[Sequence] = None,
-                     frac: float = 1.0,
                      options: ScatterOptions = ScatterOptions()):
-        data = self._exposure_data.get_data(frac)
+        data = self._exposure_data.data
         if columns is None:
             return hv.Scatter(data).options(**options.to_dict())
         index = self._exposure_data.index
@@ -47,3 +73,7 @@ class DataImageDisplay:
         assert data_y in index, f"Selected data {data_y} for Y "\
                                 f"not available on exposure data"
         return hv.Scatter(data, data_x, data_y).options(toolbar=None)
+
+    def show_histogram(self, field: 'str', options: HistogramOptions = HistogramOptions()):
+        bin, count = self._exposure_data.histogram()
+        return hv.Histogram((bin, count)).opts(options)
