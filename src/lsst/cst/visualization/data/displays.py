@@ -76,4 +76,4 @@ class DataImageDisplay:
 
     def show_histogram(self, field: 'str', options: HistogramOptions = HistogramOptions()):
         bin, count = self._exposure_data.histogram(field)
-        return hv.Histogram((bin, count)).opts(options)
+        return hv.Histogram((bin, count)).opts(**options.to_dict())
