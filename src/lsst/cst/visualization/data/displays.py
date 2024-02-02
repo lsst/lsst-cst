@@ -1,8 +1,9 @@
 import holoviews as hv
 
+from bokeh.models import HoverTool
+from dataclasses import dataclass, field
 from lsst.cst.visualization.utils import ExposureData
-from typing import Optional, Tuple
-from dataclasses import dataclass
+from typing import List, Optional, Tuple
 
 
 @dataclass
@@ -24,6 +25,7 @@ class ScatterOptions:
     width: int = 700
     xlabel: str = "X"
     ylabel: str = "Y"
+    tools: List = field(default_factory=list)
 
     def to_dict(self):
         ret_dict = dict(color=self.color,
@@ -33,10 +35,17 @@ class ScatterOptions:
                         size=self.size,
                         width=self.width,
                         xlabel=self.xlabel,
-                        ylabel=self.ylabel
+                        ylabel=self.ylabel,
+                        tools=self.tools
                         )
         filtered_dict = {key: value for key, value in ret_dict.items() if value is not None}
         return filtered_dict
+
+
+class HoverTool(HoverTool):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(args, kwargs)
 
 
 @dataclass
@@ -90,7 +99,7 @@ class DataImageDisplay:
         if isinstance(data_y, str):
             assert data_y in index, f"Selected data {data_y} for Y "\
                                     f"not available on exposure data"
-        return hv.Scatter(data, data_x, data_y).options(toolbar=None)
+        return hv.Scatter(data, data_x, data_y).options(**options.to_dict())
 
     def show_histogram(self, field: 'str', options: HistogramOptions = HistogramOptions()):
         bin, count = self._exposure_data.histogram(field)
