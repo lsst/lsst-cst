@@ -386,6 +386,16 @@ class StandardImageTransform(ImageTransform):
         return transform(image_array)
 
 
+class DataHandler(ABC):
+
+    def __init__(self):
+        super().__init__()
+
+    @abstractmethod
+    def handle(self, data: pd.DataFrame) -> pd.DataFrame:
+        raise NotImplementedError()
+
+
 class ExposureData:
 
     def __init__(self, data: pd.DataFrame):
@@ -413,6 +423,10 @@ class ExposureData:
         data = self.data[operators[operator](self.data[column_name], condition)]
         return ExposureData(data)
 
+    def apply_handler(self, handler: DataHandler):
+        new_data = handler.handle(self._data)
+        return ExposureData(new_data)
+
     def reduce_data(self, frac: float = 1.0):
         if frac == 1.0:
             return self
@@ -437,17 +451,6 @@ class QueryExposureData(ABC):
     @abstractmethod
     def query(self):
         pass
-
-
-class DataHandler(ABC):
-
-    def __init__(self):
-        super().__init__()
-
-    @abstractmethod
-    def handle(self, data: pd.DataFrame) -> pd.DataFrame:
-        raise NotImplementedError()
-
 
 class StandardDataHandler:
 
