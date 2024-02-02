@@ -65,11 +65,15 @@ class DataImageDisplay:
     def __init__(self, data: ExposureData):
         self._exposure_data = data
 
-    def create_axe(self, data_identifier, label: str, range: Optional[Tuple[float, float]] = None):
+    def create_axe(self,
+                   data_identifier: str,
+                   label: str,
+                   range: Tuple[Optional[float], Optional[float]] = (None, None),
+                   units: str = "N/A"):
         index = self._exposure_data.index
         assert data_identifier in index, f"Selected data {data_identifier} for X "\
                                          f"not available on exposure data"
-        return hv.Dimension(data_identifier, label=label, range=range)
+        return hv.Dimension(data_identifier, label=label, range=range, units=units)
 
     def show_scatter(self,
                      columns: Optional[Tuple[hv.Dimension | str, hv.Dimension | str]] = None,
@@ -83,7 +87,7 @@ class DataImageDisplay:
         if isinstance(data_x, str):
             assert data_x in index, f"Selected data {data_x} for X "\
                                     f"not available on exposure data"
-        if isinstance(data_x, str):
+        if isinstance(data_y, str):
             assert data_y in index, f"Selected data {data_y} for Y "\
                                     f"not available on exposure data"
         return hv.Scatter(data, data_x, data_y).options(toolbar=None)
