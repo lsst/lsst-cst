@@ -69,11 +69,11 @@ class DataImageDisplay:
                    data_identifier: str,
                    label: str,
                    range: Tuple[Optional[float], Optional[float]] = (None, None),
-                   units: str = "N/A"):
+                   unit: str = "N/A"):
         index = self._exposure_data.index
         assert data_identifier in index, f"Selected data {data_identifier} for X "\
                                          f"not available on exposure data"
-        return hv.Dimension(data_identifier, label=label, range=range, units=units)
+        return hv.Dimension(data_identifier, label=label, range=range, unit=unit)
 
     def show_scatter(self,
                      columns: Optional[Tuple[hv.Dimension | str, hv.Dimension | str]] = None,
