@@ -391,10 +391,27 @@ class ExposureData:
     def __init__(self, data: pd.DataFrame):
         self._data = data
 
+    @property
+    def index(self):
+        return self._data.columns.tolist()
+
+    @property
+    def data(self):
+        return self._data
+
     @classmethod
     def fromFile(cls, file_path: str):
         loaded_df = pd.read_csv(file_path)
         return ExposureData(loaded_df)
+
+    def filter_by_condition(self, column_name, condition, operator='=='):
+        operators = {'==': pd.Series.eq,
+                     '>': pd.Series.gt,
+                     '<': pd.Series.lt}
+        assert operator in operators.values(), f"Non valid operator {operator}"
+
+        data = self.data[operators[operator](self.data[column_name], condition)]
+        return ExposureData(data)
 
     def reduce_data(self, frac: float = 1.0):
         if frac == 1.0:
@@ -405,13 +422,11 @@ class ExposureData:
     def histogram(self, field: str):
         return np.histogram(self._data[field], bins='fd')
 
-    @property
-    def index(self):
-        return self._data.columns.tolist()
+    def __getitem__(self, condition):
+        return ExposureData(self.data[condition])
 
-    @property
-    def data(self):
-        return self._data
+    def __str__(self):
+        return str(self.data)
 
 
 class QueryExposureData(ABC):
