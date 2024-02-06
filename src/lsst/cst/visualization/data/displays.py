@@ -120,7 +120,7 @@ class DataFigure:
 
     @property
     def figure(self):
-        return figure
+        return self._figure
 
 
 class DataImageDisplay:

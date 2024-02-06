@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 from astropy.visualization import AsinhStretch, ZScaleInterval
 from astropy.coordinates import SkyCoord
+from bokeh.models import ColumnDataSource
 from lsst.rsp import get_tap_service
 
 __all__ = [
@@ -397,9 +398,12 @@ class DataHandler(ABC):
 
 
 class ExposureData:
+    """
+    """
 
     def __init__(self, data: pd.DataFrame):
         self._data = data
+        self._column_data_source = None
 
     @property
     def index(self):
@@ -413,6 +417,11 @@ class ExposureData:
     def fromFile(cls, file_path: str):
         loaded_df = pd.read_csv(file_path)
         return ExposureData(loaded_df)
+
+    def get_column_data_source(self):
+        if self._column_data_source is None:
+            self.get_column_data_source = ColumnDataSource(self._data)
+        return self._column_data_source
 
     def filter_by_condition(self, column_name, condition, operator='=='):
         operators = {'==': pd.Series.eq,
