@@ -111,7 +111,7 @@ class DataFigure:
         data_x = self._exposure_data[x_data]
         data_y = self._exposure_data[y_data]
         glyph = self._figure.scatter(data_x, data_y, **options.to_dict())
-        if hover_tool:
+        if hover_tool is not None:
             hover_tool.renderers.append(glyph)
             self._figure.add_tools(hover_tool)
 
@@ -154,10 +154,14 @@ class DataImageDisplay:
             else:
                 new_layout.append(self._figures[item].figure)
 
-    def show(self, layout: List[Union[str, List[...]]] = [], tools_position: str = "above"):
+    def show(
+        self,
+        layout: List[Union[str, List[...]]] = [],
+        tools_position: str = "above"
+    ):
         new_layout = []
         self._exchange_figures(layout, new_layout)
-        return show(gridplot(new_layout), tools_position)
+        return show(gridplot(new_layout), tools_position=tools_position)
 
     def create_axe(self,
                    data_identifier: str,
