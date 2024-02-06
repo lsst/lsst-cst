@@ -20,9 +20,7 @@ class FigureOptions:
         Width of the plot in pixels.
     """
     height: int = 600
-    # toolbar: str = 'above'
-    tools: List = field(default_factory=lambda: [])
-    # "pan,box_zoom,box_select,lasso_select,reset,help"
+    tools: List = field(default_factory=lambda: ["pan,box_zoom,box_select,lasso_select,reset,help"])
     width: int = 700
     xlabel: str = "X"
     ylabel: str = "Y"
@@ -31,7 +29,6 @@ class FigureOptions:
 
     def to_dict(self):
         ret_dict = dict(height=self.height,
-                        # toolbar=self.toolbar,
                         tools=self.tools,
                         width=self.width,
                         x_axis_label=self.xlabel,
@@ -104,7 +101,7 @@ class DataFigure:
     def add_scatter(self,
                     x_data: str,
                     y_data: str,
-                    x_identifier: None | str = None,
+                    hover_tool: None | HoverTool,
                     options: ScatterOptions = ScatterOptions()):
         index = self._exposure_data.index
         assert x_data in index, f"Selected data {x_data}"\
@@ -113,7 +110,10 @@ class DataFigure:
                                 f"not available on exposure data"
         data_x = self._exposure_data[x_data]
         data_y = self._exposure_data[y_data]
-        self._figure.scatter(data_x, data_y, **options.to_dict())
+        glyph = self._figure.scatter(data_x, data_y, **options.to_dict())
+        if hover_tool:
+            hover_tool.renderers.append(glyph)
+            self._figure.add_tools(hover_tool)
 
     def add_histogram(self):
         pass
@@ -154,10 +154,10 @@ class DataImageDisplay:
             else:
                 new_layout.append(self._figures[item].figure)
 
-    def show(self, layout: List[Union[str, List[...]]] = []):
+    def show(self, layout: List[Union[str, List[...]]] = [], tools_position: str = "above"):
         new_layout = []
         self._exchange_figures(layout, new_layout)
-        return show(gridplot(new_layout))
+        return show(gridplot(new_layout), tools_position)
 
     def create_axe(self,
                    data_identifier: str,
