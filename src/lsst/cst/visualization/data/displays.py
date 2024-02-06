@@ -152,7 +152,7 @@ class DataImageDisplay:
                 self._exchange_figures(item, aux_layout)
                 new_layout.append(aux_layout)
             else:
-                new_layout.append(self._figures[item])
+                new_layout.append(self._figures[item].figure)
 
     def show(self, layout: List[Union[str, List[...]]] = []):
         new_layout = []
