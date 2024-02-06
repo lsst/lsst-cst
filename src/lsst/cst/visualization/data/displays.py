@@ -101,7 +101,6 @@ class DataFigure:
         self._exposure_data = data
         self._figure = figure(**options.to_dict())
 
-    @property
     def add_scatter(self,
                     x_data: str,
                     y_data: str,
@@ -130,9 +129,15 @@ class DataImageDisplay:
         self._exposure_data = data
         self._figures = {}  # type: dict[str, DataFigure]
 
+    def get_figure(self, figure_identifier: str):
+        figure = self._figures.get(figure_identifier, None)
+        assert figure is not None, f"Figure {figure_identifier} doesnt exists"
+        return figure
+
     def create_figure(self, identifier: str, figure_options: FigureOptions = FigureOptions):
         new_figure = DataFigure(identifier, figure_options)
-        assert identifier not in self._figures.keys()
+        assert identifier not in self._figures.keys(), \
+            f"Figure {identifier} already exists"
         self._figures[identifier] = new_figure
         return new_figure
 
