@@ -436,8 +436,14 @@ class ExposureData:
     def histogram(self, field: str):
         return np.histogram(self._data[field], bins='fd')
 
-    def __getitem__(self, condition):
+    def __getitem__(self, value):
+        if value in self.index:
+            return self.data[value]
+        condition = value
         return ExposureData(self.data[condition])
+
+    def __setitem__(self, index, value):
+        self.data[index] = value
 
     def __str__(self):
         return str(self.data)
@@ -451,6 +457,7 @@ class QueryExposureData(ABC):
     @abstractmethod
     def query(self):
         pass
+
 
 class StandardDataHandler:
 
