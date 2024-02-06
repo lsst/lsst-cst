@@ -135,7 +135,7 @@ class DataImageDisplay:
         return figure
 
     def create_figure(self, identifier: str, figure_options: FigureOptions = FigureOptions):
-        new_figure = DataFigure(identifier, figure_options)
+        new_figure = DataFigure(identifier, self._exposure_data, figure_options)
         assert identifier not in self._figures.keys(), \
             f"Figure {identifier} already exists"
         self._figures[identifier] = new_figure
