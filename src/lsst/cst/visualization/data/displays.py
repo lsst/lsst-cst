@@ -101,7 +101,7 @@ class DataFigure:
     def add_scatter(self,
                     x_data: str,
                     y_data: str,
-                    hover_tool: None | HoverTool,
+                    hover_tool: None | HoverTool = None,
                     options: ScatterOptions = ScatterOptions()):
         index = self._exposure_data.index
         assert x_data in index, f"Selected data {x_data}"\
