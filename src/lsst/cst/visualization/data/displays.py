@@ -134,7 +134,7 @@ class DataImageDisplay:
         assert figure is not None, f"Figure {figure_identifier} doesnt exists"
         return figure
 
-    def create_figure(self, identifier: str, figure_options: FigureOptions = FigureOptions):
+    def create_figure(self, identifier: str, figure_options: FigureOptions = FigureOptions()):
         new_figure = DataFigure(identifier, self._exposure_data, figure_options)
         assert identifier not in self._figures.keys(), \
             f"Figure {identifier} already exists"
