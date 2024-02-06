@@ -20,7 +20,7 @@ class FigureOptions:
         Width of the plot in pixels.
     """
     height: int = 600
-    toolbar: str = 'above'
+    # toolbar: str = 'above'
     tools: List = field(default_factory=lambda: [])
     # "pan,box_zoom,box_select,lasso_select,reset,help"
     width: int = 700
@@ -31,7 +31,7 @@ class FigureOptions:
 
     def to_dict(self):
         ret_dict = dict(height=self.height,
-                        toolbar=self.toolbar,
+                        # toolbar=self.toolbar,
                         tools=self.tools,
                         width=self.width,
                         x_axis_label=self.xlabel,
