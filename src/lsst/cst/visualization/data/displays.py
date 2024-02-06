@@ -25,9 +25,9 @@ class FigureOptions:
     # "pan,box_zoom,box_select,lasso_select,reset,help"
     width: int = 700
     xlabel: str = "X"
-    x_range: None
     ylabel: str = "Y"
-    y_range: None
+    # x_range: None
+    # y_range: None
 
     def to_dict(self):
         ret_dict = dict(height=self.height,
@@ -152,7 +152,7 @@ class DataImageDisplay:
     def show(self, layout: List[Union[str, List[...]]] = []):
         new_layout = []
         self._exchange_figures(layout, new_layout)
-        return show(new_layout)
+        return show(gridplot(new_layout))
 
     def create_axe(self,
                    data_identifier: str,
