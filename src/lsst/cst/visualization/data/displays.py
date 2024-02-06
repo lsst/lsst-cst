@@ -150,7 +150,7 @@ class DataImageDisplay:
             if isinstance(item, list):
                 aux_layout = []
                 self._exchange_figures(item, aux_layout)
-                layout.append(aux_layout)
+                new_layout.append(aux_layout)
             else:
                 new_layout.append(self._figures[item])
 
