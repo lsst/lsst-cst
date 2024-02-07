@@ -112,7 +112,7 @@ class DataFigure:
         assert y_data in index, f"Selected data {y_data}"\
                                 f"not available on exposure data"
         view = CDSView()
-        if filter:
+        if filter is not None:
             view.filter = BooleanFilter(filter)
         glyph = self._figure.scatter(
             x_data,
