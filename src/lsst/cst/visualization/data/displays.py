@@ -50,9 +50,9 @@ class ScatterOptions:
         Width of the plot in pixels.
     """
     alpha: float = 1.0
-    color: str = None
-    marker: str = 'x'
-    size: int | str = None
+    color: str = "red"
+    marker: str = "cross"
+    size: int  = 10
 
     def to_dict(self):
         ret_dict = dict(alpha=self.alpha,
@@ -108,12 +108,13 @@ class DataFigure:
                                 f"not available on exposure data"
         assert y_data in index, f"Selected data {y_data}"\
                                 f"not available on exposure data"
-        data_x = self._exposure_data[x_data]
-        data_y = self._exposure_data[y_data]
-        glyph = self._figure.scatter(data_x, data_y, **options.to_dict())
+        #data_x = self._exposure_data[x_data]
+        #data_y = self._exposure_data[y_data]
+        glyph = self._figure.scatter(x_data, y_data, source=self._exposure_data.get_column_data_source(), **options.to_dict())
         if hover_tool is not None:
-            hover_tool.renderers.append(glyph)
-            self._figure.add_tools(hover_tool)
+            # hover_tool.renderers.append(glyph)
+            nhover_tool = HoverTool(renderers=[glyph], tooltips=hover_tool.tooltips, formatters=hover_tool.formatters)
+            self._figure.add_tools(nhover_tool)
 
     def add_histogram(self):
         pass
@@ -159,9 +160,11 @@ class DataImageDisplay:
         layout: List[Union[str, List[...]]] = [],
         tools_position: str = "above"
     ):
+        from IPython.display import display
         new_layout = []
         self._exchange_figures(layout, new_layout)
-        return show(gridplot(new_layout), tools_position=tools_position)
+        # return display(show(gridplot(new_layout), tools_position=tools_position, notebook_handle=True))
+        return show(gridplot(new_layout), tools_position=tools_position)	
 
     def create_axe(self,
                    data_identifier: str,

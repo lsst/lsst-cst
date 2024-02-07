@@ -420,7 +420,7 @@ class ExposureData:
 
     def get_column_data_source(self):
         if self._column_data_source is None:
-            self.get_column_data_source = ColumnDataSource(self._data)
+            self._column_data_source = ColumnDataSource(self._data)
         return self._column_data_source
 
     def filter_by_condition(self, column_name, condition, operator='=='):
