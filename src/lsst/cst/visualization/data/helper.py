@@ -35,7 +35,7 @@ def create_skycoord_datashader_plot(
     reduction: float = 1.0
 ):
     data = _get_skycoord_data(coord, reduction)
-    create_datashader_plot(data, columns)
+    return create_datashader_plot(data, columns)
 
 
 def create_datashader_plot(

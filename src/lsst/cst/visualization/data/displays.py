@@ -305,6 +305,7 @@ class DataImageDisplay:
         scatter = self.show_scatter(columns, options)
         scatter = dynspread(datashade(scatter, cmap=options.cmap))
         scatter.opts(**options.to_dict())
+        return scatter
 
     def show_histogram(self, field: 'str', options: HistogramOptions = HistogramOptions()):
         bin, count = self._exposure_data.histogram(field)
