@@ -59,7 +59,7 @@ def create_skycoord_datashader_plot(
     color_map: str = "Viridis"
 ):
     data = _get_skycoord_data(coord, reduction)
-    create_datashader_plot(data)
+    create_datashader_plot(data, color_map)
 
 
 def create_datashader_plot(
