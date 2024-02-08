@@ -45,7 +45,7 @@ def create_datashader_plot(
     if isinstance(data, pd.DataFrame):
         data = ExposureData(data)
     data_display = DataImageDisplay(data)
-    return data_display.show_data_shade(data, columns, DataShadeOptions())
+    return data_display.show_data_shade(columns, DataShadeOptions())
 
 
 def create_skycoord_linked_plot_with_brushing(

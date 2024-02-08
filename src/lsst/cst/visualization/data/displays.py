@@ -278,10 +278,8 @@ class DataImageDisplay:
     def show_scatter(
         self,
         columns: Optional[Tuple[hv.Dimension | str, hv.Dimension | str]] = None,
-        datashade_options: DataShadeOptions = DataShadeOptions(),
         options: ScatterOptions = ScatterOptions()
     ):
-        _log.info(f"{datashade_options}")
         data = self._exposure_data.data
         if columns is None:
             scatter = hv.Scatter(data).options(**options.to_dict())
