@@ -203,6 +203,12 @@ class DataShadeOptions:
     def cmap(self):
         return self._cmap
 
+    def __repr__(self):
+        return str(self)
+
+    def __str__(self):
+        return f"apply {self.apply} color: {self.cmap}"
+
 
 class DataImageDisplay:
 
@@ -260,22 +266,25 @@ class DataImageDisplay:
                      columns: Optional[Tuple[hv.Dimension | str, hv.Dimension | str]] = None,
                      datashade_options: DataShadeOptions = DataShadeOptions(),
                      options: ScatterOptions = ScatterOptions()):
+        _log.info(f"{datashade_options}")
         data = self._exposure_data.data
         if columns is None:
-            return hv.Scatter(data).options(**options.to_dict())
-        index = self._exposure_data.index
-        data_x = columns[0]
-        data_y = columns[1]
-        if isinstance(data_x, str):
-            assert data_x in index, f"Selected data {data_x} for X "\
-                                    f"not available on exposure data"
-        if isinstance(data_y, str):
-            assert data_y in index, f"Selected data {data_y} for Y "\
-                                    f"not available on exposure data"
-        scatter = hv.Scatter(data, data_x, data_y).options(**options.to_dict())
+            scatter = hv.Scatter(data).options(**options.to_dict())
+        else:
+            index = self._exposure_data.index
+            data_x = columns[0]
+            data_y = columns[1]
+            if isinstance(data_x, str):
+                assert data_x in index, f"Selected data {data_x} for X "\
+                                        f"not available on exposure data"
+            if isinstance(data_y, str):
+                assert data_y in index, f"Selected data {data_y} for Y "\
+                                        f"not available on exposure data"
+            scatter = hv.Scatter(data, data_x, data_y).options(**options.to_dict())
         if datashade_options.apply:
             _log.debug("Applying datashade to data image")
             scatter = dynspread(datashade(scatter, cmap=datashade_options.cmap))
+            scatter.opts(**options.to_dict())
         return scatter
 
     def show_histogram(self, field: 'str', options: HistogramOptions = HistogramOptions()):
