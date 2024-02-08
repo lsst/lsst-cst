@@ -5,7 +5,7 @@ from lsst.cst.visualization.data.displays import DataImageDisplay, HoverTool, Sc
 from holoviews.element.chart import Scatter
 import logging
 
-_log = logging.log(__name__)
+_log = logging.getLogger(__name__)
 
 
 def create_skycoord_linked_plot_with_brushing(
