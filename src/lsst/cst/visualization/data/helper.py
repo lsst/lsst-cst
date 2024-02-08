@@ -20,7 +20,7 @@ def _create_scatter(
     data: Union[ExposureData, pd.array],
     column: Optional[Tuple[str, str]] = None,
     hovertool: HoverTool = None,
-    shader_options: DataShadeOptions = DataShadeOptions()
+    datashade_options: DataShadeOptions = DataShadeOptions()
 ):
     # Helper function to create a Scatter data plot
     if isinstance(data, pd.DataFrame):
@@ -31,7 +31,7 @@ def _create_scatter(
         data_display.create_axe(column[1])
     _log.info("Creating Scatter")
     return data_display.show_scatter(
-        shader_options=shader_options,
+        datashade_options=datashade_options,
         options=HVScatterOptions(
             tools=[] if hovertool is None else [hovertool],
             marker="circle",
