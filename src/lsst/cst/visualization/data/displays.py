@@ -1,4 +1,5 @@
 import holoviews as hv
+import logging
 
 from bokeh.io import show
 from bokeh.models import HoverTool  # noqa: F401
@@ -9,6 +10,8 @@ from dataclasses import dataclass, field
 from lsst.cst.visualization.utils import ExposureData
 from typing import List, Optional, Union, Tuple
 from collections.abc import Sequence
+
+_log = logging.getLogger(__name__)
 
 
 @dataclass
@@ -192,9 +195,11 @@ class DataShadeOptions:
         self._apply = apply
         self._cmap = cmap
 
+    @property
     def apply(self):
         return self._apply
 
+    @property
     def cmap(self):
         return self._cmap
 
@@ -269,7 +274,8 @@ class DataImageDisplay:
                                     f"not available on exposure data"
         scatter = hv.Scatter(data, data_x, data_y).options(**options.to_dict())
         if datashade_options.apply:
-            scatter = dynspread(datashade_options(scatter, cmap=datashade_options.cmap))
+            _log.debug("Applying datashade to data image")
+            scatter = dynspread(datashade(scatter, cmap=datashade_options.cmap))
         return scatter
 
     def show_histogram(self, field: 'str', options: HistogramOptions = HistogramOptions()):
