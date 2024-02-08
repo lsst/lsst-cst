@@ -4,6 +4,7 @@ from bokeh.io import show
 from bokeh.models import HoverTool  # noqa: F401
 from bokeh.models import CDSView, BooleanFilter
 from bokeh.plotting import figure, gridplot
+from holoviews.operation.datashader import datashade, dynspread
 from dataclasses import dataclass, field
 from lsst.cst.visualization.utils import ExposureData
 from typing import List, Optional, Union, Tuple
@@ -151,7 +152,8 @@ class DataFigure:
                     y_data: str,
                     hover_tool: None | HoverTool = None,
                     filter: None | Sequence[bool] = None,
-                    options: ScatterOptions = ScatterOptions()):
+                    options: ScatterOptions = ScatterOptions()
+                    ):
         index = self._exposure_data.index
         assert x_data in index, f"Selected data {x_data}"\
                                 f"not available on exposure data"
@@ -182,6 +184,19 @@ class DataFigure:
     @property
     def figure(self):
         return self._figure
+
+
+class DataShadeOptions:
+
+    def __init__(self, apply: bool = False, cmap: str = "Viridis"):
+        self._apply = apply
+        self._cmap = cmap
+
+    def apply(self):
+        return self._apply
+
+    def cmap(self):
+        return self._cmap
 
 
 class DataImageDisplay:
@@ -226,16 +241,19 @@ class DataImageDisplay:
 
     def create_axe(self,
                    data_identifier: str,
-                   label: str,
+                   label: str = None,
                    range: Tuple[Optional[float], Optional[float]] = (None, None),
                    unit: str = "N/A"):
+        if label is None:
+            label = data_identifier
         index = self._exposure_data.index
-        assert data_identifier in index, f"Selected data {data_identifier} for X "\
+        assert data_identifier in index, f"Selected data {data_identifier}"\
                                          f"not available on exposure data"
         return hv.Dimension(data_identifier, label=label, range=range, unit=unit)
 
     def show_scatter(self,
                      columns: Optional[Tuple[hv.Dimension | str, hv.Dimension | str]] = None,
+                     datashade_options: DataShadeOptions = DataShadeOptions(),
                      options: ScatterOptions = ScatterOptions()):
         data = self._exposure_data.data
         if columns is None:
@@ -249,7 +267,10 @@ class DataImageDisplay:
         if isinstance(data_y, str):
             assert data_y in index, f"Selected data {data_y} for Y "\
                                     f"not available on exposure data"
-        return hv.Scatter(data, data_x, data_y).options(**options.to_dict())
+        scatter = hv.Scatter(data, data_x, data_y).options(**options.to_dict())
+        if datashade_options.apply:
+            scatter = dynspread(datashade_options(scatter, cmap=datashade_options.cmap))
+        return scatter
 
     def show_histogram(self, field: 'str', options: HistogramOptions = HistogramOptions()):
         bin, count = self._exposure_data.histogram(field)
