@@ -24,9 +24,9 @@ def _create_scatter(
 ):
     # Helper function to create a Scatter data plot
     data_display = DataImageDisplay(data)
-    if column is not None:
-        data_display.create_axe(column[0])
-        data_display.create_axe(column[1])
+    if columns is not None:
+        data_display.create_axe(columns[0])
+        data_display.create_axe(columns[1])
     _log.info("Creating Scatter")
     return data_display.show_scatter(
         datashade_options=datashade_options,
