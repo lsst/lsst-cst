@@ -18,7 +18,7 @@ _log = logging.getLogger(__name__)
 
 def _create_scatter(
     data: ExposureData,
-    column: Optional[Tuple[str, str]] = None,
+    columns: Optional[Tuple[str, str]] = None,
     hovertool: HoverTool = None,
     datashade_options: DataShadeOptions = DataShadeOptions()
 ):
@@ -85,7 +85,7 @@ def create_skycoord_linked_plot_with_brushing(
 
 def create_linked_plot_with_brushing(
     data: Union[ExposureData, pd.array],
-    column: Optional[Tuple[str, str]] = None,
+    columns: Optional[Tuple[str, str]] = None,
     hovertool: HoverTool = None
 ) -> Scatter:
     """Create a linked plot with brushing from a pd.DataFrame.
@@ -107,7 +107,7 @@ def create_linked_plot_with_brushing(
     """
     if isinstance(data, pd.DataFrame):
         data = ExposureData(data)
-    scatter = _create_scatter(data=data, column=column, hovertool=hovertool)
+    scatter = _create_scatter(data=data, columns=columns, hovertool=hovertool)
     return scatter.hist(
         dimension=[data.index[0], data.index[1]],
     )
