@@ -17,14 +17,12 @@ _log = logging.getLogger(__name__)
 
 
 def _create_scatter(
-    data: Union[ExposureData, pd.array],
+    data: ExposureData,
     column: Optional[Tuple[str, str]] = None,
     hovertool: HoverTool = None,
     datashade_options: DataShadeOptions = DataShadeOptions()
 ):
     # Helper function to create a Scatter data plot
-    if isinstance(data, pd.DataFrame):
-        data = ExposureData(data)
     data_display = DataImageDisplay(data)
     if column is not None:
         data_display.create_axe(column[0])
@@ -54,14 +52,24 @@ def _get_skycoord_data(coord: SkyCoord, reduction: float = 1.0):
     return data
 
 
-def create_datashader_plot(
+def create_skycoord_datashader_plot(
     coord: SkyCoord,
     columns: Optional[Tuple[str, str]] = None,
     reduction: float = 1.0,
-    color: str = ""
+    color_map: str = "Viridis"
 ):
     data = _get_skycoord_data(coord, reduction)
-    datashade_options = DataShadeOptions(True, "Viridis")
+    create_datashader_plot(data)
+
+
+def create_datashader_plot(
+    data: Union[ExposureData, pd.array],
+    columns: Optional[Tuple[str, str]] = None,
+    color_map: str = "Viridis"
+) -> Scatter:
+    if isinstance(data, pd.DataFrame):
+        data = ExposureData(data)
+    datashade_options = DataShadeOptions(True, color_map)
     return _create_scatter(data=data, columns=columns, datashade_options=datashade_options)
 
 
@@ -97,7 +105,9 @@ def create_linked_plot_with_brushing(
     plot: `Scatter`
         Holoviews created scatter plot
     """
+    if isinstance(data, pd.DataFrame):
+        data = ExposureData(data)
     scatter = _create_scatter(data=data, column=column, hovertool=hovertool)
-    scatter.hist(
+    return scatter.hist(
         dimension=[data.index[0], data.index[1]],
     )
