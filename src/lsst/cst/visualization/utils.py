@@ -548,7 +548,7 @@ class QueryTAPExposureData:
         return self._query
 
     @property
-    def data(self, frac: float = 1.0):
+    def data(self):
         assert self.has_data(), "Data is empty"
         return ExposureData(self._data)
 
