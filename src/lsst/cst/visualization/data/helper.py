@@ -16,29 +16,6 @@ from typing import Optional, Tuple, Union
 _log = logging.getLogger(__name__)
 
 
-def _create_scatter(
-    data: ExposureData,
-    columns: Optional[Tuple[str, str]] = None,
-    hovertool: HoverTool = None,
-    datashade_options: DataShadeOptions = DataShadeOptions()
-):
-    # Helper function to create a Scatter data plot
-    data_display = DataImageDisplay(data)
-    if columns is not None:
-        data_display.create_axe(columns[0])
-        data_display.create_axe(columns[1])
-    _log.info("Creating Scatter")
-    return data_display.show_scatter(
-        datashade_options=datashade_options,
-        options=HVScatterOptions(
-            tools=[] if hovertool is None else [hovertool],
-            marker="circle",
-            xlabel=data.index[0],
-            ylabel=data.index[1],
-        )
-    )
-
-
 def _get_skycoord_data(coord: SkyCoord, reduction: float = 1.0):
     # Helper function to get SkyCoord data
     assert 0.0 < reduction < 1.0, \
@@ -55,22 +32,20 @@ def _get_skycoord_data(coord: SkyCoord, reduction: float = 1.0):
 def create_skycoord_datashader_plot(
     coord: SkyCoord,
     columns: Optional[Tuple[str, str]] = None,
-    reduction: float = 1.0,
-    color_map: str = "Viridis"
+    reduction: float = 1.0
 ):
     data = _get_skycoord_data(coord, reduction)
-    create_datashader_plot(data, color_map)
+    create_datashader_plot(data, columns)
 
 
 def create_datashader_plot(
     data: Union[ExposureData, pd.array],
-    columns: Optional[Tuple[str, str]] = None,
-    color_map: str = "Viridis"
+    columns: Optional[Tuple[str, str]] = None
 ) -> Scatter:
     if isinstance(data, pd.DataFrame):
         data = ExposureData(data)
-    datashade_options = DataShadeOptions(True, color_map)
-    return _create_scatter(data=data, columns=columns, datashade_options=datashade_options)
+    data_display = DataImageDisplay(data)
+    return data_display.show_data_shade(data, columns, DataShadeOptions())
 
 
 def create_skycoord_linked_plot_with_brushing(
@@ -107,7 +82,15 @@ def create_linked_plot_with_brushing(
     """
     if isinstance(data, pd.DataFrame):
         data = ExposureData(data)
-    scatter = _create_scatter(data=data, columns=columns, hovertool=hovertool)
-    return scatter.hist(
-        dimension=[data.index[0], data.index[1]],
-    )
+    data_display = DataImageDisplay(data)
+    if columns is not None:
+        data_display.create_axe(columns[0])
+        data_display.create_axe(columns[1])
+    _log.info("Creating Scatter")
+    return data_display.show_scatter(
+        options=HVScatterOptions(
+            tools=[] if hovertool is None else [hovertool],
+            marker="circle",
+            xlabel=data.index[0],
+            ylabel=data.index[1],
+        )).hist(dimension=[data.index[0], data.index[1]])

@@ -61,6 +61,34 @@ class HVScatterOptions:
 
 
 @dataclass
+class DataShadeOptions:
+    height: int = 300
+    cmap: str = "Viridis"
+    padding: float = 0.05
+    show_grid: bool = True
+    xlabel: str = "X",
+    xlim: Optional[Tuple[float, float]] = None,
+    ylabel: str = "Y",
+    ylim: Optional[Tuple[float, float]] = None,
+    tools: List = field(default_factory=list)
+    width: int = 800
+
+    def to_dict(self):
+        ret_dict = dict(height=self.height,
+                        padding=self.padding,
+                        show_grid=self.show_grid,
+                        tools=self.tools,
+                        width=self.width,
+                        xlabel=self.xlabel,
+                        xlim=self.xlim,
+                        ylabel=self.ylabel,
+                        ylim=self.ylim
+                        )
+        filtered_dict = {key: value for key, value in ret_dict.items() if value is not None}
+        return filtered_dict
+
+
+@dataclass
 class FigureOptions:
     """Image plot options.
 
@@ -189,27 +217,6 @@ class DataFigure:
         return self._figure
 
 
-class DataShadeOptions:
-
-    def __init__(self, apply: bool = False, cmap: str = "Viridis"):
-        self._apply = apply
-        self._cmap = cmap
-
-    @property
-    def apply(self):
-        return self._apply
-
-    @property
-    def cmap(self):
-        return self._cmap
-
-    def __repr__(self):
-        return str(self)
-
-    def __str__(self):
-        return f"apply {self.apply} color: {self.cmap}"
-
-
 class DataImageDisplay:
 
     def __init__(self, data: ExposureData):
@@ -221,7 +228,11 @@ class DataImageDisplay:
         assert figure is not None, f"Figure {figure_identifier} doesnt exists"
         return figure
 
-    def create_figure(self, identifier: str, figure_options: FigureOptions = FigureOptions()):
+    def create_figure(
+        self,
+        identifier: str,
+        figure_options: FigureOptions = FigureOptions()
+    ):
         new_figure = DataFigure(identifier, self._exposure_data, figure_options)
         assert identifier not in self._figures.keys(), \
             f"Figure {identifier} already exists"
@@ -250,11 +261,13 @@ class DataImageDisplay:
         self._exchange_figures(layout, new_layout)
         show(gridplot(new_layout), tools_position=tools_position, notebook_handle=True)
 
-    def create_axe(self,
-                   data_identifier: str,
-                   label: str = None,
-                   range: Tuple[Optional[float], Optional[float]] = (None, None),
-                   unit: str = "N/A"):
+    def create_axe(
+        self,
+        data_identifier: str,
+        label: str = None,
+        range: Tuple[Optional[float], Optional[float]] = (None, None),
+        unit: str = "N/A"
+    ):
         if label is None:
             label = data_identifier
         index = self._exposure_data.index
@@ -262,10 +275,12 @@ class DataImageDisplay:
                                          f"not available on exposure data"
         return hv.Dimension(data_identifier, label=label, range=range, unit=unit)
 
-    def show_scatter(self,
-                     columns: Optional[Tuple[hv.Dimension | str, hv.Dimension | str]] = None,
-                     datashade_options: DataShadeOptions = DataShadeOptions(),
-                     options: ScatterOptions = ScatterOptions()):
+    def show_scatter(
+        self,
+        columns: Optional[Tuple[hv.Dimension | str, hv.Dimension | str]] = None,
+        datashade_options: DataShadeOptions = DataShadeOptions(),
+        options: ScatterOptions = ScatterOptions()
+    ):
         _log.info(f"{datashade_options}")
         data = self._exposure_data.data
         if columns is None:
@@ -281,11 +296,17 @@ class DataImageDisplay:
                 assert data_y in index, f"Selected data {data_y} for Y "\
                                         f"not available on exposure data"
             scatter = hv.Scatter(data, data_x, data_y).options(**options.to_dict())
-        if datashade_options.apply:
-            _log.debug("Applying datashade to data image")
-            scatter = dynspread(datashade(scatter, cmap=datashade_options.cmap))
-            scatter.opts(**options.to_dict())
         return scatter
+
+    def show_data_shade(
+        self,
+        columns: Optional[Tuple[hv.Dimension | str, hv.Dimension | str]] = None,
+        options: DataShadeOptions = DataShadeOptions()
+    ):
+        _log.debug("Applying datashade to data image")
+        scatter = self.show_scatter(columns, options)
+        scatter = dynspread(datashade(scatter, cmap=options.cmap))
+        scatter.opts(**options.to_dict())
 
     def show_histogram(self, field: 'str', options: HistogramOptions = HistogramOptions()):
         bin, count = self._exposure_data.histogram(field)
