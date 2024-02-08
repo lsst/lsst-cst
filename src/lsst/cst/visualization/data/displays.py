@@ -11,6 +11,52 @@ from collections.abc import Sequence
 
 
 @dataclass
+class HVScatterOptions:
+    """Image plot options.
+
+    Parameters
+    ----------
+    height: `int`
+        Height of the plot in pixels.
+    width: `int`
+        Width of the plot in pixels.
+    """
+    alpha: float = 1.0
+    color: str = None
+    invert_xaxis: bool = False
+    invert_yaxis: bool = False
+    height: int = 600
+    marker: str = 'x'
+    size: int | str = None
+    toolbar: str = 'above'
+    tools: List = field(default_factory=list)
+    width: int = 700
+    xlabel: str = "X"
+    xticks: int = 5
+    ylabel: str = "Y"
+    yticks: int = 5
+
+    def to_dict(self):
+        ret_dict = dict(alpha=self.alpha,
+                        color=self.color,
+                        height=self.height,
+                        invert_xaxis=self.invert_xaxis,
+                        invert_yaxis=self.invert_yaxis,
+                        marker=self.marker,
+                        size=self.size,
+                        toolbar=self.toolbar,
+                        tools=self.tools,
+                        width=self.width,
+                        xlabel=self.xlabel,
+                        xticks=self.xticks,
+                        ylabel=self.ylabel,
+                        yticks=self.yticks
+                        )
+        filtered_dict = {key: value for key, value in ret_dict.items() if value is not None}
+        return filtered_dict
+
+
+@dataclass
 class FigureOptions:
     """Image plot options.
 

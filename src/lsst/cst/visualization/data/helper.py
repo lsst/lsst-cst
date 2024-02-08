@@ -1,9 +1,11 @@
 import pandas as pd
-from astropy.coordinates import SkyCoord
-from lsst.cst.visualization.utils import QueryTAPExposureData, ExposureData
-from lsst.cst.visualization.data.displays import DataImageDisplay, HoverTool, ScatterOptions
-from holoviews.element.chart import Scatter
 import logging
+
+from astropy.coordinates import SkyCoord
+from holoviews.element.chart import Scatter
+from lsst.cst.visualization.utils import QueryTAPExposureData, ExposureData
+from lsst.cst.visualization.data.displays import DataImageDisplay, HoverTool, HVScatterOptions
+from typing import Union
 
 _log = logging.getLogger(__name__)
 
@@ -23,7 +25,7 @@ def create_skycoord_linked_plot_with_brushing(
 
 
 def create_linked_plot_with_brushing(
-    data: ExposureData | pd.array,
+    data: Union[ExposureData, pd.array],
     hovertool: HoverTool = None
 ) -> Scatter:
     """.env"""
@@ -32,7 +34,7 @@ def create_linked_plot_with_brushing(
     data_display = DataImageDisplay(data)
     _log.info("Creating Scatter")
     return data_display.show_scatter(
-        options=ScatterOptions(
+        options=HVScatterOptions(
             tools=[] if hovertool is None else [hovertool],
             marker="circle"
         )
