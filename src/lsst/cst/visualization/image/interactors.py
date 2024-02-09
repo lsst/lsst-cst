@@ -2,10 +2,12 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
 import holoviews as hv
+import pandas as pd
 import panel as pn
 from bokeh.models import HoverTool
 from holoviews import streams
 
+from typing import Tuple
 from lsst.cst.visualization.image import ImageDisplay, Options
 
 __all__ = ["HoverSources", "BoxInteract", "OnClickInteract"]
@@ -69,7 +71,12 @@ class HoverSources(_InteractiveDisplay):
 
     options = PointsOptions
 
-    def __init__(self, image_display: ImageDisplay, options=PointsOptions()):
+    def __init__(
+        self, 
+        image_display: ImageDisplay,
+        sources: Tuple[pd.series],
+        options=PointsOptions()
+    ):
         super().__init__()
         assert isinstance(image_display, ImageDisplay), (
             f"Could not create an interactive display from:"
@@ -77,6 +84,7 @@ class HoverSources(_InteractiveDisplay):
         )
         self._image_display = image_display
         self._options = options
+        self._sources = sources
         self._hover_tool = HoverTool(
             tooltips=[
                 ("X", "@x{0.2f}"),
@@ -90,8 +98,7 @@ class HoverSources(_InteractiveDisplay):
 
     def show(self):
         self._image_display.render()
-        points = self._image_display.sources
-        self._img = hv.Points(points).opts(
+        self._img = hv.Points(self._sources).opts(
             **self._options.to_dict(), tools=[self._hover_tool]
         )
         return pn.Row(self._image_display.rasterize() * self._img)

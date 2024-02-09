@@ -36,5 +36,5 @@ def create_interactive_image(
                                                  xlabel=axe_labels[0],
                                                  ylabel=axe_labels[1],
                                                  image_options=image_options)
-    h_sources = HoverSources(cal_exp_plot, source_options)
+    h_sources = HoverSources(cal_exp_plot, sources, source_options)
     return h_sources.show()

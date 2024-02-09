@@ -440,7 +440,3 @@ class CalExpImageDisplay(ImageDisplay):
     @property
     def transformed_image(self):
         return self._img.transformed_image
-
-    @property
-    def sources(self):
-        return self._cal_exp_data.get_sources()

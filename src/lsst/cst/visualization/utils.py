@@ -108,17 +108,6 @@ class CalExpData(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def get_sources(self):
-        """Calexp sources.
-
-        Returns
-        -------
-        sources: `pandas.DataFrame`
-            Sources from the calexp.
-        """
-        raise NotImplementedError()
-
-    @abstractmethod
     def get_image_bounds(self):
         """Exposure Image bounds.
 
