@@ -60,13 +60,13 @@ class CalExpId:
     ----------
     visit: `int`
     detector: `int`
-    band: `Band`
+    band: str | `Band`
     """
 
-    def __init__(self, visit: int, detector: int, band: Band):
+    def __init__(self, visit: int, detector: int, band: str | Band):
         self._visit = visit
         self._detector = detector
-        self._band = band
+        self._band = Band(band) if isinstance(band, str) else band
 
     def as_dict(self):
         """Return CalExpId as a dictionary
