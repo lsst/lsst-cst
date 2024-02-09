@@ -24,9 +24,14 @@ def create_interactive_image(
     -------
 
     """
+    bounds = (0,
+              0,
+              calexp.getDimensions()[0],
+              calexp.getDimensions()[1])
     image_options = CalExpImageDisplay.options(font_size=font_size)
     source_options = HoverSources.options(color=marker_color, marker=marker)
     cal_exp_plot = ImageDisplay.from_image_array(calexp.image.array,
+                                                 bounds=bounds,
                                                  title=label,
                                                  xlabel=axe_labels[0],
                                                  ylabel=axe_labels[1],

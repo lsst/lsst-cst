@@ -214,7 +214,7 @@ class ImageDisplay(ABC):
     @staticmethod
     def from_image_array(
         image: np.ndarray,
-        bounds: tuple[float],
+        bounds: tuple[float, float, float, float],
         title: str = "No title",
         xlabel: str = "X",
         ylabel: str = "Y",
