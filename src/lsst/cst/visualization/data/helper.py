@@ -48,8 +48,16 @@ def create_datashader_plot(
     if columns is not None:
         axes = (data_display.create_axe(columns[0]),
                 data_display.create_axe(columns[1]))
+        hvalues = list(columns)
         columns = axes
-    return data_display.show_data_shade(columns, DataShadeOptions())
+    else:
+        hvalues = [data.index[0], data.index[1]]
+        columns = axes
+    return data_display.show_data_shade(
+        columns,
+        DataShadeOptions(
+            xlabel=hvalues[0],
+            ylabel=hvalues[1],))
 
 
 def create_skycoord_linked_plot_with_brushing(
@@ -100,6 +108,6 @@ def create_linked_plot_with_brushing(
         options=HVScatterOptions(
             tools=[] if hovertool is None else [hovertool],
             marker="circle",
-            xlabel=data.index[0],
-            ylabel=data.index[1],
+            xlabel=hvalues[0],
+            ylabel=hvalues[1],
         )).hist(dimension=hvalues)

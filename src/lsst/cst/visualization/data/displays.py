@@ -62,7 +62,7 @@ class HVScatterOptions:
 
 @dataclass
 class DataShadeOptions:
-    height: int = 300
+    height: int = 600
     cmap: str = "Viridis"
     padding: float = 0.05
     show_grid: bool = True
@@ -71,7 +71,7 @@ class DataShadeOptions:
     ylabel: str = "Y"
     ylim: Optional[Tuple[float, float]] = None
     tools: List = field(default_factory=list)
-    width: int = 800
+    width: int = 700
 
     def to_dict(self):
         ret_dict = dict(height=self.height,
