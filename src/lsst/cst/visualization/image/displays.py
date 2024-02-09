@@ -193,18 +193,6 @@ class ImageDisplay(ABC):
         """
         raise NotImplementedError()
 
-    @property
-    @abstractmethod
-    def sources(self):
-        """Exposure sources.
-
-        Returns
-        -------
-        sources: Tuple[pandas.Series]
-            Sources from the exposure
-        """
-        raise NotImplementedError()
-
     def delete(self):
         """Delete underlying image."""
         assert self._img is not None
