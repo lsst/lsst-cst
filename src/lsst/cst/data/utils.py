@@ -2,6 +2,25 @@
 import numpy as np
 import pandas as pd
 
+from lsst.cst.visualization.utils import CalExpId
+
+
+def data_id_to_str(data_id: dict):
+    """Returns a data identifier dictionary to a string
+
+    Parameters
+    ----------
+    data_id: 'dict'
+        Data identifier dictionary.
+
+    Returns
+    -------
+    data_id_str: `str`
+        Data identifier string
+    """
+    cal_exp_id = CalExpId(**data_id)
+    return str(cal_exp_id)
+
 
 def sort_dataframe(
     df: pd.DataFrame,
