@@ -302,7 +302,7 @@ class DataImageDisplay:
         options: DataShadeOptions = DataShadeOptions()
     ):
         _log.debug("Applying datashade to data image")
-        scatter = self.show_scatter(columns, options)
+        scatter = self.show_scatter(columns)
         scatter = dynspread(datashade(scatter, cmap=options.cmap))
         scatter.opts(**options.to_dict())
         return scatter

@@ -45,6 +45,10 @@ def create_datashader_plot(
     if isinstance(data, pd.DataFrame):
         data = ExposureData(data)
     data_display = DataImageDisplay(data)
+    if columns is not None:
+        axes = (data_display.create_axe(columns[0]),
+                data_display.create_axe(columns[1]))
+        columns = axes
     return data_display.show_data_shade(columns, DataShadeOptions())
 
 
@@ -84,8 +88,9 @@ def create_linked_plot_with_brushing(
         data = ExposureData(data)
     data_display = DataImageDisplay(data)
     if columns is not None:
-        data_display.create_axe(columns[0])
-        data_display.create_axe(columns[1])
+        axes = (data_display.create_axe(columns[0]),
+                data_display.create_axe(columns[1]))
+        columns = axes
     _log.info("Creating Scatter")
     return data_display.show_scatter(
         options=HVScatterOptions(
