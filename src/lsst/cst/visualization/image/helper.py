@@ -8,9 +8,9 @@ from lsst.cst.visualization.image import CalExpImageDisplay, HoverSources, Image
 def create_interactive_image(
     calexp: ExposureF,
     sources: Optional[Tuple[pd.Series]] = None,
-    label: str = "Untitled",
-    axe_labels: Tuple[str, str] = ("X", "Y"),
-    font_size: int = 18,
+    title: str = "Untitled",
+    axes_label: Tuple[str, str] = ("X", "Y"),
+    font_size: int = 16,
     marker: str = 'circle',
     marker_color: str = 'orange'
 ):
@@ -32,9 +32,9 @@ def create_interactive_image(
     source_options = HoverSources.options(color=marker_color, marker=marker)
     cal_exp_plot = ImageDisplay.from_image_array(calexp.image.array,
                                                  bounds=bounds,
-                                                 title=label,
-                                                 xlabel=axe_labels[0],
-                                                 ylabel=axe_labels[1],
+                                                 title=title,
+                                                 xlabel=axes_label[0],
+                                                 ylabel=axes_label[1],
                                                  image_options=image_options)
     if sources is None:
         return cal_exp_plot.show()

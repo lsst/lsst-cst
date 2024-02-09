@@ -3,7 +3,7 @@ import logging
 
 from astropy.coordinates import SkyCoord
 from holoviews.element.chart import Scatter
-from lsst.cst.visualization.utils import QueryTAPExposureData, ExposureData
+from lsst.cst.data.tools import QueryTAPExposureData, ExposureData
 from lsst.cst.visualization.data.displays import (
     DataImageDisplay,
     HoverTool,

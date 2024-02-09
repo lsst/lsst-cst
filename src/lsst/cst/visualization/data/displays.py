@@ -1,3 +1,5 @@
+"""lsst.cst data plot display"""
+
 import holoviews as hv
 import logging
 
@@ -7,40 +9,74 @@ from bokeh.models import CDSView, BooleanFilter
 from bokeh.plotting import figure, gridplot
 from holoviews.operation.datashader import datashade, dynspread
 from dataclasses import dataclass, field
-from lsst.cst.visualization.utils import ExposureData
+from lsst.cst.visualization.params import PlotOptionsDefault
+from lsst.cst.data.tools import ExposureData
 from typing import List, Optional, Union, Tuple
 from collections.abc import Sequence
 
 _log = logging.getLogger(__name__)
 
 
+__all__ = ["HVScatterOptions",
+           "DataShadeOptions",
+           "FigureOptions",
+           "ScatterOptions",
+           "HistogramOptions"]
+
+
 @dataclass
 class HVScatterOptions:
-    """Image plot options.
+    """Holoviews Scatter Options.
 
     Parameters
     ----------
-    height: `int`
+    alpha: `float`, optional
+        Plot points alpha value.
+    color: `str,` optional
+        Plot points color.
+    invert_xaxis: `bool`, optional
+        Invert xaxis of the plot.
+    invert_yaxis: bool = False
+        Invert xaxis of the plot.
+    height: `int`, optional
         Height of the plot in pixels.
-    width: `int`
+    marker: `str`, optional
+        Plot points marker type.
+    size: int, optional
+        Plot points marker type.
+    toolbar: `str`,  optional
+        Toolbar position.
+    tools: `List`, optional
+        Plot tools available.
+    width: `int`, optional
         Width of the plot in pixels.
+    xlabel: str, optional
+        xlabel value.
+    ylabel: `str`
+        ylabel value.
     """
     alpha: float = 1.0
-    color: str = None
+    color: str = PlotOptionsDefault.marker_color
     invert_xaxis: bool = False
     invert_yaxis: bool = False
-    height: int = 600
-    marker: str = 'x'
-    size: int | str = None
-    toolbar: str = 'above'
+    height: int = PlotOptionsDefault.height
+    marker: str = PlotOptionsDefault.marker
+    size: int | str = PlotOptionsDefault.marker_size
+    toolbar: str = PlotOptionsDefault.toolbar_position
     tools: List = field(default_factory=list)
-    width: int = 700
+    width: int = PlotOptionsDefault.width
     xlabel: str = "X"
-    xticks: int = 5
     ylabel: str = "Y"
-    yticks: int = 5
 
     def to_dict(self):
+        """Create and returns a dictionary from options, key is the
+        name of the parameter and value as value, with None value filtered.
+
+        Returns
+        -------
+        options: `dict`
+           Option key and values as dictionary.
+        """
         ret_dict = dict(alpha=self.alpha,
                         color=self.color,
                         height=self.height,
@@ -62,7 +98,33 @@ class HVScatterOptions:
 
 @dataclass
 class DataShadeOptions:
-    height: int = 600
+    """Datashade options
+
+    Parameters
+    ----------
+    height: `int`, optional
+        Height of the plot in pixels.
+    cmap: `str`, optional
+        color mapping to be applied
+        to the Datashader plot.
+    padding: `float`, optional
+        Extra space is added around the data points in the plot.
+    show_grid: `bool`, optional
+        Show plot grid.
+    xlabel: `str`, optional
+        xlabel value.
+    xlim: `Tuple[float, float]`, optional
+        X axes limits.
+    ylabel: `str`, optional
+        ylabel value.
+    ylim: `Tuple[float, float]`, optional
+        Y axes limits.
+    tools: List = field(default_factory=list)
+        Plot tools available.
+    width: `int`, optional
+        Width of the plot in pixels.
+    """
+    height: int = PlotOptionsDefault.height
     cmap: str = "Viridis"
     padding: float = 0.05
     show_grid: bool = True
@@ -71,9 +133,17 @@ class DataShadeOptions:
     ylabel: str = "Y"
     ylim: Optional[Tuple[float, float]] = None
     tools: List = field(default_factory=list)
-    width: int = 700
+    width: int = PlotOptionsDefault.width
 
     def to_dict(self):
+        """Create and returns a dictionary from options, key is the
+        name of the parameter and value as value, with None value filtered.
+
+        Returns
+        -------
+        options: `dict`
+           Option key and values as dictionary.
+        """
         ret_dict = dict(height=self.height,
                         padding=self.padding,
                         show_grid=self.show_grid,
@@ -90,24 +160,36 @@ class DataShadeOptions:
 
 @dataclass
 class FigureOptions:
-    """Image plot options.
+    """Figure plot options.
 
     Parameters
     ----------
-    height: `int`
+    height: `int`, optional
         Height of the plot in pixels.
+    tools: `List`, optional
+        Figure tools available.
     width: `int`
         Width of the plot in pixels.
+    xlabel: `str`, optional
+        xlabel value.
+    ylabel: `str`, optional
+        ylabel value.
     """
-    height: int = 600
+    height: int = PlotOptionsDefault.height
     tools: List = field(default_factory=lambda: ["pan,box_zoom,box_select,lasso_select,reset,help"])
-    width: int = 700
+    width: int = PlotOptionsDefault.width
     xlabel: str = "X"
     ylabel: str = "Y"
-    # x_range: None
-    # y_range: None
 
     def to_dict(self):
+        """Create and returns a dictionary from options, key is the
+        name of the parameter and value as value, with None value filtered.
+
+        Returns
+        -------
+        options: `dict`
+           Option key and values as dictionary.
+        """
         ret_dict = dict(height=self.height,
                         tools=self.tools,
                         width=self.width,
@@ -120,21 +202,33 @@ class FigureOptions:
 
 @dataclass
 class ScatterOptions:
-    """Image plot options.
+    """Bokeh Scatter plot options.
 
     Parameters
     ----------
-    height: `int`
-        Height of the plot in pixels.
-    width: `int`
-        Width of the plot in pixels.
+    alpha: `float`, optional
+        Plot points alpha value.
+    color: `str,` optional
+        Plot points color.
+    marker: `str`, optional
+        Plot points marker type.
+    size: int, optional
+        Plot points marker type.
     """
     alpha: float = 1.0
-    color: str = "red"
-    marker: str = "cross"
-    size: int = 10
+    color: str = PlotOptionsDefault.marker_color
+    marker: str = PlotOptionsDefault.marker
+    size: int = PlotOptionsDefault.marker_size
 
     def to_dict(self):
+        """Create and returns a dictionary from options, key is the
+        name of the parameter and value as value, with None value filtered.
+
+        Returns
+        -------
+        options: `dict`
+           Option key and values as dictionary.
+        """
         ret_dict = dict(alpha=self.alpha,
                         color=self.color,
                         marker=self.marker,
@@ -146,15 +240,45 @@ class ScatterOptions:
 
 @dataclass
 class HistogramOptions:
-    color: str = 'darkmagenta'
+    """Plot histogram options
+
+    Parameters
+    ----------
+    color: `str`, optional
+        Histogram bars color.
+    fontscale: `float`, optional
+        Histogram labels fontsize.
+    height: `int`, optional
+        Height of the plot in pixels.
+    title: str, optional
+        Histogram title.
+    xlabel: `str`, optional
+        xlabel value.
+    width: `int`, optional
+        Width of the plot in pixels.
+    ylabel: `str`, optional
+        ylabel value.
+    """
+    color: str = PlotOptionsDefault.color
     fontscale: float = 1.2
-    height: int = 600
+    height: int = PlotOptionsDefault.height
     title: str = "No title"
     xlabel: str = 'X'
-    width: int = 700
+    width: int = PlotOptionsDefault.width
     ylabel: str = 'Y'
 
+    # check this
+    # fontsize={"labels": "10pt", "title": "16pt"}
+
     def to_dict(self):
+        """Create and returns a dictionary from options, key is the
+        name of the parameter and value as value, with None value filtered.
+
+        Returns
+        -------
+        options: `dict`
+           Option key and values as dictionary.
+        """
         ret_dict = dict(color=self.color,
                         height=self.height,
                         fontscale=self.fontscale,
