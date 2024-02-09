@@ -11,7 +11,7 @@ import holoviews as hv
 import numpy as np
 from holoviews.operation.datashader import rasterize
 
-from lsst.cst.visualization.utils import (
+from lsst.cst.visualization.tools import (
     CalExpData,
     ImageTransform,
     StandardImageTransform,
