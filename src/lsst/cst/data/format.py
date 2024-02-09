@@ -2,7 +2,7 @@
 import numpy as np
 import pandas as pd
 
-from lsst.cst.visualization.utils import CalExpId
+from lsst.cst.data.tools import CalExpId
 
 
 __all__ = ["data_id_to_str", "ids_to_str"]
