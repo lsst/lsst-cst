@@ -416,7 +416,7 @@ class StandardDataHandler(DataHandler):
     exposure data fetched from the TAP Service
     """
     def __init__(self):
-        super().__init__(self)
+        super().__init__()
 
     def handle(self, data: pd.DataFrame):
         data['gmi'] = data['mag_g_cModel'] - data['mag_i_cModel']

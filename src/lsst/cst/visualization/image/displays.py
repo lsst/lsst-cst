@@ -117,7 +117,6 @@ class ImageOptions(Options):
         displays grid lines on the plot.
     tools: `list`
         List of Bokeh tools to include to the default ones.
-        []
     """
 
     cmap: str = "Greys_r"

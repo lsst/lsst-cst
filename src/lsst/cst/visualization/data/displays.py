@@ -54,6 +54,7 @@ class HVScatterOptions:
         xlabel value.
     ylabel: `str`
         ylabel value.
+    fontsize: dict, optional = {"labels": "10pt", "title": "16pt"}
     """
     alpha: float = 1.0
     color: str = PlotOptionsDefault.marker_color
@@ -67,6 +68,7 @@ class HVScatterOptions:
     width: int = PlotOptionsDefault.width
     xlabel: str = "X"
     ylabel: str = "Y"
+    fontsize: dict = {"labels": "10pt", "title": "16pt"}
 
     def to_dict(self):
         """Create and returns a dictionary from options, key is the
@@ -90,7 +92,8 @@ class HVScatterOptions:
                         xlabel=self.xlabel,
                         xticks=self.xticks,
                         ylabel=self.ylabel,
-                        yticks=self.yticks
+                        yticks=self.yticks,
+                        fontsize=self.fontsize
                         )
         filtered_dict = {key: value for key, value in ret_dict.items() if value is not None}
         return filtered_dict
@@ -266,9 +269,6 @@ class HistogramOptions:
     xlabel: str = 'X'
     width: int = PlotOptionsDefault.width
     ylabel: str = 'Y'
-
-    # check this
-    # fontsize={"labels": "10pt", "title": "16pt"}
 
     def to_dict(self):
         """Create and returns a dictionary from options, key is the
