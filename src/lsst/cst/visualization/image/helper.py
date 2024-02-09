@@ -6,7 +6,7 @@ from lsst.cst.visualization.image import CalExpImageDisplay, HoverSources, Image
 
 
 def create_interactive_image(
-    image: ExposureF,
+    calexp: ExposureF,
     sources: Tuple[pd.Series],
     label: Optional[str] = None,
     axe_labels: Tuple[str, str] = ("X", "Y"),
@@ -26,7 +26,7 @@ def create_interactive_image(
     """
     image_options = CalExpImageDisplay.options(font_size=font_size)
     source_options = HoverSources.options(color=marker_color, marker=marker)
-    cal_exp_plot = ImageDisplay.from_image_array(image.array,
+    cal_exp_plot = ImageDisplay.from_image_array(calexp.image.array,
                                                  title=label,
                                                  xlabel=axe_labels[0],
                                                  ylabel=axe_labels[1],
