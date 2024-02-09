@@ -25,7 +25,7 @@ def create_interactive_image(
 
     """
     image_options = CalExpImageDisplay.options(font_size=font_size)
-    source_options = HoverSources.options(marker_color=marker_color, marker=marker)
+    source_options = HoverSources.options(color=marker_color, marker=marker)
     cal_exp_plot = ImageDisplay.from_image_array(image.array,
                                                  title=label,
                                                  xlabel=axe_labels[0],
