@@ -1,13 +1,13 @@
 import pandas as pd
 
-from typing import Tuple
+from typing import Tuple, Optional
 from lsst.afw.image._exposure import ExposureF
 from lsst.cst.visualization.image import CalExpImageDisplay, HoverSources, ImageDisplay
 
 
 def create_interactive_image(
     calexp: ExposureF,
-    sources: Tuple[pd.Series],
+    sources: Optional[Tuple[pd.Series]] = None,
     label: str = "Untitled",
     axe_labels: Tuple[str, str] = ("X", "Y"),
     font_size: int = 18,
@@ -36,5 +36,7 @@ def create_interactive_image(
                                                  xlabel=axe_labels[0],
                                                  ylabel=axe_labels[1],
                                                  image_options=image_options)
+    if sources is None:
+        return cal_exp_plot.show()
     h_sources = HoverSources(cal_exp_plot, sources, source_options)
     return h_sources.show()

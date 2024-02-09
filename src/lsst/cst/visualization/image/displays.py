@@ -363,10 +363,6 @@ class ImageArrayDisplay(ImageDisplay):
     def transformed_image(self):
         return self._transformed_image
 
-    @property
-    def sources(self):
-        return tuple[(), ()]
-
     image_transform = property(fget=None, fset=_set_image_transform)
 
 

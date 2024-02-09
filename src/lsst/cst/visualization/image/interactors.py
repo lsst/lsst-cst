@@ -42,7 +42,7 @@ class PointsOptions(Options):
     fill_color: str = None
     size: int = 9
     color: str = "darkorange"
-    marker: str = "o"
+    marker: str = "circle"
 
     def to_dict(self):
         """Options as dictionary.
@@ -98,7 +98,8 @@ class HoverSources(_InteractiveDisplay):
 
     def show(self):
         self._image_display.render()
-        self._img = hv.Points(self._sources).opts(
+        coords = self._sources.x, self.sources.y
+        self._img = hv.Points(coords).opts(
             **self._options.to_dict(), tools=[self._hover_tool]
         )
         return pn.Row(self._image_display.rasterize() * self._img)
