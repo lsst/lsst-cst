@@ -9,7 +9,6 @@ from .image import (
     OnClickInteract,
     Options,
 )
-from .savers import HTMLSaver
 
 __all__ = [
     "ImageDisplay",
@@ -17,7 +16,6 @@ __all__ = [
     "ImageArrayDisplay",
     "ImageOptions",
     "Options",
-    "HTMLSaver",
     "HoverSources",
     "BoxInteract",
     "OnClickInteract"
