@@ -66,10 +66,10 @@ class DataShadeOptions:
     cmap: str = "Viridis"
     padding: float = 0.05
     show_grid: bool = True
-    xlabel: str = "X",
-    xlim: Optional[Tuple[float, float]] = None,
-    ylabel: str = "Y",
-    ylim: Optional[Tuple[float, float]] = None,
+    xlabel: str = "X"
+    xlim: Optional[Tuple[float, float]] = None
+    ylabel: str = "Y"
+    ylim: Optional[Tuple[float, float]] = None
     tools: List = field(default_factory=list)
     width: int = 800
 
