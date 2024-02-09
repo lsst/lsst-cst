@@ -13,6 +13,7 @@ from lsst.cst.visualization.params import PlotOptionsDefault
 from lsst.cst.data.tools import ExposureData
 from typing import List, Optional, Union, Tuple
 from collections.abc import Sequence
+from collections import defaultdict
 
 _log = logging.getLogger(__name__)
 
@@ -68,7 +69,9 @@ class HVScatterOptions:
     width: int = PlotOptionsDefault.width
     xlabel: str = "X"
     ylabel: str = "Y"
-    fontsize: dict = {"labels": "10pt", "title": "16pt"}
+    fontsize: defaultdict = field(
+        default_factory=lambda: defaultdict(str, {"labels": "10pt", "title": "16pt"})
+    )
 
     def to_dict(self):
         """Create and returns a dictionary from options, key is the
