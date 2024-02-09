@@ -1,6 +1,6 @@
 import pandas as pd
 
-from typing import Tuple, Optional
+from typing import Tuple
 from lsst.afw.image._exposure import ExposureF
 from lsst.cst.visualization.image import CalExpImageDisplay, HoverSources, ImageDisplay
 
@@ -8,7 +8,7 @@ from lsst.cst.visualization.image import CalExpImageDisplay, HoverSources, Image
 def create_interactive_image(
     calexp: ExposureF,
     sources: Tuple[pd.Series],
-    label: Optional[str] = None,
+    label: str = "Untitled",
     axe_labels: Tuple[str, str] = ("X", "Y"),
     font_size: int = 18,
     marker: str = 'circle',
