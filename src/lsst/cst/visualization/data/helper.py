@@ -93,6 +93,7 @@ def create_linked_plot_with_brushing(
         columns = axes
     _log.info("Creating Scatter")
     return data_display.show_scatter(
+        columns=columns,
         options=HVScatterOptions(
             tools=[] if hovertool is None else [hovertool],
             marker="circle",
