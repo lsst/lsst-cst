@@ -98,7 +98,7 @@ class HoverSources(_InteractiveDisplay):
 
     def show(self):
         self._image_display.render()
-        coords = self._sources.x, self.sources.y
+        coords = self._sources.x, self._sources.y
         self._img = hv.Points(coords).opts(
             **self._options.to_dict(), tools=[self._hover_tool]
         )
