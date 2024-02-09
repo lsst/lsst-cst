@@ -70,7 +70,7 @@ class HVScatterOptions:
     xlabel: str = "X"
     ylabel: str = "Y"
     fontsize: defaultdict = field(
-        default_factory=lambda: defaultdict(str, {"labels": "10pt", "title": "16pt"})
+        default_factory=lambda: defaultdict(str, {"labels": "14pt", "title": "16pt"})
     )
 
     def to_dict(self):
@@ -93,9 +93,7 @@ class HVScatterOptions:
                         tools=self.tools,
                         width=self.width,
                         xlabel=self.xlabel,
-                        xticks=self.xticks,
                         ylabel=self.ylabel,
-                        yticks=self.yticks,
                         fontsize=self.fontsize
                         )
         filtered_dict = {key: value for key, value in ret_dict.items() if value is not None}
