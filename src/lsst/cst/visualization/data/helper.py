@@ -90,10 +90,10 @@ def create_linked_plot_with_brushing(
     if columns is not None:
         axes = (data_display.create_axe(columns[0]),
                 data_display.create_axe(columns[1]))
-        hvalues = columns
+        hvalues = list(columns)
         columns = axes
     else:
-        hvalues = (data.index[0], data.index[1])
+        hvalues = [data.index[0], data.index[1]]
     _log.info("Creating Scatter")
     return data_display.show_scatter(
         columns=columns,
