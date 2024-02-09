@@ -74,7 +74,7 @@ class HoverSources(_InteractiveDisplay):
     def __init__(
         self, 
         image_display: ImageDisplay,
-        sources: Tuple[pd.series],
+        sources: Tuple[pd.Series],
         options=PointsOptions()
     ):
         super().__init__()
