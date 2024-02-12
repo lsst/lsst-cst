@@ -55,27 +55,29 @@ class HVScatterOptions:
         xlabel value.
     ylabel: `str`
         ylabel value.
-    fontsize: dict, optional = {"labels": "10pt", "title": "16pt"}
+    fontsize: dict, optional
+        dictionary selecting fontsize for different
+        elements on the plot
     """
     alpha: float = 1.0
     color: str = PlotOptionsDefault.marker_color
+    fontsize: dict[str, str] = field(default_factory=lambda: PlotOptionsDefault.font_size)
+    height: int = PlotOptionsDefault.height
     invert_xaxis: bool = False
     invert_yaxis: bool = False
-    height: int = PlotOptionsDefault.height
     marker: str = PlotOptionsDefault.marker
     size: int | str = PlotOptionsDefault.marker_size
-    toolbar: str = PlotOptionsDefault.toolbar_position
+    title: Optional[str] = None
+    toolbar_position: str = PlotOptionsDefault.toolbar_position
     tools: List = field(default_factory=list)
     width: int = PlotOptionsDefault.width
     xlabel: str = "X"
     ylabel: str = "Y"
-    fontsize: defaultdict = field(
-        default_factory=lambda: defaultdict(str, {"labels": "14pt", "title": "16pt"})
-    )
 
     def to_dict(self):
-        """Create and returns a dictionary from options, key is the
-        name of the parameter and value as value, with None value filtered.
+        """Create and returns a dictionary from class attributes,
+        where key is the name of the attribute and value its value.
+        Instance attributes with None value will not be included.
 
         Returns
         -------
@@ -89,6 +91,7 @@ class HVScatterOptions:
                         invert_yaxis=self.invert_yaxis,
                         marker=self.marker,
                         size=self.size,
+                        title=self.title,
                         toolbar=self.toolbar,
                         tools=self.tools,
                         width=self.width,
@@ -140,8 +143,9 @@ class DataShadeOptions:
     width: int = PlotOptionsDefault.width
 
     def to_dict(self):
-        """Create and returns a dictionary from options, key is the
-        name of the parameter and value as value, with None value filtered.
+        """Create and returns a dictionary from class attributes,
+        where key is the name of the attribute and value its value.
+        Instance attributes with None value will not be included.
 
         Returns
         -------
@@ -186,8 +190,9 @@ class FigureOptions:
     ylabel: str = "Y"
 
     def to_dict(self):
-        """Create and returns a dictionary from options, key is the
-        name of the parameter and value as value, with None value filtered.
+        """Create and returns a dictionary from class attributes,
+        where key is the name of the attribute and value its value.
+        Instance attributes with None value will not be included.
 
         Returns
         -------
@@ -225,8 +230,9 @@ class ScatterOptions:
     size: int = PlotOptionsDefault.marker_size
 
     def to_dict(self):
-        """Create and returns a dictionary from options, key is the
-        name of the parameter and value as value, with None value filtered.
+        """Create and returns a dictionary from class attributes,
+        where key is the name of the attribute and value its value.
+        Instance attributes with None value will not be included.
 
         Returns
         -------
@@ -272,8 +278,9 @@ class HistogramOptions:
     ylabel: str = 'Y'
 
     def to_dict(self):
-        """Create and returns a dictionary from options, key is the
-        name of the parameter and value as value, with None value filtered.
+        """Create and returns a dictionary from class attributes,
+        where key is the name of the attribute and value its value.
+        Instance attributes with None value will not be included.
 
         Returns
         -------

@@ -10,6 +10,7 @@ from typing import Dict, List
 import holoviews as hv
 import numpy as np
 from holoviews.operation.datashader import rasterize
+from lsst.cst.visualization.params import PlotOptionsDefault
 
 from lsst.cst.data.tools import (
     CalExpData,
@@ -120,16 +121,16 @@ class ImageOptions(Options):
     """
 
     cmap: str = "Greys_r"
-    height: int = 600
+    colorbar: bool = True
+    height: int = PlotOptionsDefault.height
+    padding: float = 0.01
+    fontsize: Dict[str, str] = field(default_factory=lambda: PlotOptionsDefault.font_size)
+    toolbar_position: str = "right"
+    show_grid: bool = True
+    tools: List[str] = field(default_factory=lambda: [])
     width: int = 700
     xaxis: str = "bottom"
     yaxis: str = "left"
-    padding: float = 0.01
-    font_size: Dict[str, str] = field(default_factory=lambda: {"title": "8pt"})
-    colorbar: bool = True
-    toolbar: str = "right"
-    show_grid: bool = True
-    tools: List[str] = field(default_factory=lambda: [])
 
     def to_dict(self):
         return dict(

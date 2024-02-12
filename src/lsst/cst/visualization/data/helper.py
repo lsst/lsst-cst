@@ -39,7 +39,7 @@ def create_skycoord_datashader_plot(
 
 
 def create_datashader_plot(
-    data: Union[ExposureData, pd.array],
+    data: Union[ExposureData, pd.DataFrame],
     columns: Optional[Tuple[str, str]] = None
 ) -> Scatter:
     if isinstance(data, pd.DataFrame):
@@ -71,7 +71,7 @@ def create_skycoord_linked_plot_with_brushing(
 
 
 def create_linked_plot_with_brushing(
-    data: Union[ExposureData, pd.array],
+    data: Union[ExposureData, pd.DataFrame],
     columns: Optional[Tuple[str, str]] = None,
     hovertool: HoverTool = None
 ) -> Scatter:

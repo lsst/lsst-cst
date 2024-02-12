@@ -19,6 +19,19 @@ def create_interactive_image(
 
     Parameters
     ----------
+    calexp: `lsst.afw.image._exposure.ExposureF``
+        Exposure data.
+    sources: `Tuple[pd.Series]`
+        Exposure data sources.
+    title: `str``
+        Plot title.
+    font_size: `int`
+
+    marker: `str`
+        Marker type. foe example:
+            circle, square, triangle, cross, x, diamond...
+    marker_color: `str`
+        Marker color for the sources.
 
     Returns
     -------
