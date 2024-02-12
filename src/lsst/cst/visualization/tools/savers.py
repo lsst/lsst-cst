@@ -9,6 +9,11 @@ from lsst.cst.visualization.image.interactors import _InteractiveDisplay
 __all__ = "HTMLSaver"
 
 
+def save_plot(plot: ):
+    """"""
+
+    
+
 class Saver(ABC):
     """Saver interface."""
 
@@ -54,8 +59,6 @@ class _PanelHtmlLayoutSaver(_ImageDisplaySaver):
 class HTMLSaver(Saver):
     """HTML plot saver"""
 
-    _extension = "html"
-
     def __init__(self, output_dir: str = os.path.expanduser("~")):
         super().__init__(output_dir)
 
@@ -67,7 +70,7 @@ class HTMLSaver(Saver):
         filename: `str`
             Name and path of the file where the image will be saved.
         """
-        output_file_base_name = f"{filename}.{HTMLSaver._extension}"
+        output_file_base_name = f"{filename}"
         output_file = os.path.join(self._output_dir, output_file_base_name)
         if isinstance(plot, ImageDisplay):
             saver = _HVHtmlImageDisplaySaver(plot)

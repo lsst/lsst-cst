@@ -108,7 +108,7 @@ class ImageOptions(Options):
         Position of the yaxis.
     padding: `float`
         space around the plot.
-    font_size: `dict`
+    fontsize: `dict`
         Font size for axis labels, titles, and legend.
     colorbar: `bool`
         adds a colorbar to the plot.
@@ -124,7 +124,7 @@ class ImageOptions(Options):
     colorbar: bool = True
     height: int = PlotOptionsDefault.height
     padding: float = 0.01
-    font_size: Dict[str, str] = field(default_factory=lambda: PlotOptionsDefault.font_size)
+    fontsize: Dict[str, str] = field(default_factory=lambda: PlotOptionsDefault.fontsize)
     toolbar_position: str = "right"
     show_grid: bool = True
     tools: List[str] = field(default_factory=lambda: [])
@@ -337,11 +337,11 @@ class ImageArrayDisplay(ImageDisplay):
 
     def show(self):
         assert self._img is not None
-        return self._img
+        return hv.Row(self._img)
 
     def rasterize(self):
         assert self._img is not None
-        return rasterize(self._img)
+        return hv.Row(rasterize(self._img))
 
     @property
     def image(self):

@@ -32,6 +32,7 @@ def create_interactive_image(
 
     Returns
     -------
+    
 
     """
     bounds = (0,

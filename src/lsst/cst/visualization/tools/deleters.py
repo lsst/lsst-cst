@@ -5,12 +5,24 @@ import gc
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 
+from typing import Any
 
 # image deleters
 
-def delete_plot(plot: Figure) -> None:
-    """"""
-    pass
+
+def delete_plot(plot: Any) -> None:
+    """Plot deleter function.
+
+    Parameters:
+    ----------
+    plot: 'Any'
+       Plot to be deleted. Nowadays this function will work
+       with any python object, but the plan is to specialized
+       for diferent plots and layouts.
+    """
+    del plot
+    import gc
+    gc.collect()
 
 
 def _remove_figure(fig: Figure) -> None:

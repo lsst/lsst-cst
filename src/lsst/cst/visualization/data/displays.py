@@ -61,7 +61,7 @@ class HVScatterOptions:
     """
     alpha: float = 1.0
     color: str = PlotOptionsDefault.marker_color
-    fontsize: dict[str, str] = field(default_factory=lambda: PlotOptionsDefault.font_size)
+    fontsize: dict[str, str] = field(default_factory=lambda: PlotOptionsDefault.fontsize)
     height: int = PlotOptionsDefault.height
     invert_xaxis: bool = False
     invert_yaxis: bool = False
@@ -185,7 +185,7 @@ class FigureOptions:
     ylabel: `str`, optional
         ylabel value.
     """
-    fontsize: dict[str, str] = field(default_factory=lambda: PlotOptionsDefault.font_size)
+    fontsize: dict[str, str] = field(default_factory=lambda: PlotOptionsDefault.fontsize)
     height: int = PlotOptionsDefault.height
     tools: List = field(default_factory=lambda:
                         ["pan,box_zoom,box_select,lasso_select,reset,help"])
@@ -431,7 +431,7 @@ class DataImageDisplay:
                 assert data_y in index, f"Selected data {data_y} for Y "\
                                         f"not available on exposure data"
             scatter = hv.Scatter(data, data_x, data_y).options(**options.to_dict())
-        return scatter
+        return hv.Row(scatter)
 
     def show_data_shade(
         self,
@@ -442,7 +442,7 @@ class DataImageDisplay:
         scatter = self.show_scatter(columns)
         scatter = dynspread(datashade(scatter, cmap=options.cmap))
         scatter.opts(**options.to_dict())
-        return scatter
+        return hv.Row(scatter)
 
     def show_histogram(self, field: 'str', options: HistogramOptions = HistogramOptions()):
         bin, count = self._exposure_data.histogram(field)
