@@ -92,7 +92,7 @@ class HVScatterOptions:
                         marker=self.marker,
                         size=self.size,
                         title=self.title,
-                        toolbar=self.toolbar,
+                        toolbar=self.toolbar_position,
                         tools=self.tools,
                         width=self.width,
                         xlabel=self.xlabel,
@@ -172,6 +172,8 @@ class FigureOptions:
 
     Parameters
     ----------
+    fontsize: dict[str, str], optional
+        Size of the diferent elements in the plot: title, xlabel, ylabel, ticks
     height: `int`, optional
         Height of the plot in pixels.
     tools: `List`, optional
@@ -183,8 +185,10 @@ class FigureOptions:
     ylabel: `str`, optional
         ylabel value.
     """
+    fontsize: dict[str, str] = field(default_factory=lambda: PlotOptionsDefault.font_size)
     height: int = PlotOptionsDefault.height
-    tools: List = field(default_factory=lambda: ["pan,box_zoom,box_select,lasso_select,reset,help"])
+    tools: List = field(default_factory=lambda:
+                        ["pan,box_zoom,box_select,lasso_select,reset,help"])
     width: int = PlotOptionsDefault.width
     xlabel: str = "X"
     ylabel: str = "Y"
@@ -199,7 +203,8 @@ class FigureOptions:
         options: `dict`
            Option key and values as dictionary.
         """
-        ret_dict = dict(height=self.height,
+        ret_dict = dict(fontsize=self.fontsize,
+                        height=self.height,
                         tools=self.tools,
                         width=self.width,
                         x_axis_label=self.xlabel,

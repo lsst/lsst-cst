@@ -10,7 +10,6 @@ def create_interactive_image(
     sources: Optional[Tuple[pd.Series]] = None,
     title: str = "Untitled",
     axes_label: Tuple[str, str] = ("X", "Y"),
-    font_size: int = 16,
     marker: str = 'circle',
     marker_color: str = 'orange'
 ):
@@ -19,16 +18,14 @@ def create_interactive_image(
 
     Parameters
     ----------
-    calexp: `lsst.afw.image._exposure.ExposureF``
+    calexp: `lsst.afw.image._exposure.ExposureF`
         Exposure data.
     sources: `Tuple[pd.Series]`
         Exposure data sources.
     title: `str``
         Plot title.
-    font_size: `int`
-
     marker: `str`
-        Marker type. foe example:
+        Marker type. for example:
             circle, square, triangle, cross, x, diamond...
     marker_color: `str`
         Marker color for the sources.

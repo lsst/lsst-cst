@@ -140,7 +140,7 @@ class ImageOptions(Options):
             xaxis=self.xaxis,
             yaxis=self.yaxis,
             padding=self.padding,
-            fontsize=self.font_size,
+            fontsize=self.fontsize,
             colorbar=self.colorbar,
             toolbar=self.toolbar_position,
             show_grid=self.show_grid,

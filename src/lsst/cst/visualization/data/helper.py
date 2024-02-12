@@ -34,6 +34,27 @@ def create_skycoord_datashader_plot(
     columns: Optional[Tuple[str, str]] = None,
     reduction: float = 1.0
 ):
+    """Create a datashader plot out of a skycoord object.
+    Object data will be retrieved using the TAP Service, and
+    any data column can be selected to be used as the
+    plot scatter data, if none selected 2 first columns will
+    be used. A reduction number is also accepted
+    to be able to reduce data if toomany rows in the select
+    are expected.
+
+    Parameters:
+    -----------
+    coord: `astropy.coordinates.SkyCoord`
+        Coordinates of the TAP data to look for.
+    columns: Tuple[str, str], optional
+        Columns from data that will be used to create the plot.
+    reduction: `float`, optional
+        Reduction to be applied to the data retrieves
+    Returns:
+    -------
+
+    
+    """
     data = _get_skycoord_data(coord, reduction)
     return create_datashader_plot(data, columns)
 
