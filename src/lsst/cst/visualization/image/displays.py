@@ -128,7 +128,7 @@ class ImageOptions(Options):
     toolbar_position: str = "right"
     show_grid: bool = True
     tools: List[str] = field(default_factory=lambda: [])
-    width: int = 700
+    width: int = PlotOptionsDefault.width
     xaxis: str = "bottom"
     yaxis: str = "left"
 
@@ -337,11 +337,12 @@ class ImageArrayDisplay(ImageDisplay):
 
     def show(self):
         assert self._img is not None
-        return hv.Row(self._img)
+        return hv.Layout(self._img).cols(1)
 
     def rasterize(self):
         assert self._img is not None
-        return hv.Row(rasterize(self._img))
+        img = hv.Layout([self._img]).cols(1)
+        return rasterize(img)	
 
     @property
     def image(self):
