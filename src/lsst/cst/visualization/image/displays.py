@@ -126,7 +126,7 @@ class ImageOptions(Options):
     padding: float = 0.01
     fontsize: Dict[str, str] = field(default_factory=lambda: PlotOptionsDefault.fontsize)
     toolbar_position: str = "right"
-    show_grid: bool = True
+    show_grid: bool = PlotOptionsDefault.show_grid
     tools: List[str] = field(default_factory=lambda: [])
     width: int = PlotOptionsDefault.width
     xaxis: str = "bottom"
@@ -321,6 +321,7 @@ class ImageArrayDisplay(ImageDisplay):
         self._image_transform = image_transform
 
     def render(self):
+        """"""
         if self._img is not None:
             return
         self._transformed_image = self._image_transform.transform(self._image)
@@ -342,7 +343,7 @@ class ImageArrayDisplay(ImageDisplay):
     def rasterize(self):
         assert self._img is not None
         img = hv.Layout([self._img]).cols(1)
-        return rasterize(img)	
+        return rasterize(img)
 
     @property
     def image(self):

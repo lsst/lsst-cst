@@ -14,5 +14,6 @@ class PlotOptionsDefault:
     marker = 'circle'
     marker_color = 'darkorange'
     marker_size = 5
+    show_grid = True
     toolbar_position = 'above'
     width = 700

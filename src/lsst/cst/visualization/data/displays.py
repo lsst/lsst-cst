@@ -13,7 +13,6 @@ from lsst.cst.visualization.params import PlotOptionsDefault
 from lsst.cst.data.tools import ExposureData
 from typing import List, Optional, Union, Tuple
 from collections.abc import Sequence
-from collections import defaultdict
 
 _log = logging.getLogger(__name__)
 
@@ -431,19 +430,21 @@ class DataImageDisplay:
                 assert data_y in index, f"Selected data {data_y} for Y "\
                                         f"not available on exposure data"
             scatter = hv.Scatter(data, data_x, data_y).options(**options.to_dict())
-        return hv.Row(scatter)
+        return hv.Layout([scatter]).cols(1)
 
     def show_data_shade(
         self,
         columns: Optional[Tuple[hv.Dimension | str, hv.Dimension | str]] = None,
         options: DataShadeOptions = DataShadeOptions()
     ):
+        """"""
         _log.debug("Applying datashade to data image")
         scatter = self.show_scatter(columns)
         scatter = dynspread(datashade(scatter, cmap=options.cmap))
         scatter.opts(**options.to_dict())
-        return hv.Row(scatter)
+        return hv.Layout([scatter]).cols(1)
 
     def show_histogram(self, field: 'str', options: HistogramOptions = HistogramOptions()):
+        """"""
         bin, count = self._exposure_data.histogram(field)
         return hv.Histogram((bin, count)).opts(**options.to_dict())

@@ -5,14 +5,19 @@ import holoviews as hv
 
 from lsst.cst.visualization.image.displays import ImageDisplay, get_extension
 from lsst.cst.visualization.image.interactors import _InteractiveDisplay
+from panel.layout.base import Panel
 
 __all__ = "HTMLSaver"
 
 
-def save_plot(plot: ):
+def save_plot(plot: Panel, filename: str):
     """"""
+    if isinstance(plot, Panel):
+        plot.save(filename)
+    else:
+        raise Exception(f"Unable to save plot type:"
+                        f"{type(plot)} using this function")
 
-    
 
 class Saver(ABC):
     """Saver interface."""
