@@ -124,7 +124,7 @@ class ImageOptions(Options):
     colorbar: bool = True
     height: int = PlotOptionsDefault.height
     padding: float = 0.01
-    fontsize: Dict[str, str] = field(default_factory=lambda: PlotOptionsDefault.font_size)
+    font_size: Dict[str, str] = field(default_factory=lambda: PlotOptionsDefault.font_size)
     toolbar_position: str = "right"
     show_grid: bool = True
     tools: List[str] = field(default_factory=lambda: [])
@@ -142,7 +142,7 @@ class ImageOptions(Options):
             padding=self.padding,
             fontsize=self.font_size,
             colorbar=self.colorbar,
-            toolbar=self.toolbar,
+            toolbar=self.toolbar_position,
             show_grid=self.show_grid,
             tools=self.tools,
         )
