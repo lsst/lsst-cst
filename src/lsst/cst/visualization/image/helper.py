@@ -1,5 +1,5 @@
 import pandas as pd
-
+import holoviews as hv
 from typing import Tuple, Optional
 from lsst.afw.image._exposure import ExposureF
 from lsst.cst.visualization.image import CalExpImageDisplay, HoverSources, ImageDisplay
@@ -32,7 +32,7 @@ def create_interactive_image(
 
     Returns
     -------
-    
+
 
     """
     bounds = (0,
@@ -50,4 +50,5 @@ def create_interactive_image(
     if sources is None:
         return cal_exp_plot.show()
     h_sources = HoverSources(cal_exp_plot, sources, source_options)
-    return h_sources.show()
+    img = h_sources.show()
+    return hv.Layout(img).cols(1)

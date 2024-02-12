@@ -1,6 +1,6 @@
 import pandas as pd
 import logging
-
+import holoviews as hv
 from astropy.coordinates import SkyCoord
 from holoviews.element.chart import Scatter
 from lsst.cst.data.tools import QueryTAPExposureData, ExposureData
@@ -94,11 +94,12 @@ def create_datashader_plot(
     else:
         hvalues = [data.index[0], data.index[1]]
         columns = axes
-    return data_display.show_data_shade(
+    data_shade = data_display.show_data_shade(
         columns,
         DataShadeOptions(
             xlabel=hvalues[0],
             ylabel=hvalues[1],))
+    return hv.Layout(data_shade).cols(1)
 
 
 def create_skycoord_linked_plot_with_brushing(
@@ -164,7 +165,7 @@ def create_linked_plot_with_brushing(
     else:
         hvalues = [data.index[0], data.index[1]]
     _log.info("Creating Scatter")
-    return data_display.show_scatter(
+    scatter = data_display.show_scatter(
         columns=columns,
         options=HVScatterOptions(
             tools=[] if hovertool is None else [hovertool],
@@ -172,3 +173,4 @@ def create_linked_plot_with_brushing(
             xlabel=hvalues[0],
             ylabel=hvalues[1],
         )).hist(dimension=hvalues)
+    return hv.Layout(scatter).cols(1)
