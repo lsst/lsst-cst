@@ -494,17 +494,22 @@ class ExposureData:
         return str(self.data)
 
 
-class QueryExposureData(ABC):
+class Query(ABC):
 
     def __init__(self):
         super().__init__()
 
+    @property
     @abstractmethod
     def query(self):
+        raise NotImplementedError()
+
+    @abstractmethod
+    def post_query_actions(self, data: pd.DataFrame):
         pass
 
 
-class QueryTAPExposureData:
+class QueryExposureData(Query):
     _QUERY = "SELECT coord_ra, coord_dec, objectId, r_extendedness, "\
         "scisql_nanojanskyToAbMag(g_cModelFlux) AS mag_g_cModel, "\
         "scisql_nanojanskyToAbMag(r_cModelFlux) AS mag_r_cModel, "\
@@ -517,21 +522,36 @@ class QueryTAPExposureData:
         "AND r_extendedness IS NOT NULL"
 
     def __init__(self, ra: np.float64, dec: np.float64, radius: np.float64):
+        super().__init__(self)
         self._ra = ra
         self._dec = dec
         self._radius = radius
-        self._query = QueryTAPExposureData._QUERY.format(ra, dec, radius)
-        self._data = pd.DataFrame()
+        self._query = QueryExposureData._QUERY.format(ra, dec, radius)
         self._data_handler = StandardDataHandler()
-
-    def _set_data_handler(self, data_handler):
-        self._data_handler = data_handler
 
     @classmethod
     def from_sky_coord(cls, coord: SkyCoord, radius: np.float64):
         """
         """
         return cls(coord.ra.value, coord.dec.value, radius)
+
+    @property
+    def query(self):
+        """"""
+        return self._query
+
+    @abstractmethod
+    def post_query_actions(self, data: pd.DataFrame):
+        pass
+
+    def _set_data_handler(self, data_handler):
+        self._data_handler = data_handler
+
+
+class TAPService:
+
+    def __init__(self):
+        self._data = pd.DataFrame()
 
     def __len__(self):
         return len(self._data)
@@ -555,6 +575,7 @@ class QueryTAPExposureData:
         job = service.submit_job(self._query)
         job.run()
         job.wait(phases=['COMPLETED', 'ERROR'])
+        job.raise_if_error()
         self._check_status(job.phase)
         _log.info("Converting result to Dataframe")
         return job.fetch_result().to_table().to_pandas()
