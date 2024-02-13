@@ -1,4 +1,4 @@
-# Default parameters used in the Bokeh plot
+"""data science default parameters for plots."""
 
 __all__ = ["PlotOptionsDefault"]
 

@@ -1,4 +1,4 @@
-"""Plot science utils."""
+"""data science data display utilities."""
 
 import gc
 import logging
@@ -321,7 +321,6 @@ class ImageArrayDisplay(ImageDisplay):
         self._image_transform = image_transform
 
     def render(self):
-        """"""
         if self._img is not None:
             return
         self._transformed_image = self._image_transform.transform(self._image)
@@ -338,12 +337,11 @@ class ImageArrayDisplay(ImageDisplay):
 
     def show(self):
         assert self._img is not None
-        return hv.Layout(self._img).cols(1)
+        return self._img
 
     def rasterize(self):
         assert self._img is not None
-        img = hv.Layout([self._img]).cols(1)
-        return rasterize(img)
+        return rasterize(self._img)
 
     @property
     def image(self):

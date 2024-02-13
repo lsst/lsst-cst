@@ -1,11 +1,16 @@
-"""data science format utils"""
+"""data science format utils."""
 import numpy as np
 import pandas as pd
 
 from lsst.cst.data.tools import CalExpId
 
 
-__all__ = ["data_id_to_str", "ids_to_str"]
+__all__ = [
+    "data_id_to_str",
+    "ids_to_str",
+    "shuffle_dataframe",
+    "sort_dataframe"
+]
 
 
 def ids_to_str(data_ids: np.ndarray) -> str:

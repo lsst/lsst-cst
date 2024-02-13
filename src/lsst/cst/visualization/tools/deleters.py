@@ -1,17 +1,18 @@
-"""General plot utils"""
+"""data science delete plot tools."""
 
 import gc
-
+import holoviews as hv
 import matplotlib.pyplot as plt
-from matplotlib.figure import Figure
+from plt.figure import Figure
 
-from typing import Any
 
 # image deleters
 
+__all__ = ["delete_plot"]
 
-def delete_plot(plot: Any) -> None:
-    """Plot deleter function.
+
+def delete_plot(plot: hv.Layout) -> None:
+    """Delete selected plot.
 
     Parameters:
     ----------
@@ -25,17 +26,13 @@ def delete_plot(plot: Any) -> None:
     gc.collect()
 
 
-def _remove_figure(fig: Figure) -> None:
+def _remove_figure(fig: Figure):
     """Remove a figure to reduce memory footprint.
 
     Parameters
     ----------
     fig : `matplotlib.figure.Figure`
         Figure to be removed.
-
-    Returns
-    -------
-    None
     """
     # Get the axes and clear their images
     for ax in fig.get_axes():

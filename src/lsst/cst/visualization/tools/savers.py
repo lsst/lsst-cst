@@ -1,3 +1,4 @@
+"""data science saver plot tools."""
 import os
 from abc import ABC, abstractmethod
 
@@ -7,11 +8,20 @@ from lsst.cst.visualization.image.displays import ImageDisplay, get_extension
 from lsst.cst.visualization.image.interactors import _InteractiveDisplay
 from holoviews.core.layout import Layout
 
-__all__ = "HTMLSaver"
+__all__ = ["save_plot_as_html"]
 
 
-def save_plot(plot: Layout, filename: str):
-    """"""
+def save_plot_as_html(plot: Layout, filename: str):
+    """Function to save a plot created with helper functions
+     as an html file 
+     
+    Parameters
+    ----------
+    plot: `hv.Layout``
+        Plot to be saved.
+    filename: `str`
+        Name of the file where plot will be saved, including path and extension.
+    """
     if isinstance(plot, Layout):
         hv.save(plot, filename)
     else:

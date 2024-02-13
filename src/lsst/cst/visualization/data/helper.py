@@ -1,3 +1,4 @@
+"""data science helper functions for data plots."""
 import pandas as pd
 import logging
 import holoviews as hv
@@ -42,19 +43,19 @@ def create_skycoord_datashader_plot(
     A reduction number is also accepted to be able to reduce
     data if too many rows in the select are expected.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     coord: `astropy.coordinates.SkyCoord`
         Coordinates of the TAP data to look for.
     columns: Tuple[str, str], optional
         Columns from data that will be used to create the plot.
     reduction: `float`, optional
-        Reduction to be applied to the data retrieves
-    Returns:
-    -------
-    plot: `holoviews.core.layout.AdjointLayout`
-        Scatter image with histogram information on both axes.    
+        Reduction to be applied to the data retrieves.
 
+    Returns
+    -------
+    plot: `hv.Layout`
+        holoviews layout with the scatter image inside of it.
     """
     data = _get_skycoord_data(coord, reduction)
     return create_datashader_plot(data, columns)
@@ -69,19 +70,19 @@ def create_datashader_plot(
     plot scatter data, if none column is selected, then two
     first columns will be used.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     coord: `astropy.coordinates.SkyCoord`
         Coordinates of the TAP data to look for.
     columns: Tuple[str, str], optional
         Columns from data that will be used to create the plot.
     reduction: `float`, optional
         Reduction to be applied to the data retrieves
-    Returns:
-    -------
-    plot: `holoviews.core.layout.AdjointLayout`
-        Scatter image with histogram information on both axes.
 
+    Returns
+    -------
+    plot: `hv.Layout`
+        holoviews layout with the scatter image inside of it.
     """
     if isinstance(data, pd.DataFrame):
         data = ExposureData(data)
@@ -108,8 +109,9 @@ def create_skycoord_linked_plot_with_brushing(
     reduction: float = 1.0,
     hovertool: HoverTool = None
 ):
-    """Create a linked plot with brushing from out of a SkyCoord
-    coordinates. The plot will be created the first two colums from the df
+    """Create a linked plot with brushing from out of
+    a SkyCoord coordinates. The plot will be created
+    the first two colums from the df
 
     Parameters
     ----------
@@ -121,10 +123,10 @@ def create_skycoord_linked_plot_with_brushing(
         Hovertool to be used when hovering the mouse
         over the plot points.
 
-    Return
-    ------
-    plot: `Scatter`
-        Holoviews created scatter plot with histograms.
+    Returns
+    -------
+    plot: `hv.Layout`
+        Holoviews layout containing scatter plot with histograms.
     """
     data = _get_skycoord_data(coord, reduction)
     return create_linked_plot_with_brushing(data, columns, hovertool)
@@ -149,10 +151,10 @@ def create_linked_plot_with_brushing(
         Hovertool to be used when hovering the mouse
         over the plot points.
 
-    Return
-    ------
-    plot: `Scatter`
-        Holoviews created scatter plot with histograms.
+    Returns
+    -------
+    plot: `hv.Layout`
+        Holoviews layout containing scatter plot with histograms.
     """
     if isinstance(data, pd.DataFrame):
         data = ExposureData(data)

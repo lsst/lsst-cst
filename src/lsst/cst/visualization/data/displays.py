@@ -1,4 +1,4 @@
-"""lsst.cst data plot display"""
+"""data science plot display utilities."""
 
 import holoviews as hv
 import logging
@@ -304,7 +304,16 @@ class HistogramOptions:
 
 
 class DataFigure:
-    """
+    """Figure class used to add different Scatter plots in it.
+
+    Parameters
+    ----------
+    figure_id: `str``
+        Figure string identifier.
+    data: `ExposureData`
+        Data used to create plots inside the figure.
+    options: `FigureOptions``
+        Figure options.
     """
     def __init__(self,
                  figure_id: str,
@@ -321,6 +330,26 @@ class DataFigure:
                     filter: None | Sequence[bool] = None,
                     options: ScatterOptions = ScatterOptions()
                     ):
+        """Add scatter plot to the figure.
+
+        Parameters
+        ----------
+        x_data: `str`
+            Identifier of the column from
+            data to get as plot X values.
+        y_data: `str`
+            Identifier of the column from data
+            to get as plot Y values.
+        hover_tool: `HoverTool`, optional
+            Hover tool to show when mouse is over data.
+        filter: `Sequence`, optional
+            Sequence with boolean values sized as
+            the figure data, meaning the filter
+            applied to the data, only rows with
+            True will be applied.
+        options: `ScatterOptions`
+            Scatter plot options.
+        """
         index = self._exposure_data.index
         assert x_data in index, f"Selected data {x_data}"\
                                 f"not available on exposure data"
@@ -354,12 +383,35 @@ class DataFigure:
 
 
 class DataImageDisplay:
+    """Scatter plots and figures creation management.
+
+    Parameters
+    ----------
+    data: `ExposureData`
+        Data used to create plots.
+    """
 
     def __init__(self, data: ExposureData):
         self._exposure_data = data
         self._figures = {}  # type: dict[str, DataFigure]
 
     def get_figure(self, figure_identifier: str):
+        """Returns previously created figure
+           identified by the figure_identifier.
+
+        Parameters
+        ----------
+        figure_identifier: `str`
+            Unique identifier for a figure.
+
+        Returns
+        -------
+        figure: `DataFigure`
+            Figure identified by figure_identifier string.
+        Raises
+        ------
+        AssertionError: Figure id is not found
+        """
         figure = self._figures.get(figure_identifier, None)
         assert figure is not None, f"Figure {figure_identifier} doesnt exists"
         return figure
@@ -369,6 +421,24 @@ class DataImageDisplay:
         identifier: str,
         figure_options: FigureOptions = FigureOptions()
     ):
+        """Creates a new figure and save the reference for future use.
+
+        Parameters
+        ----------
+        identifier: `str`
+            Figure identifier, used to use it as figure reference.
+        figure_options: `FigureOptions`, optional
+            Created figure options.
+
+        Returns
+        -------
+        figure: `DataFigure`
+            Data figure instance class.
+
+        Raises
+        ------
+        AssertionError: Identifier already taken by another figure.
+        """
         new_figure = DataFigure(identifier, self._exposure_data, figure_options)
         assert identifier not in self._figures.keys(), \
             f"Figure {identifier} already exists"
@@ -380,6 +450,8 @@ class DataImageDisplay:
         layout: List[Union[str, List[...]]],
         new_layout: List[Union[figure, List[...]]]
     ):
+        # Helper function to exchange list of figure identifier
+        # and exchange it for its equivalent created figure.
         for item in layout:
             if isinstance(item, list):
                 aux_layout = []
@@ -390,9 +462,20 @@ class DataImageDisplay:
 
     def show(
         self,
-        layout: List[Union[str, List[...]]] = [],
+        layout: List[Union[str, List[...]]],
         tools_position: str = "above"
     ):
+        """Show selected figures already created and configured.
+
+        Parameters
+        ----------
+        layout: `list`
+            List containing the figures to be shown.
+
+        tools_position: `str`
+            Selected position for the toolbar.
+
+        """
         new_layout = []
         self._exchange_figures(layout, new_layout)
         show(gridplot(new_layout), tools_position=tools_position, notebook_handle=True)
@@ -400,10 +483,28 @@ class DataImageDisplay:
     def create_axe(
         self,
         data_identifier: str,
-        label: str = None,
-        range: Tuple[Optional[float], Optional[float]] = (None, None),
+        label: Optional[str] = None,
+        range: Optional[Tuple[float, float]] = None,
         unit: str = "N/A"
     ):
+        """Create Axe information to be used on scatter plots.
+
+        Parameters
+        ----------
+        data_identifier: `str`
+            Column indentifier from data used to draw the plot.
+        label: `str`, optional
+            Axe label.
+        range: `Tuple[float, float]`, optional
+            Axe range.
+        unit: `str`, optional
+            Axe units.
+
+        Returns
+        -------
+        axe_information: `hv.Dimension`
+            Axe information to be used in a scatter plot.
+        """
         if label is None:
             label = data_identifier
         index = self._exposure_data.index
@@ -416,6 +517,22 @@ class DataImageDisplay:
         columns: Optional[Tuple[hv.Dimension | str, hv.Dimension | str]] = None,
         options: ScatterOptions = ScatterOptions()
     ):
+        """Creates scatter plot using selected columns from data.
+
+        Parameters
+        ----------
+        columns: `Tuple[hv.Dimension | str, hv.Dimension | str]`, optional
+            Data columns to create the scatter plot, if non columns are passed
+            the two first columns from data will be used.
+
+        options: ScatterOptions, optional
+            Scatter plot options.
+
+        Returns
+        -------
+        plot: `hv.Scatter`
+            Scatter plot.
+        """
         data = self._exposure_data.data
         if columns is None:
             scatter = hv.Scatter(data).options(**options.to_dict())
@@ -437,14 +554,43 @@ class DataImageDisplay:
         columns: Optional[Tuple[hv.Dimension | str, hv.Dimension | str]] = None,
         options: DataShadeOptions = DataShadeOptions()
     ):
-        """"""
-        _log.debug("Applying datashade to data image")
+        """Creates datashader plot using selected columns from data.
+
+        Parameters
+        ----------
+        columns: `Tuple[hv.Dimension | str, hv.Dimension | str]`, optional
+            Data columns selected to create the datashader plot,
+            if non columns are passed the two first columns from 
+            data will be used.
+
+        options: ScatterOptions, optional
+            Scatter plot options.
+
+        Returns
+        -------
+        plot: `holoviews.core.spaces.DynamicMap`
+            Datashader plot.
+        """
+        _log.debug("Applying datashade to data image.")
         scatter = self.show_scatter(columns)
         scatter = dynspread(datashade(scatter, cmap=options.cmap))
         scatter.opts(**options.to_dict())
         return scatter
 
     def show_histogram(self, field: 'str', options: HistogramOptions = HistogramOptions()):
-        """"""
+        """Creates histogram plot using selected columns from data.
+
+        Parameters
+        ----------
+        field: `str`
+            Data column selected to create the histogram plot.
+        options: HistogramOptions, optional
+            Histogram plot options.
+
+        Returns
+        -------
+        plot: `hv.Histogram`
+            Histogram plot.
+        """
         bin, count = self._exposure_data.histogram(field)
         return hv.Histogram((bin, count)).opts(**options.to_dict())

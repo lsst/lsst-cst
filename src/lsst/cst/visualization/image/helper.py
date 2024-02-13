@@ -1,3 +1,4 @@
+"""data science helper functions for image plots."""
 import pandas as pd
 import holoviews as hv
 from typing import Tuple, Optional

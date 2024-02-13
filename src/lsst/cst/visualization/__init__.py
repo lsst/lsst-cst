@@ -1,4 +1,4 @@
-"""Visualization utils."""
+"""data science visualization utilities."""
 from .image import (
     BoxInteract,
     CalExpImageDisplay,
