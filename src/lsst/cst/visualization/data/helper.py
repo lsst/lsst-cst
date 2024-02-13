@@ -100,7 +100,7 @@ def create_datashader_plot(
         DataShadeOptions(
             xlabel=hvalues[0],
             ylabel=hvalues[1],))
-    return hv.Layout(data_shade).cols(1)
+    return data_shade
 
 
 def create_skycoord_linked_plot_with_brushing(
