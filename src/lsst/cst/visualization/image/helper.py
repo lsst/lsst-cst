@@ -51,4 +51,4 @@ def create_interactive_image(
         return cal_exp_plot.show()
     h_sources = HoverSources(cal_exp_plot, sources, source_options)
     img = h_sources.show()
-    return hv.Layout(img).cols(1)
+    return hv.Layout(img)

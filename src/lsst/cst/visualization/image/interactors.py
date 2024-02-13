@@ -102,7 +102,7 @@ class HoverSources(_InteractiveDisplay):
         self._img = hv.Points(coords).opts(
             **self._options.to_dict(), tools=[self._hover_tool]
         )
-        return pn.Row(self._image_display.rasterize() * self._img)
+        return self._image_display.rasterize() * self._img
 
     def layout(self):
         raise NotImplementedError()
@@ -163,7 +163,7 @@ class BoxInteract(_InteractiveDisplay):
             * dynamic_map
         )
         layout = pn.Row(interactive_image_display, self._text_area_input)
-        return layout
+        return layout 
 
 
 @dataclass
