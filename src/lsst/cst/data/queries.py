@@ -93,7 +93,7 @@ class DataWrapper:
         return DataWrapper(data)
 
     def handle_data(self, handler: DataHandler):
-        new_data = handler.modify_queried_data(self._data)
+        new_data = handler.handle_data(self._data)
         return DataWrapper(new_data)
 
     def reduce_data(self, frac: float = 1.0):
@@ -160,7 +160,7 @@ class QueryExposureData(Query):
         "AND r_extendedness IS NOT NULL"
 
     def __init__(self, ra: np.float64, dec: np.float64, radius: np.float64):
-        super().__init__(self)
+        super().__init__()
         self._ra = ra
         self._dec = dec
         self._radius = radius
