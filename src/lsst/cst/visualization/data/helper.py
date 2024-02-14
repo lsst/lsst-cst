@@ -4,7 +4,7 @@ import logging
 import holoviews as hv
 from astropy.coordinates import SkyCoord
 from holoviews.element.chart import Scatter
-from lsst.cst.data.tools import QueryTAPExposureData, ExposureData
+from lsst.cst.data.queries import TAPService, DataWrapper, QueryExposureData
 from lsst.cst.visualization.data.displays import (
     DataImageDisplay,
     HoverTool,
@@ -22,9 +22,10 @@ def _get_skycoord_data(coord: SkyCoord, reduction: float = 1.0):
     assert 0.0 < reduction < 1.0, \
         "Select a valid reduction value between 0 and 1"
     _log.info("Fetching data")
-    tap_exposure_data = QueryTAPExposureData.from_sky_coord(coord, 1.0)
-    tap_exposure_data.fetch()
-    data = tap_exposure_data.data
+    tap_exposure_data = TAPService()
+    query = QueryExposureData.from_sky_coord(coord, 1.0)
+    tap_exposure_data.query = query
+    data = tap_exposure_data.fetch()
     _log.info("Reducing data")
     data = data.reduce_data(reduction)
     return data
@@ -62,7 +63,7 @@ def create_skycoord_datashader_plot(
 
 
 def create_datashader_plot(
-    data: Union[ExposureData, pd.DataFrame],
+    data: Union[DataWrapper, pd.DataFrame],
     columns: Optional[Tuple[str, str]] = None
 ) -> Scatter:
     """Create a datashader plot out of a pd.DataFrame, note
@@ -85,7 +86,7 @@ def create_datashader_plot(
         holoviews layout with the scatter image inside of it.
     """
     if isinstance(data, pd.DataFrame):
-        data = ExposureData(data)
+        data = DataWrapper(data)
     data_display = DataImageDisplay(data)
     if columns is not None:
         axes = (data_display.create_axe(columns[0]),
@@ -133,7 +134,7 @@ def create_skycoord_linked_plot_with_brushing(
 
 
 def create_linked_plot_with_brushing(
-    data: Union[ExposureData, pd.DataFrame],
+    data: Union[DataWrapper, pd.DataFrame],
     columns: Optional[Tuple[str, str]] = None,
     hovertool: HoverTool = None
 ) -> Scatter:
@@ -157,7 +158,7 @@ def create_linked_plot_with_brushing(
         Holoviews layout containing scatter plot with histograms.
     """
     if isinstance(data, pd.DataFrame):
-        data = ExposureData(data)
+        data = DataWrapper(data)
     data_display = DataImageDisplay(data)
     if columns is not None:
         axes = (data_display.create_axe(columns[0]),

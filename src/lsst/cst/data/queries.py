@@ -9,10 +9,11 @@ from lsst.rsp import get_tap_service
 
 _log = logging.getLogger(__name__)
 
+__all__ = ["TAPService", "DataWrapper"]
+
 
 class DataHandler(ABC):
-    """Interface that integrate actions to be done
-    after data has been queried.
+    """
     """
     def __init__(self):
         super().__init__()
@@ -51,8 +52,8 @@ class ExposureDataHandler():
         return data
 
 
-class QueriedData:
-    """Wrapper of an exposure data information.
+class DataWrapper:
+    """Wrapper .
 
     Parameters
     ----------
@@ -75,7 +76,7 @@ class QueriedData:
     @classmethod
     def fromFile(cls, file_path: str):
         loaded_df = pd.read_csv(file_path)
-        return QueriedData(loaded_df)
+        return DataWrapper(loaded_df)
 
     def get_column_data_source(self):
         if self._column_data_source is None:
@@ -89,17 +90,17 @@ class QueriedData:
         assert operator in operators.values(), f"Non valid operator {operator}"
 
         data = self.data[operators[operator](self.data[column_name], condition)]
-        return QueriedData(data)
+        return DataWrapper(data)
 
     def handle_data(self, handler: DataHandler):
         new_data = handler.modify_queried_data(self._data)
-        return QueriedData(new_data)
+        return DataWrapper(new_data)
 
     def reduce_data(self, frac: float = 1.0):
         if frac == 1.0:
             return self
         data = self._data.sample(frac=frac, axis='index')
-        return QueriedData(data)
+        return DataWrapper(data)
 
     def histogram(self, field: str):
         return np.histogram(self._data[field], bins='fd')
@@ -108,7 +109,7 @@ class QueriedData:
         if value in self.index:
             return self.data[value]
         condition = value
-        return QueriedData(self.data[condition])
+        return DataWrapper(self.data[condition])
 
     def __setitem__(self, index, value):
         self.data[index] = value
@@ -174,7 +175,6 @@ class QueryExposureData(Query):
 
     @property
     def query(self):
-        """"""
         return self._query
 
     def post_query_actions(self, data: pd.DataFrame):
@@ -182,6 +182,30 @@ class QueryExposureData(Query):
 
     def _set_data_handler(self, data_handler):
         self._data_handler = data_handler
+
+    data_handler = property(None, _set_data_handler, None, None)
+
+
+class RaDecCoordinatesToTractPatch(Query):
+
+    _QUERY = "SELECT coadd.lsst_tract, coadd.lsst_patch, "\
+             "DISTANCE(POINT('ICRS GEOCENTER',{},{}), "\
+             "POINT('ICRS GEOCENTER',coadd.s_ra, coadd.s_dec)) as distance "\
+             "FROM dp02_dc2_catalogs.CoaddPatches as coadd "\
+             "ORDER BY distance LIMIT {}"
+
+    def __init__(self, ra: float, dec: float, limit: int = 1):
+        self._ra = ra
+        self._dec = dec
+        self._limit = limit
+        self._query = RaDecCoordinatesToTractPatch._QUERY.format(ra, dec, limit)
+
+    @property
+    def query(self):
+        return self._query
+
+    def post_query_actions(self, data: pd.DataFrame):
+        return data
 
 
 class TAPService:
@@ -211,7 +235,7 @@ class TAPService:
         """
         data = self._launch_tap_fetch()
         data = self._query.post_query_actions(data)
-        return QueriedData(data)
+        return DataWrapper(data)
 
     def _launch_tap_fetch(self):
         # Helper function to launch tap query

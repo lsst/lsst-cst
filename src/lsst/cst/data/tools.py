@@ -6,6 +6,7 @@ from enum import Enum
 
 import numpy as np
 from astropy.visualization import AsinhStretch, ZScaleInterval
+from lsst.cst.data.queries import RaDecCoordinatesToTractPatch, TAPService
 
 
 __all__ = [
@@ -16,6 +17,7 @@ __all__ = [
     "Band",
     "CalExpDataFactory",
     "ButlerCalExpDataFactory",
+    "ra_dec_to_tract_patch"
 ]
 
 _log = logging.getLogger(__name__)
@@ -383,3 +385,13 @@ class StandardImageTransform(ImageTransform):
         """
         transform = AsinhStretch() + ZScaleInterval()
         return transform(image_array)
+
+
+def ra_dec_to_tract_patch(ra: float, dec: float):
+    """
+    """
+    tap_exposure_data = TAPService()
+    query = RaDecCoordinatesToTractPatch
+    tap_exposure_data.query = query
+    data = tap_exposure_data.fetch()
+    return data._data
