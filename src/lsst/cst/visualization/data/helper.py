@@ -1,7 +1,8 @@
 """data science helper functions for data plots."""
 import pandas as pd
 import logging
-import holoviews as hv
+import panel as pn
+
 from astropy.coordinates import SkyCoord
 from holoviews.element.chart import Scatter
 from lsst.cst.data.queries import TAPService, DataWrapper, QueryExposureData
@@ -101,7 +102,6 @@ def create_datashader_plot(
         DataShadeOptions(
             xlabel=hvalues[0],
             ylabel=hvalues[1],))
-    import panel as pn
     return pn.Row(data_shade)
 
 
@@ -177,5 +177,4 @@ def create_linked_plot_with_brushing(
             xlabel=hvalues[0],
             ylabel=hvalues[1],
         )).hist(dimension=hvalues)
-    import panel as pn
     return pn.Row(scatter)

@@ -1,6 +1,6 @@
 """data science helper functions for image plots."""
 import pandas as pd
-import holoviews as hv
+import panel as pn
 from typing import Tuple, Optional
 from lsst.afw.image._exposure import ExposureF
 from lsst.cst.visualization.image import CalExpImageDisplay, HoverSources, ImageDisplay
@@ -52,16 +52,4 @@ def create_interactive_image(
         return cal_exp_plot.show()
     h_sources = HoverSources(cal_exp_plot, sources, source_options)
     img = h_sources.show()
-    #layout = hv.Layout(img)
-    #layout_with_fig_display = layout.map(lambda item: item.opts(display='fig'))
-
-    import panel as pn
-
-    # Wrap the Bokeh plot into a Panel
-    panel = pn.Row(img)
-
-    # Display the Panel
-    return panel
-    # Arrange the elements in a single column layout
-    #layout_with_fig_display.cols(1)
-    #return hv.Layout(img).cols(1).opts(display='fig')
+    return pn.Row(img)

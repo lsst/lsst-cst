@@ -6,6 +6,7 @@ from abc import ABC, abstractmethod
 from astropy.coordinates import SkyCoord
 from bokeh.models import ColumnDataSource
 from lsst.rsp import get_tap_service
+from typing import Optional
 
 _log = logging.getLogger(__name__)
 
@@ -210,7 +211,7 @@ class RaDecCoordinatesToTractPatch(Query):
 
 class TAPService:
 
-    def __init__(self, query: Optional[str]: None):
+    def __init__(self, query: Optional[str] = None):
         self._query = query  # type: Optional[Query]
 
     def has_data(self):
