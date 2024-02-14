@@ -10,7 +10,7 @@ from bokeh.plotting import figure, gridplot
 from holoviews.operation.datashader import datashade, dynspread
 from dataclasses import dataclass, field
 from lsst.cst.visualization.params import PlotOptionsDefault
-from lsst.cst.data.query import DataWrapper
+from lsst.cst.data.queries import DataWrapper
 from typing import List, Optional, Union, Tuple
 from collections.abc import Sequence
 
@@ -310,7 +310,7 @@ class DataFigure:
     ----------
     figure_id: `str``
         Figure string identifier.
-    data: `ExposureData`
+    data: `DataWrapper`
         Data used to create plots inside the figure.
     options: `FigureOptions``
         Figure options.
@@ -387,7 +387,7 @@ class DataImageDisplay:
 
     Parameters
     ----------
-    data: `ExposureData`
+    data: `DataWrapper`
         Data used to create plots.
     """
 
