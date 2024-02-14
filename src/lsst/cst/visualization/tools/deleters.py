@@ -3,7 +3,8 @@
 import gc
 import holoviews as hv
 import matplotlib.pyplot as plt
-from plt.figure import Figure
+
+from matplotlib.figure import Figure
 
 
 # image deleters
