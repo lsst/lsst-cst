@@ -101,7 +101,8 @@ def create_datashader_plot(
         DataShadeOptions(
             xlabel=hvalues[0],
             ylabel=hvalues[1],))
-    return data_shade
+    import panel as pn
+    return pn.Row(data_shade)
 
 
 def create_skycoord_linked_plot_with_brushing(
@@ -176,4 +177,5 @@ def create_linked_plot_with_brushing(
             xlabel=hvalues[0],
             ylabel=hvalues[1],
         )).hist(dimension=hvalues)
-    return hv.Layout(scatter).cols(1)
+    import panel as pn
+    return pn.Row(scatter)

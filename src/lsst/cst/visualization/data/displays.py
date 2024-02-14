@@ -510,7 +510,7 @@ class DataImageDisplay:
         index = self._exposure_data.index
         assert data_identifier in index, f"Selected data {data_identifier}"\
                                          f"not available on exposure data"
-        return hv.Dimension(data_identifier, label=label, range=range, unit=unit)
+        return hv.Dimension(data_identifier, label=label, range=(None, None), unit=unit)
 
     def show_scatter(
         self,

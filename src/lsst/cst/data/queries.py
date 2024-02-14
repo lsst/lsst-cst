@@ -210,8 +210,8 @@ class RaDecCoordinatesToTractPatch(Query):
 
 class TAPService:
 
-    def __init__(self):
-        self._query = None  # type: Optional[Query]
+    def __init__(self, query: Optional[str]: None):
+        self._query = query  # type: Optional[Query]
 
     def has_data(self):
         """
