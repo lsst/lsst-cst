@@ -10,7 +10,7 @@ from bokeh.plotting import figure, gridplot
 from holoviews.operation.datashader import datashade, dynspread
 from dataclasses import dataclass, field
 from lsst.cst.visualization.params import PlotOptionsDefault
-from lsst.cst.data.tools import ExposureData
+from lsst.cst.data.query import DataWrapper
 from typing import List, Optional, Union, Tuple
 from collections.abc import Sequence
 
@@ -317,7 +317,7 @@ class DataFigure:
     """
     def __init__(self,
                  figure_id: str,
-                 data: ExposureData,
+                 data: DataWrapper,
                  options: FigureOptions = FigureOptions()):
         self._figure_id = figure_id
         self._exposure_data = data
@@ -391,7 +391,7 @@ class DataImageDisplay:
         Data used to create plots.
     """
 
-    def __init__(self, data: ExposureData):
+    def __init__(self, data: DataWrapper):
         self._exposure_data = data
         self._figures = {}  # type: dict[str, DataFigure]
 
