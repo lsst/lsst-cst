@@ -1,18 +1,17 @@
 """data science delete plot tools."""
 
 import gc
-import panel as pn
 import matplotlib.pyplot as plt
 
 from matplotlib.figure import Figure
-
+from panel.layout.base import Panel
 
 # image deleters
 
 __all__ = ["delete_plot"]
 
 
-def delete_plot(plot: pn.Layout) -> None:
+def delete_plot(plot: Panel) -> None:
     """Delete selected plot.
 
     Parameters:
