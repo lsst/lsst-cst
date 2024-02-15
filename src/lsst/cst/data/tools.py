@@ -387,11 +387,40 @@ class StandardImageTransform(ImageTransform):
         return transform(image_array)
 
 
-def ra_dec_to_tract_patch(ra: float, dec: float):
+class TractPatchInformation:
+
+    def __init__(self, tract: int, patch: int):
+        self._tract = tract
+        self._patch = patch
+
+    @property
+    def patch(self):
+        return self._patch
+
+    @property
+    def tract(self):
+        return self._tract
+
+    def to_dict(self):
+        return dict(tract=self._tract, patch=self._patch)
+
+    def __str__(self):
+        return f"tract: {self._tract} patch: {self._patch}"
+
+    def __repr__(self):
+        return str(self)
+
+
+def tract_patch_from_ra_dec(ra: float, dec: float):
     """
     """
     tap_exposure_data = TAPService()
     query = RaDecCoordinatesToTractPatch
     tap_exposure_data.query = query
     data = tap_exposure_data.fetch()
-    return data._data
+    final_data = data._data
+    if final_data.empty:
+        raise Exception(f"No tract-patch info found"
+                        f"for ra: {ra} dec: {dec}")
+    return TractPatchInformation(final_data["lsst_tract"].iloc[0],
+                                 final_data["lsst_tract"].iloc[1])

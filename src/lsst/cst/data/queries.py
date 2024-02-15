@@ -214,11 +214,6 @@ class TAPService:
     def __init__(self, query: Optional[str] = None):
         self._query = query  # type: Optional[Query]
 
-    def has_data(self):
-        """
-        """
-        return not self._data.empty
-
     @property
     def query(self):
         """"""
@@ -259,4 +254,3 @@ class TAPService:
             _log.error("Job phase finished with ERROR")
         else:
             _log.info(f"Job phase finished with status {job_state}")
-
