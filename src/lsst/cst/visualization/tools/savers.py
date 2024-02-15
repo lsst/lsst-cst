@@ -3,27 +3,27 @@ import os
 from abc import ABC, abstractmethod
 
 import holoviews as hv
-
+import panel as pn
 from lsst.cst.visualization.image.displays import ImageDisplay, get_extension
 from lsst.cst.visualization.image.interactors import _InteractiveDisplay
-from holoviews.core.layout import Layout
 
 __all__ = ["save_plot_as_html"]
 
 
-def save_plot_as_html(plot: Layout, filename: str):
-    """Function to save a plot created with helper functions
-     as an html file 
-     
+def save_plot_as_html(plot: pn.Layout, filename: str):
+    """Function to save a plot created with
+    helper functions as an html file
+
     Parameters
     ----------
-    plot: `hv.Layout``
+    plot: `hv.Layout`
         Plot to be saved.
     filename: `str`
-        Name of the file where plot will be saved, including path and extension.
+        Name of the file where plot will be saved,
+        including path and extension.
     """
-    if isinstance(plot, Layout):
-        hv.save(plot, filename)
+    if isinstance(plot, pn.Layout):
+        plot.save(filename)
     else:
         raise Exception(f"Unable to save plot type:"
                         f"{type(plot)} using this function")

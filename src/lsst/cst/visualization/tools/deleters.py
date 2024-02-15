@@ -1,7 +1,7 @@
 """data science delete plot tools."""
 
 import gc
-import holoviews as hv
+import panel as pn
 import matplotlib.pyplot as plt
 
 from matplotlib.figure import Figure
@@ -12,7 +12,7 @@ from matplotlib.figure import Figure
 __all__ = ["delete_plot"]
 
 
-def delete_plot(plot: hv.Layout) -> None:
+def delete_plot(plot: pn.Layout) -> None:
     """Delete selected plot.
 
     Parameters:
