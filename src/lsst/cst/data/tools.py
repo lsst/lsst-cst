@@ -415,7 +415,7 @@ def tract_patch_from_ra_dec(ra: float, dec: float):
     """
     """
     tap_exposure_data = TAPService()
-    query = RaDecCoordinatesToTractPatch
+    query = RaDecCoordinatesToTractPatch(ra, dec)
     tap_exposure_data.query = query
     data = tap_exposure_data.fetch()
     final_data = data._data
