@@ -243,7 +243,7 @@ class TAPService:
         service = get_tap_service("tap")
         assert service is not None
         _log.info("Fetching Data")
-        job = service.submit_job(self._query)
+        job = service.submit_job(self._query.query)
         job.run()
         job.wait(phases=['COMPLETED', 'ERROR'])
         job.raise_if_error()
@@ -260,7 +260,3 @@ class TAPService:
         else:
             _log.info(f"Job phase finished with status {job_state}")
 
-    @property
-    def query(self):
-        """"""
-        return self._query

@@ -11,7 +11,7 @@ from holoviews.operation.datashader import datashade, dynspread
 from dataclasses import dataclass, field
 from lsst.cst.visualization.params import PlotOptionsDefault
 from lsst.cst.data.queries import DataWrapper
-from typing import List, Optional, Union, Tuple
+from typing import Dict, List, Optional, Union, Tuple
 from collections.abc import Sequence
 
 _log = logging.getLogger(__name__)
@@ -60,7 +60,9 @@ class HVScatterOptions:
     """
     alpha: float = 1.0
     color: str = PlotOptionsDefault.marker_color
-    fontsize: dict[str, str] = field(default_factory=lambda: PlotOptionsDefault.fontsize)
+    fontsize: Dict[str, str] = field(
+        default_factory=lambda: PlotOptionsDefault.fontsize
+    )
     height: int = PlotOptionsDefault.height
     invert_xaxis: bool = False
     invert_yaxis: bool = False
@@ -85,6 +87,7 @@ class HVScatterOptions:
         """
         ret_dict = dict(alpha=self.alpha,
                         color=self.color,
+                        fontsize=self.fontsize,
                         height=self.height,
                         invert_xaxis=self.invert_xaxis,
                         invert_yaxis=self.invert_yaxis,
@@ -95,8 +98,7 @@ class HVScatterOptions:
                         tools=self.tools,
                         width=self.width,
                         xlabel=self.xlabel,
-                        ylabel=self.ylabel,
-                        fontsize=self.fontsize
+                        ylabel=self.ylabel
                         )
         filtered_dict = {key: value for key, value in ret_dict.items() if value is not None}
         return filtered_dict
@@ -108,11 +110,14 @@ class DataShadeOptions:
 
     Parameters
     ----------
-    height: `int`, optional
-        Height of the plot in pixels.
     cmap: `str`, optional
         color mapping to be applied
         to the Datashader plot.
+    fontsize: dict[str, str], optional
+        Size of the diferent elements in the plot: title,
+        xlabel, ylabel, ticks
+    height: `int`, optional
+        Height of the plot in pixels.
     padding: `float`, optional
         Extra space is added around the data points in the plot.
     show_grid: `bool`, optional
@@ -130,8 +135,11 @@ class DataShadeOptions:
     width: `int`, optional
         Width of the plot in pixels.
     """
-    height: int = PlotOptionsDefault.height
     cmap: str = "Viridis"
+    fontsize: Dict[str, str] = field(
+        default_factory=lambda: PlotOptionsDefault.fontsize
+    )
+    height: int = PlotOptionsDefault.height
     padding: float = 0.05
     show_grid: bool = True
     xlabel: str = "X"
@@ -151,7 +159,8 @@ class DataShadeOptions:
         options: `dict`
            Option key and values as dictionary.
         """
-        ret_dict = dict(height=self.height,
+        ret_dict = dict(fontsize=self.fontsize,
+                        height=self.height,
                         padding=self.padding,
                         show_grid=self.show_grid,
                         tools=self.tools,
@@ -171,8 +180,6 @@ class FigureOptions:
 
     Parameters
     ----------
-    fontsize: dict[str, str], optional
-        Size of the diferent elements in the plot: title, xlabel, ylabel, ticks
     height: `int`, optional
         Height of the plot in pixels.
     tools: `List`, optional
@@ -184,7 +191,6 @@ class FigureOptions:
     ylabel: `str`, optional
         ylabel value.
     """
-    fontsize: dict[str, str] = field(default_factory=lambda: PlotOptionsDefault.fontsize)
     height: int = PlotOptionsDefault.height
     tools: List = field(default_factory=lambda:
                         ["pan,box_zoom,box_select,lasso_select,reset,help"])
@@ -209,7 +215,12 @@ class FigureOptions:
                         x_axis_label=self.xlabel,
                         y_axis_label=self.ylabel,
                         )
-        filtered_dict = {key: value for key, value in ret_dict.items() if value is not None}
+        filtered_dict = {
+            key: value
+            for key, value in ret_dict.items()
+            if value is not None
+        }
+
         return filtered_dict
 
 
