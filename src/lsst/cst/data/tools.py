@@ -17,7 +17,7 @@ __all__ = [
     "Band",
     "CalExpDataFactory",
     "ButlerCalExpDataFactory",
-    "ra_dec_to_tract_patch"
+    "tract_patch_from_ra_dec"
 ]
 
 _log = logging.getLogger(__name__)
