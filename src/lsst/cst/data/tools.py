@@ -423,4 +423,4 @@ def tract_patch_from_ra_dec(ra: float, dec: float):
         raise Exception(f"No tract-patch info found"
                         f"for ra: {ra} dec: {dec}")
     return TractPatchInformation(final_data["lsst_tract"].iloc[0],
-                                 final_data["lsst_tract"].iloc[1])
+                                 final_data["lsst_patch"].iloc[0])
