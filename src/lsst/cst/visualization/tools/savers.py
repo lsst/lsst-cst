@@ -22,7 +22,7 @@ def save_plot_as_html(plot: Panel, filename: str):
         Name of the file where plot will be saved,
         including path and extension.
     """
-    if isinstance(plot, pn.Layout):
+    if isinstance(plot, Panel):
         plot.save(filename)
     else:
         raise Exception(f"Unable to save plot type:"
