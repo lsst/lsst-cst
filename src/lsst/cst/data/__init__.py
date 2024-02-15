@@ -13,7 +13,7 @@ from .queries import (
 )
 
 from .tools import (
-    ra_dec_to_tract_patch
+    tract_patch_from_ra_dec
 )
 
 __all__ = [
@@ -23,5 +23,5 @@ __all__ = [
     "ids_to_str",
     "TAPService",
     "DataWrapper",
-    "ra_dec_to_tract_patch"
+    "tract_patch_from_ra_dec"
 ]
