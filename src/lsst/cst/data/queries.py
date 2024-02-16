@@ -277,7 +277,7 @@ class TAPService:
         # Helper function to launch tap query
         service = get_tap_service("tap")
         assert service is not None
-        _log.info("Fetching Data")
+        _log.info(f"Fetching Data from query: {self._query.query}")
         job = service.submit_job(self._query.query)
         job.run()
         job.wait(phases=['COMPLETED', 'ERROR'])
