@@ -184,6 +184,9 @@ class QueryCoordinateBoundingBox(Query):
     def query(self):
         return self._query
 
+    def post_query_actions(self, data: pd.DataFrame):
+        pass
+
 
 class QueryExposureData(Query):
     _QUERY = "SELECT coord_ra, coord_dec, objectId, r_extendedness, "\
