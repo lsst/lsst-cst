@@ -197,11 +197,9 @@ def create_bounding_boxes_calexps_overlapping_a_point_plot(
     """"""
     _log.info("Retrieving data")
     tap_exposure_data = TAPService()
-    ra = str(coord.ra.deg)
-    dec = str(coord.dec.deg)
     mjd1 = str(mjd_range[0])
     mjd2 = str(mjd_range[1])
-    query = QueryCoordinateBoundingBox(ra, dec, mjd1, mjd2)
+    query = QueryCoordinateBoundingBox.from_sky_coord(coord, mjd1, mjd2)
     tap_exposure_data.query = query
     data = tap_exposure_data.fetch()
     df = data._data

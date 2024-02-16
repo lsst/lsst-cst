@@ -167,7 +167,7 @@ class QueryCoordinateBoundingBox(Query):
         self._dec = dec
         self._mjd_begin = mjd_begin
         self._mjd_end = mjd_end
-        self._query = QueryExposureData._QUERY.format(ra, dec, mjd_begin, mjd_end)
+        self._query = QueryCoordinateBoundingBox._QUERY.format(ra, dec, mjd_begin, mjd_end)
 
     @classmethod
     def from_sky_coord(
