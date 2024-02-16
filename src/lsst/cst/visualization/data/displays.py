@@ -621,9 +621,9 @@ class PolygonInformation(TypedDict):
 class PolygonOptions:
     alpha: float = 0.0
     cmap: dict[str, str] = None
-    color = None
-    height = PlotOptionsDefault.height
-    tools = None
+    color: str = None
+    height: int = PlotOptionsDefault.height
+    tools: [] = None
     hover_alpha: float = 0.3
     line_color: str = 'blue'
     line_alpha: float = 1.0
@@ -649,6 +649,7 @@ class PolygonOptions:
                         hover_alpha=self.hover_alpha,
                         line_color=self.line_color,
                         line_alpha=self.line_alpha,
+                        tools=self.tools,
                         title=self.title,
                         width=self.width,
                         xlabel=self.xlabel,
