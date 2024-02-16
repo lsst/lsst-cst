@@ -206,7 +206,7 @@ def create_bounding_boxes_calexps_overlapping_a_point_plot(
     region_list = []
     _log.debug("Creating bounding boxes")
     for index, row in df.iterrows():
-        r = {'z': [row['llcra'], row['ulcra'], row['urcra'], row['lrcra']],
+        r = {'x': [row['llcra'], row['ulcra'], row['urcra'], row['lrcra']],
              'y': [row['llcdec'], row['ulcdec'], row['urcdec'], row['lrcdec']],
              'v1': row['band'],
              'v2': row['ccdVisitId']}
