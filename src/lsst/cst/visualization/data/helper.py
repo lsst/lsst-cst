@@ -5,12 +5,21 @@ import panel as pn
 
 from astropy.coordinates import SkyCoord
 from holoviews.element.chart import Scatter
-from lsst.cst.data.queries import TAPService, DataWrapper, QueryExposureData
+from lsst.cst.data.queries import (
+    TAPService,
+    DataWrapper,
+    QueryExposureData,
+    QueryCoordinateBoundingBox
+)
+from lsst.cst.visualization.params import PlotOptionsDefault
+
 from lsst.cst.visualization.data.displays import (
     DataImageDisplay,
     HoverTool,
     HVScatterOptions,
-    DataShadeOptions
+    DataShadeOptions,
+    PolygonOptions,
+    GeometricPlots
 )
 from typing import Optional, Tuple, Union
 
@@ -178,3 +187,36 @@ def create_linked_plot_with_brushing(
             ylabel=hvalues[1],
         )).hist(dimension=hvalues)
     return pn.Row(scatter)
+
+
+def create_bounding_boxes_calexps_overlapping_a_point_plot(
+    coord: SkyCoord,
+    mjd_range: Tuple[int],
+
+):
+    """"""
+    _log.info("Retrieving data")
+    tap_exposure_data = TAPService()
+    ra = str(coord.ra.deg)
+    dec = str(coord.dec.deg)
+    mjd1 = str(mjd_range[0])
+    mjd2 = str(mjd_range[1])
+    query = QueryCoordinateBoundingBox(ra, dec, mjd1, mjd2)
+    tap_exposure_data.query = query
+    data = tap_exposure_data.fetch()
+    df = data._data
+    region_list = []
+    _log.debug("Creating bounding boxes")
+    for index, row in df.iterrows():
+        r = {'z': [row['llcra'], row['ulcra'], row['urcra'], row['lrcra']],
+             'y': [row['llcdec'], row['ulcdec'], row['urcdec'], row['lrcdec']],
+             'v1': row['band'],
+             'v2': row['ccdVisitId']}
+        region_list.append(r)
+    boxes = GeometricPlots.polygons(region_list,
+                                    kdims=['x', 'y'],
+                                    vdims=['v1', 'v2'],
+                                    options=PolygonOptions(cmap=PlotOptionsDefault.filter_colormap))
+    _log.debug("Creating point")
+    points = GeometricPlots.points((coord.ra.deg, coord.dec.deg))
+    return pn.Row(boxes*points)

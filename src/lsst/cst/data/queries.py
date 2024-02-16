@@ -148,6 +148,43 @@ class BasicQuery(ABC):
         return data
 
 
+class QueryCoordinateBoundingBox(Query):
+    _QUERY = "SELECT ra, decl, band, ccdVisitId, expMidptMJD, "\
+        "llcra, llcdec, ulcra, ulcdec, urcra, urcdec, lrcra, lrcdec "\
+        "FROM dp02_dc2_catalogs.CcdVisit "\
+        "WHERE CONTAINS(POINT('ICRS', {}, {}), "\
+        "POLYGON('ICRS', llcra, llcdec, ulcra, ulcdec, urcra, urcdec, lrcra, lrcdec)) = 1 "\
+        "AND expMidptMJD >= {} AND expMidptMJD <= {}"
+
+    def __init__(
+        self,
+        ra: np.float64,
+        dec: np.float64,
+        mjd_begin: np.int64,
+        mjd_end: np.int64
+    ):
+        self._ra = ra
+        self._dec = dec
+        self._mjd_begin = mjd_begin
+        self._mjd_end = mjd_end
+        self._query = QueryExposureData._QUERY.format(ra, dec, mjd_begin, mjd_end)
+
+    @classmethod
+    def from_sky_coord(
+        cls,
+        coord: SkyCoord,
+        mjd_begin: np.int64,
+        mjd_end: np.int64
+    ):
+        """
+        """
+        return cls(coord.ra.value, coord.dec.value, mjd_begin, mjd_end)
+
+    @property
+    def query(self):
+        return self._query
+
+
 class QueryExposureData(Query):
     _QUERY = "SELECT coord_ra, coord_dec, objectId, r_extendedness, "\
         "scisql_nanojanskyToAbMag(g_cModelFlux) AS mag_g_cModel, "\

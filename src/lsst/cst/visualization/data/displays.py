@@ -11,7 +11,7 @@ from holoviews.operation.datashader import datashade, dynspread
 from dataclasses import dataclass, field
 from lsst.cst.visualization.params import PlotOptionsDefault
 from lsst.cst.data.queries import DataWrapper
-from typing import Dict, List, Optional, Union, Tuple
+from typing import Dict, List, Optional, Tuple, TypedDict, Union
 from collections.abc import Sequence
 
 _log = logging.getLogger(__name__)
@@ -21,7 +21,10 @@ __all__ = ["HVScatterOptions",
            "DataShadeOptions",
            "FigureOptions",
            "ScatterOptions",
-           "HistogramOptions"]
+           "HistogramOptions",
+           "PointsOptions",
+           "PolygonOptions",
+           "GeometricPlots"]
 
 
 @dataclass
@@ -605,3 +608,104 @@ class DataImageDisplay:
         """
         bin, count = self._exposure_data.histogram(field)
         return hv.Histogram((bin, count)).opts(**options.to_dict())
+
+
+class PolygonInformation(TypedDict):
+    x: Tuple[float, float, float, float]
+    y: Tuple[float, float, float, float]
+    v1: str
+    v2: str
+
+
+@dataclass
+class PolygonOptions:
+    alpha: float = 0.0
+    cmap: dict[str, str] = None
+    color = None
+    height = PlotOptionsDefault.height
+    hover_alpha: float = 0.3
+    line_color = 'blue'
+    line_alpha: float = 1.0
+    title: Optional[str] = None
+    width = PlotOptionsDefault.width
+    xlabel: Optional[str] = None
+    ylabel: Optional[str] = None
+
+    def to_dict(self):
+        """Create and returns a dictionary from class attributes,
+        where key is the name of the attribute and value its value.
+        Instance attributes with None value will not be included.
+
+        Returns
+        -------
+        options: `dict`
+           Option key and values as dictionary.
+        """
+        ret_dict = dict(alpha=self.alpha,
+                        cmap=self.cmap,
+                        color=self.color,
+                        height=self.height,
+                        hover_alpha=self.hover_alpha,
+                        line_color=self.line_color,
+                        line_alpha=self.line_alpha,
+                        title=self.title,
+                        width=self.width,
+                        xlabel=self.xlabel,
+                        ylabel=self.ylabel
+                        )
+        filtered_dict = {key: value for key, value in ret_dict.items() if value is not None}
+        return filtered_dict
+
+
+@dataclass
+class PointsOptions:
+    alpha: float = 1.0
+    color: str = PlotOptionsDefault.marker_color
+    height: int = PlotOptionsDefault.height
+    size: int | str = PlotOptionsDefault.marker_size
+    title: Optional[str] = None
+    width: int = PlotOptionsDefault.width
+    xlabel: Optional[str] = None
+    ylabel: Optional[str] = None
+
+    def to_dict(self):
+        """Create and returns a dictionary from class attributes,
+        where key is the name of the attribute and value its value.
+        Instance attributes with None value will not be included.
+
+        Returns
+        -------
+        options: `dict`
+           Option key and values as dictionary.
+        """
+        ret_dict = dict(alpha=self.alpha,
+                        color=self.color,
+                        height=self.height,
+                        size=self.size,
+                        title=self.title,
+                        width=self.width,
+                        xlabel=self.xlabel,
+                        ylabel=self.ylabel
+                        )
+        filtered_dict = {key: value for key, value in ret_dict.items() if value is not None}
+        return filtered_dict
+
+
+class GeometricPlots:
+
+    @staticmethod
+    def points(points: List[Tuple[float, float]], options: PointsOptions = PointsOptions()):
+        points = hv.Points(points).opts(**options.to_dict())
+        return points
+
+    @staticmethod
+    def polygons(
+        region_data: list[PolygonInformation],
+        kdims: Optional[Tuple[str, str]] = None,
+        vdims: Optional[Tuple[str, str]] = None,
+        tooltips: Optional[List[Tuple[str, str]]] = None,
+        options: PolygonOptions = PointsOptions()
+    ):
+        region_poly = hv.Polygons(region_data, kdims=kdims, vdims=vdims)\
+            .opts(**options.to_dict())
+        return region_poly
