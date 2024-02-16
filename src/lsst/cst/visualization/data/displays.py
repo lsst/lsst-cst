@@ -623,11 +623,12 @@ class PolygonOptions:
     cmap: dict[str, str] = None
     color = None
     height = PlotOptionsDefault.height
+    tools = None
     hover_alpha: float = 0.3
-    line_color = 'blue'
+    line_color: str = 'blue'
     line_alpha: float = 1.0
     title: Optional[str] = None
-    width = PlotOptionsDefault.width
+    width: int = PlotOptionsDefault.width
     xlabel: Optional[str] = None
     ylabel: Optional[str] = None
 
