@@ -129,9 +129,8 @@ class Query(ABC):
     def query(self):
         raise NotImplementedError()
 
-    @abstractmethod
     def post_query_actions(self, data: pd.DataFrame):
-        pass
+        return data
 
 
 class BasicQuery(ABC):
@@ -143,9 +142,6 @@ class BasicQuery(ABC):
     @property
     def query(self):
         return self._query
-
-    def post_query_actions(self, data: pd.DataFrame):
-        return data
 
 
 class QueryCoordinateBoundingBox(Query):
@@ -183,9 +179,6 @@ class QueryCoordinateBoundingBox(Query):
     @property
     def query(self):
         return self._query
-
-    def post_query_actions(self, data: pd.DataFrame):
-        pass
 
 
 class QueryExposureData(Query):
