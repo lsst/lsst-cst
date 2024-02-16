@@ -211,10 +211,19 @@ def create_bounding_boxes_calexps_overlapping_a_point_plot(
              'v1': row['band'],
              'v2': row['ccdVisitId']}
         region_list.append(r)
+    tooltips = [
+        ('band', '@v1'),
+        ('ccdVisitId', '@v2')
+    ]
+
+    hover = HoverTool(tooltips=tooltips)
     boxes = GeometricPlots.polygons(region_list,
                                     kdims=['x', 'y'],
                                     vdims=['v1', 'v2'],
-                                    options=PolygonOptions(cmap=PlotOptionsDefault.filter_colormap))
+                                    options=PolygonOptions(cmap=PlotOptionsDefault.filter_colormap,
+                                                           line_color='v1',
+                                                           tools=[hover])
+                                    )
     _log.debug("Creating point")
     points = GeometricPlots.points((coord.ra.deg, coord.dec.deg))
     return pn.Row(boxes*points)
