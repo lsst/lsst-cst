@@ -66,7 +66,7 @@ def create_skycoord_datashader_plot(
     Returns
     -------
     plot: `hv.Layout`
-        holoviews layout with the scatter image inside of it.
+        Panel Row with the scatter image inside of it.
     """
     data = _get_skycoord_data(coord, reduction)
     return create_datashader_plot(data, columns)
@@ -93,7 +93,7 @@ def create_datashader_plot(
     Returns
     -------
     plot: `hv.Layout`
-        holoviews layout with the scatter image inside of it.
+        Panel Row with the scatter image inside of it.
     """
     if isinstance(data, pd.DataFrame):
         data = DataWrapper(data)
@@ -137,7 +137,7 @@ def create_skycoord_linked_plot_with_brushing(
     Returns
     -------
     plot: `hv.Layout`
-        Holoviews layout containing scatter plot with histograms.
+        Panel Row containing scatter plot with histograms.
     """
     data = _get_skycoord_data(coord, reduction)
     return create_linked_plot_with_brushing(data, columns, hovertool)
@@ -165,7 +165,7 @@ def create_linked_plot_with_brushing(
     Returns
     -------
     plot: `hv.Layout`
-        Holoviews layout containing scatter plot with histograms.
+        Panel Row containing scatter plot with histograms.
     """
     if isinstance(data, pd.DataFrame):
         data = DataWrapper(data)
@@ -191,10 +191,25 @@ def create_linked_plot_with_brushing(
 
 def create_bounding_boxes_calexps_overlapping_a_point_plot(
     coord: SkyCoord,
-    mjd_range: Tuple[int],
-
+    mjd_range: Tuple[int, int]
 ):
-    """"""
+    """Draw bounding boxes of all calexps overlapping a point.
+
+    Parameters
+    ----------
+    ra: `np.float64`
+        Coordinate ascension.
+    dec: `np.float64`
+        Coordinate declination.
+    mjd_range: `Tuple[int, int]`
+       Time range to look for.
+
+    Returns
+    -------
+    plot: `pn.Row`
+        Panel Row containing bounding boxes ovelapping
+        a point plot.
+    """
     _log.info("Retrieving data")
     tap_exposure_data = TAPService()
     mjd1 = str(mjd_range[0])

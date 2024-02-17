@@ -388,20 +388,50 @@ class StandardImageTransform(ImageTransform):
 
 
 class TractPatchInformation:
+    """Tract patch information
 
+    Parameters
+    ----------
+    patch: `int`
+        Patch value.
+    tract: `int`
+        Tract value.
+    """
     def __init__(self, tract: int, patch: int):
         self._tract = tract
         self._patch = patch
 
     @property
     def patch(self):
+        """Patch value.
+
+        Returns
+        -------
+        patch: `int`
+            Patch value.
+        """
         return self._patch
 
     @property
     def tract(self):
+        """Patch value.
+
+        Returns
+        -------
+        tract: `int`
+            Tract value.
+        """
         return self._tract
 
     def to_dict(self):
+        """Dictionary containing
+        Tract-patch information
+
+        Returns
+        -------
+        values: `dict[str, int]`
+            Dictionary with tract-patch information.
+        """
         return dict(tract=self._tract, patch=self._patch)
 
     def __str__(self):
@@ -412,7 +442,20 @@ class TractPatchInformation:
 
 
 def tract_patch_from_ra_dec(ra: float, dec: float):
-    """
+    """Look for nearest tract-patch information from a
+    coordinate.
+
+    Parameters
+    ----------
+    ra: `np.float64`
+        Coordinate ascension.
+    dec: `np.float64`
+        Coordinate declination.
+
+    Returns
+    -------
+    value: `
+        Tract patch information
     """
     tap_exposure_data = TAPService()
     query = RaDecCoordinatesToTractPatch(ra, dec)

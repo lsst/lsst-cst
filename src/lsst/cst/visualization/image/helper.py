@@ -33,7 +33,9 @@ def create_interactive_image(
 
     Returns
     -------
-
+    plot: `pn.Row`
+        Panel Row containing the plot from the exposure
+        with sources.
 
     """
     bounds = (0,

@@ -37,6 +37,9 @@ class HVScatterOptions:
         Plot points alpha value.
     color: `str,` optional
         Plot points color.
+    fontsize: dict, optional
+        dictionary selecting fontsize for different
+        elements on the plot.
     invert_xaxis: `bool`, optional
         Invert xaxis of the plot.
     invert_yaxis: bool = False
@@ -57,9 +60,6 @@ class HVScatterOptions:
         xlabel value.
     ylabel: `str`
         ylabel value.
-    fontsize: dict, optional
-        dictionary selecting fontsize for different
-        elements on the plot
     """
     alpha: float = 1.0
     color: str = PlotOptionsDefault.marker_color
@@ -118,7 +118,7 @@ class DataShadeOptions:
         to the Datashader plot.
     fontsize: dict[str, str], optional
         Size of the diferent elements in the plot: title,
-        xlabel, ylabel, ticks
+        xlabel, ylabel, ticks.
     height: `int`, optional
         Height of the plot in pixels.
     padding: `float`, optional
@@ -240,7 +240,7 @@ class ScatterOptions:
     marker: `str`, optional
         Plot points marker type.
     size: int, optional
-        Plot points marker type.
+        Plot points marker size.
     """
     alpha: float = 1.0
     color: str = PlotOptionsDefault.marker_color
@@ -279,7 +279,7 @@ class HistogramOptions:
     height: `int`, optional
         Height of the plot in pixels.
     title: str, optional
-        Histogram title.
+        Plot title.
     xlabel: `str`, optional
         xlabel value.
     width: `int`, optional
@@ -619,6 +619,35 @@ class PolygonInformation(TypedDict):
 
 @dataclass
 class PolygonOptions:
+    """Polygon plot options.
+
+    Parameters
+    ----------
+    alpha: `float`, optional
+        Polygons alpha value.
+    cmap: `dict[str, str]`, optional
+        Color map.
+    color: `str`
+        Polygon fill color.
+    height: `int`, optional
+        Height of the plot in pixels.
+    tools: `List`, optional
+        Plot tools available.
+    hover_alpha: `float`, optional
+        Polygon alpha value on hover.
+    line_color: `List`, optional
+        Polygon line color.
+    line_alpha: `List`, optional
+        Polygon line alpha value.
+    title: str, optional
+        Plot title.
+    width: `int`, optional
+        Width of the plot in pixels.
+    xlabel: str, optional
+        xlabel value.
+    ylabel: `str`
+        ylabel value.
+    """
     alpha: float = 0.0
     cmap: dict[str, str] = None
     color: str = None
@@ -661,8 +690,35 @@ class PolygonOptions:
 
 @dataclass
 class PointsOptions:
+    """Points plot options.
+
+     Parameters
+    ----------
+    alpha: `float`, optional
+        Plot points alpha value.
+    color: `str`, optional
+        Plot points color.
+    fontsize: dict[str, str], optional
+        Size of the diferent elements in the plot: title,
+        xlabel, ylabel, ticks.
+    height: `int`, optional
+        Height of the plot in pixels.
+    size: int, optional
+        Points marker size.
+    title: str, optional
+        Plot title.
+    width: `int`, optional
+        Width of the plot in pixels.
+    xlabel: str, optional
+        xlabel value.
+    ylabel: `str`
+        ylabel value.
+    """
     alpha: float = 1.0
     color: str = PlotOptionsDefault.marker_color
+    fontsize: Dict[str, str] = field(
+        default_factory=lambda: PlotOptionsDefault.fontsize
+    )
     height: int = PlotOptionsDefault.height
     size: int | str = PlotOptionsDefault.marker_size
     title: Optional[str] = None
@@ -682,6 +738,7 @@ class PointsOptions:
         """
         ret_dict = dict(alpha=self.alpha,
                         color=self.color,
+                        fontsize=self.fontsize,
                         height=self.height,
                         size=self.size,
                         title=self.title,
@@ -694,9 +751,25 @@ class PointsOptions:
 
 
 class GeometricPlots:
-
+    """Static functions to create HV plots
+    with geometric figures.
+    """
     @staticmethod
     def points(points: List[Tuple[float, float]], options: PointsOptions = PointsOptions()):
+        """Create a plot with the selected points on it.
+
+        Parameters
+        ----------
+        points: `List[Tuple[float, float]]`
+            Points to be plot.
+        options: `PointsOptions`
+            Points plot options.
+
+        Returns
+        -------
+        plot: `hv.Points`
+            Plot with the points draw on it.
+        """
         points = hv.Points(points).opts(**options.to_dict())
         return points
 
@@ -708,6 +781,27 @@ class GeometricPlots:
         tooltips: Optional[List[Tuple[str, str]]] = None,
         options: PolygonOptions = PointsOptions()
     ):
+        """Create a plot with the selected polygons on it.
+
+        Parameters
+        ----------
+        polygon_information: `list[PolygonInformation]`
+            Polygon information, including the vertex
+            and other data to be shown.
+        kdims: `Optional[Tuple[str, str]]`
+            X and Y vertex points values.
+        vdims: `Optional[Tuple[str, str]]`
+            Other column information to be shown.
+        tooltipls: `Optional[List[Tuple[str, str]]]`
+            On hoover text information.
+        options: `PointsOptions`
+            Polygon plot options.
+
+        Returns
+        -------
+        plot: `hv.Points`
+            Plot with the polygons draw on it.
+        """
         region_poly = hv.Polygons(region_data, kdims=kdims, vdims=vdims)\
             .opts(**options.to_dict())
         return region_poly
