@@ -200,7 +200,7 @@ class DataWrapper:
 
 class Query(ABC):
     """Interface of a Query to be
-        used by TAPService
+       used by TAPService
     """
     def __init__(self):
         super().__init__()
@@ -308,9 +308,9 @@ class QueryCoordinateBoundingBox(Query):
 
 class QueryExposureData(Query):
     """Exposure data query. Returns
-        information from all the exposures
-        inside the circumpherence defined
-        by a coordinate and a radius.
+       information from all the exposures
+       inside the circumpherence defined
+       by a coordinate and a radius.
 
     Parameters
     ----------
