@@ -75,6 +75,14 @@ class PsfProperties:
     peak: float
     dims: Extent2I
 
+    def __str__(self):
+        return f"PSF FWHM: {self.fwhm:.4} pix \n"\
+               f"PSF flux from aperture photometry: {self.ap_flux:.4} \n"\
+               f"Peak PSF value: {self.peak:.4} \n"\
+               f"PSF postage stamp dimensions: {self.dims} \n"
+    
+    def __repr__(self):
+        return __str__()
 
 def get_psf_properties(psf, point):
     """Function to obtain PSF properties.
@@ -97,12 +105,6 @@ def get_psf_properties(psf, point):
     ap_flux = psf.computeApertureFlux(radius=sigma, position=point)
     peak = psf.computePeak(position=point)
     dims = psf.computeImage(point).getDimensions()
-
-    print(f"PSF FWHM: {fwhm:.4} pix \n"
-          f"PSF flux from aperture photometry: {ap_flux:.4} \n"
-          f"Peak PSF value: {peak:.4} \n"
-          f"PSF postage stamp dimensions: {dims} \n")
-
     return PsfProperties(sigma, ap_flux, peak, dims)
 
 

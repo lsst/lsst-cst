@@ -149,6 +149,7 @@ def create_linked_plot_with_brushing(
     data: Union[DataWrapper, pd.DataFrame],
     columns: Optional[Tuple[str, str]] = None,
     hovertool: HoverTool = None,
+    options: HVScatterOptions = HVScatterOptions(),
     show_histogram: bool = True
 ) -> Scatter:
     """Create a linked plot with brushing from a pd.DataFrame.
@@ -164,7 +165,9 @@ def create_linked_plot_with_brushing(
     hovertool: HoverTool, optional
         Hovertool to be used when hovering the mouse
         over the plot points.
-    show_histogram: `bool`
+    options: `HVScatterOptions`, optional
+        Holoviews scatter options.
+    show_histogram: `bool`, optional
         Attach histogram to plot.
 
     Returns
@@ -275,9 +278,13 @@ def create_psf_flux_plot(dia_object_id: int, band: Band, show: str = 'psfFlux'):
 
     _log.info(f"Retrieving data: Selected: {show}")
     tap_exposure_data = TAPService()
-    query = QueryPsFlux.from_sky_coord(dia_object_id, band.value)
+    query = QueryPsFlux(dia_object_id, band.value)
     tap_exposure_data.query = query
     data = tap_exposure_data.fetch()
     _log.info("Plotting data")
+    options = HVScatterOptions()
+    options.color = PlotOptionsDefault.filter_colormap[band.value]
     return create_linked_plot_with_brushing(data,
-                                            columns=[show, "expMidptMJD"])
+                                            columns=["expMidptMJD", show],
+					    options=options,
+					    show_histogram=False)
