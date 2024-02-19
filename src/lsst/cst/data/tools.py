@@ -6,7 +6,7 @@ from enum import Enum
 
 import numpy as np
 from astropy.visualization import AsinhStretch, ZScaleInterval
-from lsst.cst.data.queries import RaDecCoordinatesToTractPatch, TAPService
+from lsst.cst.data.queries import Band, RaDecCoordinatesToTractPatch, TAPService
 
 
 __all__ = [
@@ -14,7 +14,6 @@ __all__ = [
     "Configuration",
     "CalExpData",
     "CalExpId",
-    "Band",
     "CalExpDataFactory",
     "ButlerCalExpDataFactory",
     "tract_patch_from_ra_dec"
@@ -44,12 +43,6 @@ class Configuration(Enum):
     """
 
     DP02 = {"name": "dp02", "collections_available": [Collection.i22]}
-
-
-class Band(Enum):
-    """Exposure bands available."""
-
-    i = "i"
 
 
 @dataclass
@@ -454,7 +447,7 @@ def tract_patch_from_ra_dec(ra: float, dec: float):
 
     Returns
     -------
-    value: `
+    value: `TractPatchInformation`
         Tract patch information
     """
     tap_exposure_data = TAPService()

@@ -8,8 +8,9 @@ from .format import (
 )
 
 from .queries import (
-    TAPService,
-    DataWrapper
+    Band,
+    DataWrapper,
+    TAPService
 )
 
 from .tools import (
@@ -17,6 +18,7 @@ from .tools import (
 )
 
 __all__ = [
+    "Band",
     "shuffle_dataframe",
     "sort_dataframe",
     "data_id_to_str",

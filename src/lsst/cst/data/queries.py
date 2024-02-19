@@ -3,6 +3,7 @@ import logging
 import pandas as pd
 import numpy as np
 
+from enum import Enum
 from abc import ABC, abstractmethod
 from astropy.coordinates import SkyCoord
 from bokeh.models import ColumnDataSource
@@ -12,6 +13,12 @@ from typing import Optional
 _log = logging.getLogger(__name__)
 
 __all__ = ["TAPService", "DataWrapper"]
+
+
+class Band(Enum):
+    """Exposure bands available."""
+
+    i = "i"
 
 
 class DataHandler(ABC):
@@ -233,12 +240,44 @@ class Query(ABC):
         return data
 
 
-class BasicQuery(ABC):
+class BasicQuery(Query):
     """Simple string data query.
     """
     def __init__(self, query: str):
         super().__init__()
         self._query = query
+
+    @property
+    def query(self):
+        return self._query
+
+
+class QueryPsFlux(Query):
+    """Query to get psDiffFlux and psfDiffFluxErr
+
+    Parameters
+    ----------
+    dia_object_id: `int`
+        Object identifier.
+    band: `str`
+        Selected band.
+    """
+
+    _QUERY = "SELECT fsodo.coord_ra, fsodo.coord_dec, "\
+        "fsodo.diaObjectId, fsodo.ccdVisitId, fsodo.band, "\
+        "fsodo.psfFlux, fsodo.psfDiffFlux, "\
+        "fsodo.psfDiffFluxErr, cv.expMidptMJD "\
+        "FROM dp02_dc2_catalogs.ForcedSourceOnDiaObject as fsodo "\
+        "JOIN dp02_dc2_catalogs.CcdVisit as cv "\
+        "ON cv.ccdVisitId = fsodo.ccdVisitId "\
+        "WHERE fsodo.diaObjectId = {} "\
+        "AND fsodo.band = '{}'"
+
+    def __init__(self, dia_object_id: int, band: Band):
+        super().__init__()
+        self._dia_object_id = dia_object_id
+        self._band = band
+        self._query = QueryPsFlux._QUERY.format(dia_object_id, band)
 
     @property
     def query(self):

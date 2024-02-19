@@ -6,10 +6,12 @@ import panel as pn
 from astropy.coordinates import SkyCoord
 from holoviews.element.chart import Scatter
 from lsst.cst.data.queries import (
+    Band,
     TAPService,
     DataWrapper,
+    QueryCoordinateBoundingBox,
     QueryExposureData,
-    QueryCoordinateBoundingBox
+    QueryPsFlux,
 )
 from lsst.cst.visualization.params import PlotOptionsDefault
 
@@ -146,10 +148,11 @@ def create_skycoord_linked_plot_with_brushing(
 def create_linked_plot_with_brushing(
     data: Union[DataWrapper, pd.DataFrame],
     columns: Optional[Tuple[str, str]] = None,
-    hovertool: HoverTool = None
+    hovertool: HoverTool = None,
+    show_histogram: bool = True
 ) -> Scatter:
     """Create a linked plot with brushing from a pd.DataFrame.
-    The plot will be created the first two colums from the df if 
+    The plot will be created the first two colums from the df if
     no columns are explicitely selected.
 
     Parameters
@@ -161,11 +164,13 @@ def create_linked_plot_with_brushing(
     hovertool: HoverTool, optional
         Hovertool to be used when hovering the mouse
         over the plot points.
+    show_histogram: `bool`
+        Attach histogram to plot.
 
     Returns
     -------
     plot: `hv.Layout`
-        Panel Row containing scatter plot with histograms.
+        Panel Row containing scatter plot.
     """
     if isinstance(data, pd.DataFrame):
         data = DataWrapper(data)
@@ -185,7 +190,9 @@ def create_linked_plot_with_brushing(
             marker="circle",
             xlabel=hvalues[0],
             ylabel=hvalues[1],
-        )).hist(dimension=hvalues)
+        ))
+    if show_histogram:
+        scatter = scatter.hist(dimension=hvalues)
     return pn.Row(scatter)
 
 
@@ -242,3 +249,34 @@ def create_bounding_boxes_calexps_overlapping_a_point_plot(
     _log.debug("Creating point")
     points = GeometricPlots.points((coord.ra.deg, coord.dec.deg))
     return pn.Row(boxes*points)
+
+
+def create_psf_flux_plot(dia_object_id: int, band: Band, show: str = 'psfFlux'):
+    """Create psf flux plot, psfFlux or psfDiffFlux values over time.
+
+    Parameters
+    ----------
+    dia_object_id: `int`
+        Object identifier.
+    band: `str`
+        Selected band.
+    show: `str`
+        Selectable data to be plotted over time,
+        psfFlux or psfDiffFlux.
+    Returns
+    -------
+        Panel row containing psfFlux or psfDiffFlux value
+        over time.
+    """
+    assert (
+        show in ['psfFlux', 'psfDiffFlux']
+    ), "No valid selected data to be shown, should be psfFlux or psfDiffFlux"
+
+    _log.info(f"Retrieving data: Selected: {show}")
+    tap_exposure_data = TAPService()
+    query = QueryPsFlux.from_sky_coord(dia_object_id, band)
+    tap_exposure_data.query = query
+    data = tap_exposure_data.fetch()
+    _log.info("Plotting data")
+    return create_linked_plot_with_brushing(data,
+                                            [show, "expMidptMJD"])
