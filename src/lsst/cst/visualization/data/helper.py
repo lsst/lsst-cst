@@ -258,7 +258,7 @@ def create_psf_flux_plot(dia_object_id: int, band: Band, show: str = 'psfFlux'):
     ----------
     dia_object_id: `int`
         Object identifier.
-    band: `str`
+    band: `Band`
         Selected band.
     show: `str`
         Selectable data to be plotted over time,
@@ -275,7 +275,7 @@ def create_psf_flux_plot(dia_object_id: int, band: Band, show: str = 'psfFlux'):
 
     _log.info(f"Retrieving data: Selected: {show}")
     tap_exposure_data = TAPService()
-    query = QueryPsFlux.from_sky_coord(dia_object_id, band)
+    query = QueryPsFlux.from_sky_coord(dia_object_id, band.value)
     tap_exposure_data.query = query
     data = tap_exposure_data.fetch()
     _log.info("Plotting data")
