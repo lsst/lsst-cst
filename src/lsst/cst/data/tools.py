@@ -7,7 +7,7 @@ from enum import Enum
 import numpy as np
 from astropy.visualization import AsinhStretch, ZScaleInterval
 from lsst.cst.data.queries import Band, RaDecCoordinatesToTractPatch, TAPService
-from lsst.geom import ExtendI
+from lsst.geom import Extent2I
 
 __all__ = [
     "Collection",
@@ -73,7 +73,7 @@ class PsfProperties:
     fwhm: float
     ap_flux: float
     peak: float
-    dims: ExtendI
+    dims: Extent2I
 
 
 def get_psf_properties(psf, point):
