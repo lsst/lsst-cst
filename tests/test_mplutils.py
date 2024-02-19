@@ -3,7 +3,7 @@ import unittest
 import matplotlib.pyplot as plt
 import numpy as np
 
-from lsst.cst.data.mpl_utils import remove_figure
+from lsst.cst.visualization.tools.deleters import delete_plot
 
 
 class TestMPLUtils(unittest.TestCase):
@@ -30,4 +30,4 @@ class TestMPLUtils(unittest.TestCase):
         self.assertIsNotNone(fig)
 
         # Remove figure using utility function
-        remove_figure(fig)
+        delete_plot(fig)

@@ -14,17 +14,20 @@ __all__ = ["delete_plot"]
 def delete_plot(plot: Panel) -> None:
     """Delete selected plot.
 
-    Parameters:
+    Parameters
     ----------
     plot: 'Any'
        Plot to be deleted. Nowadays this function will work
        with any python object, but the plan is to specialized
        for diferent plots and layouts.
     """
-    del plot
-    import gc
+    if isinstance(plot, Figure):
+        _remove_figure(plot)
+    else:
+        del plot
+        import gc
 
-    gc.collect()
+        gc.collect()
 
 
 def _remove_figure(fig: Figure):

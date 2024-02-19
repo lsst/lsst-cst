@@ -450,6 +450,7 @@ class DataImageDisplay:
         -------
         figure: `DataFigure`
             Figure identified by figure_identifier string.
+
         Raises
         ------
         AssertionError: Figure id is not found
@@ -745,7 +746,7 @@ class PolygonOptions:
 class PointsOptions:
     """Points plot options.
 
-     Parameters
+    Parameters
     ----------
     alpha: `float`, optional
         Plot points alpha value.

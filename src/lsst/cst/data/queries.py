@@ -93,7 +93,13 @@ class DataWrapper:
 
     @property
     def index(self):
-        """ """
+        """Get data index available.
+
+        Returns
+        -------
+        index: `List[str]`
+            Data index available.
+        """
         return self._data.columns.tolist()
 
     @property
@@ -219,8 +225,8 @@ class Query(ABC):
     @property
     @abstractmethod
     def query(self):
-        """
-        Query string.
+        """Query string.
+
         Returns
         -------
         query: `str`
@@ -311,7 +317,8 @@ class QueryCoordinateBoundingBox(Query):
         "llcra, llcdec, ulcra, ulcdec, urcra, urcdec, lrcra, lrcdec "
         "FROM dp02_dc2_catalogs.CcdVisit "
         "WHERE CONTAINS(POINT('ICRS', {}, {}), "
-        "POLYGON('ICRS', llcra, llcdec, ulcra, ulcdec, urcra, urcdec, lrcra, lrcdec)) = 1 "
+        "POLYGON('ICRS', llcra, llcdec, ulcra, ulcdec, "
+        "urcra, urcdec, lrcra, lrcdec)) = 1 "
         "AND expMidptMJD >= {} AND expMidptMJD <= {}"
     )
 
@@ -452,8 +459,7 @@ class TAPService:
 
     @property
     def query(self):
-        """
-        Loaded query on the tap service.
+        """Loaded query on the tap service.
         Is the query loaded if fetch method is call.
 
         Returns
@@ -466,8 +472,7 @@ class TAPService:
 
     @query.setter
     def query(self, query: str | Query):
-        """
-        Query setter.
+        """Query setter.
 
         Parameters
         ----------

@@ -4,6 +4,10 @@ __all__ = ["PlotOptionsDefault"]
 
 
 class PlotOptionsDefault:
+    """Scatic class to save all plotting
+    aesthetic default values.
+    """
+
     color = "darkorange"
     cmap_color = "Viridis"
     fontsize = {"title": 16, "xlabel": 14, "ylabel": 14, "ticks": 12}

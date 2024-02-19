@@ -12,7 +12,6 @@ from lsst.cst.data.queries import (
     RaDecCoordinatesToTractPatch,
     TAPService,
 )
-from lsst.geom import Extent2I
 
 __all__ = [
     "Collection",
@@ -72,14 +71,14 @@ class PsfProperties:
         by a sinc function.
     peak : `float`
         Peak PSF value.
-    dims : `lsst.geom.ExtendI`
+    dims : `Tuple[int, int]`
         PSF postage stamp dimensions.
     """
 
     fwhm: float
     ap_flux: float
     peak: float
-    dims: Extent2I
+    dims: (int, int)
 
     def __str__(self):
         return (
@@ -90,7 +89,7 @@ class PsfProperties:
         )
 
     def __repr__(self):
-        return __str__()
+        return self.__str__()
 
 
 def get_psf_properties(psf, point):
@@ -114,7 +113,7 @@ def get_psf_properties(psf, point):
     ap_flux = psf.computeApertureFlux(radius=sigma, position=point)
     peak = psf.computePeak(position=point)
     dims = psf.computeImage(point).getDimensions()
-    return PsfProperties(sigma, ap_flux, peak, dims)
+    return PsfProperties(fwhm, ap_flux, peak, (dims[0], dims[1]))
 
 
 @dataclass

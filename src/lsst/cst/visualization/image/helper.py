@@ -20,8 +20,7 @@ def create_interactive_image(
     marker: str = "circle",
     marker_color: str = "orange",
 ):
-    """
-    Shows a interactive image from a butler image and its sources.
+    """Shows a interactive image from a butler image and its sources.
 
     Parameters
     ----------
