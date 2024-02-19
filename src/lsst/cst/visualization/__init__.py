@@ -18,5 +18,5 @@ __all__ = [
     "Options",
     "HoverSources",
     "BoxInteract",
-    "OnClickInteract"
+    "OnClickInteract",
 ]

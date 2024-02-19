@@ -10,13 +10,13 @@ from typing import Dict, List
 import holoviews as hv
 import numpy as np
 from holoviews.operation.datashader import rasterize
-from lsst.cst.visualization.params import PlotOptionsDefault
 
 from lsst.cst.data.tools import (
     CalExpData,
     ImageTransform,
     StandardImageTransform,
 )
+from lsst.cst.visualization.params import PlotOptionsDefault
 
 _log = logging.getLogger(__name__)
 
@@ -124,7 +124,9 @@ class ImageOptions(Options):
     colorbar: bool = True
     height: int = PlotOptionsDefault.height
     padding: float = 0.01
-    fontsize: Dict[str, str] = field(default_factory=lambda: PlotOptionsDefault.fontsize)
+    fontsize: Dict[str, str] = field(
+        default_factory=lambda: PlotOptionsDefault.fontsize
+    )
     toolbar_position: str = "right"
     show_grid: bool = PlotOptionsDefault.show_grid
     tools: List[str] = field(default_factory=lambda: [])

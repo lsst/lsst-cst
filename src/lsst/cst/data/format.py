@@ -4,12 +4,11 @@ import pandas as pd
 
 from lsst.cst.data.tools import CalExpId
 
-
 __all__ = [
     "data_id_to_str",
     "ids_to_str",
     "shuffle_dataframe",
-    "sort_dataframe"
+    "sort_dataframe",
 ]
 
 

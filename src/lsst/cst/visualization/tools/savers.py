@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 
 import holoviews as hv
 from panel.layout.base import Panel
+
 from lsst.cst.visualization.image.displays import ImageDisplay, get_extension
 from lsst.cst.visualization.image.interactors import _InteractiveDisplay
 
@@ -25,8 +26,9 @@ def save_plot_as_html(plot: Panel, filename: str):
     if isinstance(plot, Panel):
         plot.save(filename)
     else:
-        raise Exception(f"Unable to save plot type:"
-                        f"{type(plot)} using this function")
+        raise Exception(
+            f"Unable to save plot type:" f"{type(plot)} using this function"
+        )
 
 
 class Saver(ABC):

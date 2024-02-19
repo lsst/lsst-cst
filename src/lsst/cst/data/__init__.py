@@ -6,16 +6,8 @@ from .format import (
     shuffle_dataframe,
     sort_dataframe,
 )
-
-from .queries import (
-    Band,
-    DataWrapper,
-    TAPService
-)
-
-from .tools import (
-    tract_patch_from_ra_dec
-)
+from .queries import Band, DataWrapper, TAPService
+from .tools import tract_patch_from_ra_dec
 
 __all__ = [
     "Band",
@@ -25,5 +17,5 @@ __all__ = [
     "ids_to_str",
     "TAPService",
     "DataWrapper",
-    "tract_patch_from_ra_dec"
+    "tract_patch_from_ra_dec",
 ]

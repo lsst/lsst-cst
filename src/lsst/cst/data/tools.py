@@ -6,7 +6,12 @@ from enum import Enum
 
 import numpy as np
 from astropy.visualization import AsinhStretch, ZScaleInterval
-from lsst.cst.data.queries import Band, RaDecCoordinatesToTractPatch, TAPService
+
+from lsst.cst.data.queries import (
+    Band,
+    RaDecCoordinatesToTractPatch,
+    TAPService,
+)
 from lsst.geom import Extent2I
 
 __all__ = [
@@ -16,13 +21,13 @@ __all__ = [
     "CalExpId",
     "CalExpDataFactory",
     "ButlerCalExpDataFactory",
-    "tract_patch_from_ra_dec"
+    "tract_patch_from_ra_dec",
 ]
 
 _log = logging.getLogger(__name__)
 _lsst_butler_ready = True
 
-SIGMA_TO_FWHM = 2.0*np.sqrt(2.0*np.log(2.0))
+SIGMA_TO_FWHM = 2.0 * np.sqrt(2.0 * np.log(2.0))
 
 try:
     from lsst.daf.butler import Butler, DatasetExistence
@@ -49,7 +54,7 @@ class Configuration(Enum):
 
 def gauss(x, a, x0, sigma):
     # Helper function to define a one-dimensional Gaussian profile.
-    return a*np.exp(-(x-x0)**2/(2*sigma**2))
+    return a * np.exp(-((x - x0) ** 2) / (2 * sigma**2))
 
 
 @dataclass(frozen=True)
@@ -70,19 +75,23 @@ class PsfProperties:
     dims : `lsst.geom.ExtendI`
         PSF postage stamp dimensions.
     """
+
     fwhm: float
     ap_flux: float
     peak: float
     dims: Extent2I
 
     def __str__(self):
-        return f"PSF FWHM: {self.fwhm:.4} pix \n"\
-               f"PSF flux from aperture photometry: {self.ap_flux:.4} \n"\
-               f"Peak PSF value: {self.peak:.4} \n"\
-               f"PSF postage stamp dimensions: {self.dims} \n"
-    
+        return (
+            f"PSF FWHM: {self.fwhm:.4} pix \n"
+            f"PSF flux from aperture photometry: {self.ap_flux:.4} \n"
+            f"Peak PSF value: {self.peak:.4} \n"
+            f"PSF postage stamp dimensions: {self.dims} \n"
+        )
+
     def __repr__(self):
         return __str__()
+
 
 def get_psf_properties(psf, point):
     """Function to obtain PSF properties.
@@ -453,6 +462,7 @@ class TractPatchInformation:
     tract: `int`
         Tract value.
     """
+
     def __init__(self, tract: int, patch: int):
         self._tract = tract
         self._patch = patch
@@ -519,7 +529,9 @@ def tract_patch_from_ra_dec(ra: float, dec: float):
     data = tap_exposure_data.fetch()
     final_data = data._data
     if final_data.empty:
-        raise Exception(f"No tract-patch info found"
-                        f"for ra: {ra} dec: {dec}")
-    return TractPatchInformation(final_data["lsst_tract"].iloc[0],
-                                 final_data["lsst_patch"].iloc[0])
+        raise Exception(
+            f"No tract-patch info found" f"for ra: {ra} dec: {dec}"
+        )
+    return TractPatchInformation(
+        final_data["lsst_tract"].iloc[0], final_data["lsst_patch"].iloc[0]
+    )

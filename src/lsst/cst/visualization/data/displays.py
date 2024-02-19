@@ -1,30 +1,33 @@
 """data science plot display utilities."""
 
-import holoviews as hv
 import logging
+from collections.abc import Sequence
+from dataclasses import dataclass, field
+from typing import Dict, List, Optional, Tuple, TypedDict, Union
 
+import holoviews as hv
 from bokeh.io import show
 from bokeh.models import HoverTool  # noqa: F401
-from bokeh.models import CDSView, BooleanFilter
+from bokeh.models import BooleanFilter, CDSView
 from bokeh.plotting import figure, gridplot
 from holoviews.operation.datashader import datashade, dynspread
-from dataclasses import dataclass, field
-from lsst.cst.visualization.params import PlotOptionsDefault
+
 from lsst.cst.data.queries import DataWrapper
-from typing import Dict, List, Optional, Tuple, TypedDict, Union
-from collections.abc import Sequence
+from lsst.cst.visualization.params import PlotOptionsDefault
 
 _log = logging.getLogger(__name__)
 
 
-__all__ = ["HVScatterOptions",
-           "DataShadeOptions",
-           "FigureOptions",
-           "ScatterOptions",
-           "HistogramOptions",
-           "PointsOptions",
-           "PolygonOptions",
-           "GeometricPlots"]
+__all__ = [
+    "HVScatterOptions",
+    "DataShadeOptions",
+    "FigureOptions",
+    "ScatterOptions",
+    "HistogramOptions",
+    "PointsOptions",
+    "PolygonOptions",
+    "GeometricPlots",
+]
 
 
 @dataclass
@@ -61,6 +64,7 @@ class HVScatterOptions:
     ylabel: `str`
         ylabel value.
     """
+
     alpha: float = 1.0
     color: str = PlotOptionsDefault.marker_color
     fontsize: Dict[str, str] = field(
@@ -88,22 +92,25 @@ class HVScatterOptions:
         options: `dict`
            Option key and values as dictionary.
         """
-        ret_dict = dict(alpha=self.alpha,
-                        color=self.color,
-                        fontsize=self.fontsize,
-                        height=self.height,
-                        invert_xaxis=self.invert_xaxis,
-                        invert_yaxis=self.invert_yaxis,
-                        marker=self.marker,
-                        size=self.size,
-                        title=self.title,
-                        toolbar=self.toolbar_position,
-                        tools=self.tools,
-                        width=self.width,
-                        xlabel=self.xlabel,
-                        ylabel=self.ylabel
-                        )
-        filtered_dict = {key: value for key, value in ret_dict.items() if value is not None}
+        ret_dict = dict(
+            alpha=self.alpha,
+            color=self.color,
+            fontsize=self.fontsize,
+            height=self.height,
+            invert_xaxis=self.invert_xaxis,
+            invert_yaxis=self.invert_yaxis,
+            marker=self.marker,
+            size=self.size,
+            title=self.title,
+            toolbar=self.toolbar_position,
+            tools=self.tools,
+            width=self.width,
+            xlabel=self.xlabel,
+            ylabel=self.ylabel,
+        )
+        filtered_dict = {
+            key: value for key, value in ret_dict.items() if value is not None
+        }
         return filtered_dict
 
 
@@ -138,6 +145,7 @@ class DataShadeOptions:
     width: `int`, optional
         Width of the plot in pixels.
     """
+
     cmap: str = "Viridis"
     fontsize: Dict[str, str] = field(
         default_factory=lambda: PlotOptionsDefault.fontsize
@@ -162,18 +170,21 @@ class DataShadeOptions:
         options: `dict`
            Option key and values as dictionary.
         """
-        ret_dict = dict(fontsize=self.fontsize,
-                        height=self.height,
-                        padding=self.padding,
-                        show_grid=self.show_grid,
-                        tools=self.tools,
-                        width=self.width,
-                        xlabel=self.xlabel,
-                        xlim=self.xlim,
-                        ylabel=self.ylabel,
-                        ylim=self.ylim
-                        )
-        filtered_dict = {key: value for key, value in ret_dict.items() if value is not None}
+        ret_dict = dict(
+            fontsize=self.fontsize,
+            height=self.height,
+            padding=self.padding,
+            show_grid=self.show_grid,
+            tools=self.tools,
+            width=self.width,
+            xlabel=self.xlabel,
+            xlim=self.xlim,
+            ylabel=self.ylabel,
+            ylim=self.ylim,
+        )
+        filtered_dict = {
+            key: value for key, value in ret_dict.items() if value is not None
+        }
         return filtered_dict
 
 
@@ -194,9 +205,13 @@ class FigureOptions:
     ylabel: `str`, optional
         ylabel value.
     """
+
     height: int = PlotOptionsDefault.height
-    tools: List = field(default_factory=lambda:
-                        ["pan,box_zoom,box_select,lasso_select,reset,help"])
+    tools: List = field(
+        default_factory=lambda: [
+            "pan,box_zoom,box_select,lasso_select,reset,help"
+        ]
+    )
     width: int = PlotOptionsDefault.width
     xlabel: str = "X"
     ylabel: str = "Y"
@@ -211,17 +226,16 @@ class FigureOptions:
         options: `dict`
            Option key and values as dictionary.
         """
-        ret_dict = dict(fontsize=self.fontsize,
-                        height=self.height,
-                        tools=self.tools,
-                        width=self.width,
-                        x_axis_label=self.xlabel,
-                        y_axis_label=self.ylabel,
-                        )
+        ret_dict = dict(
+            fontsize=self.fontsize,
+            height=self.height,
+            tools=self.tools,
+            width=self.width,
+            x_axis_label=self.xlabel,
+            y_axis_label=self.ylabel,
+        )
         filtered_dict = {
-            key: value
-            for key, value in ret_dict.items()
-            if value is not None
+            key: value for key, value in ret_dict.items() if value is not None
         }
 
         return filtered_dict
@@ -242,6 +256,7 @@ class ScatterOptions:
     size: int, optional
         Plot points marker size.
     """
+
     alpha: float = 1.0
     color: str = PlotOptionsDefault.marker_color
     marker: str = PlotOptionsDefault.marker
@@ -257,12 +272,15 @@ class ScatterOptions:
         options: `dict`
            Option key and values as dictionary.
         """
-        ret_dict = dict(alpha=self.alpha,
-                        color=self.color,
-                        marker=self.marker,
-                        size=self.size,
-                        )
-        filtered_dict = {key: value for key, value in ret_dict.items() if value is not None}
+        ret_dict = dict(
+            alpha=self.alpha,
+            color=self.color,
+            marker=self.marker,
+            size=self.size,
+        )
+        filtered_dict = {
+            key: value for key, value in ret_dict.items() if value is not None
+        }
         return filtered_dict
 
 
@@ -287,13 +305,14 @@ class HistogramOptions:
     ylabel: `str`, optional
         ylabel value.
     """
+
     color: str = PlotOptionsDefault.color
     fontscale: float = 1.2
     height: int = PlotOptionsDefault.height
     title: str = "No title"
-    xlabel: str = 'X'
+    xlabel: str = "X"
     width: int = PlotOptionsDefault.width
-    ylabel: str = 'Y'
+    ylabel: str = "Y"
 
     def to_dict(self):
         """Create and returns a dictionary from class attributes,
@@ -305,15 +324,18 @@ class HistogramOptions:
         options: `dict`
            Option key and values as dictionary.
         """
-        ret_dict = dict(color=self.color,
-                        height=self.height,
-                        fontscale=self.fontscale,
-                        title=self.title,
-                        xlabel=self.xlabel,
-                        width=self.width,
-                        ylabel=self.ylabel
-                        )
-        filtered_dict = {key: value for key, value in ret_dict.items() if value is not None}
+        ret_dict = dict(
+            color=self.color,
+            height=self.height,
+            fontscale=self.fontscale,
+            title=self.title,
+            xlabel=self.xlabel,
+            width=self.width,
+            ylabel=self.ylabel,
+        )
+        filtered_dict = {
+            key: value for key, value in ret_dict.items() if value is not None
+        }
         return filtered_dict
 
 
@@ -329,21 +351,25 @@ class DataFigure:
     options: `FigureOptions``
         Figure options.
     """
-    def __init__(self,
-                 figure_id: str,
-                 data: DataWrapper,
-                 options: FigureOptions = FigureOptions()):
+
+    def __init__(
+        self,
+        figure_id: str,
+        data: DataWrapper,
+        options: FigureOptions = FigureOptions(),
+    ):
         self._figure_id = figure_id
         self._exposure_data = data
         self._figure = figure(**options.to_dict())
 
-    def add_scatter(self,
-                    x_data: str,
-                    y_data: str,
-                    hover_tool: None | HoverTool = None,
-                    filter: None | Sequence[bool] = None,
-                    options: ScatterOptions = ScatterOptions()
-                    ):
+    def add_scatter(
+        self,
+        x_data: str,
+        y_data: str,
+        hover_tool: None | HoverTool = None,
+        filter: None | Sequence[bool] = None,
+        options: ScatterOptions = ScatterOptions(),
+    ):
         """Add scatter plot to the figure.
 
         Parameters
@@ -365,10 +391,12 @@ class DataFigure:
             Scatter plot options.
         """
         index = self._exposure_data.index
-        assert x_data in index, f"Selected data {x_data}"\
-                                f"not available on exposure data"
-        assert y_data in index, f"Selected data {y_data}"\
-                                f"not available on exposure data"
+        assert x_data in index, (
+            f"Selected data {x_data}" f"not available on exposure data"
+        )
+        assert y_data in index, (
+            f"Selected data {y_data}" f"not available on exposure data"
+        )
         view = CDSView()
         if filter is not None:
             view.filter = BooleanFilter(filter)
@@ -377,14 +405,14 @@ class DataFigure:
             y_data,
             source=self._exposure_data.get_column_data_source(),
             view=view,
-            **options.to_dict()
+            **options.to_dict(),
         )
         if hover_tool is not None:
             # hover_tool.renderers.append(glyph)
             nhover_tool = HoverTool(
                 renderers=[glyph],
                 tooltips=hover_tool.tooltips,
-                formatters=hover_tool.formatters
+                formatters=hover_tool.formatters,
             )
             self._figure.add_tools(nhover_tool)
 
@@ -431,9 +459,7 @@ class DataImageDisplay:
         return figure
 
     def create_figure(
-        self,
-        identifier: str,
-        figure_options: FigureOptions = FigureOptions()
+        self, identifier: str, figure_options: FigureOptions = FigureOptions()
     ):
         """Creates a new figure and save the reference for future use.
 
@@ -453,16 +479,19 @@ class DataImageDisplay:
         ------
         AssertionError: Identifier already taken by another figure.
         """
-        new_figure = DataFigure(identifier, self._exposure_data, figure_options)
-        assert identifier not in self._figures.keys(), \
-            f"Figure {identifier} already exists"
+        new_figure = DataFigure(
+            identifier, self._exposure_data, figure_options
+        )
+        assert (
+            identifier not in self._figures.keys()
+        ), f"Figure {identifier} already exists"
         self._figures[identifier] = new_figure
         return new_figure
 
     def _exchange_figures(
         self,
         layout: List[Union[str, List[...]]],
-        new_layout: List[Union[figure, List[...]]]
+        new_layout: List[Union[figure, List[...]]],
     ):
         # Helper function to exchange list of figure identifier
         # and exchange it for its equivalent created figure.
@@ -477,7 +506,7 @@ class DataImageDisplay:
     def show(
         self,
         layout: List[Union[str, List[...]]],
-        tools_position: str = "above"
+        tools_position: str = "above",
     ):
         """Show selected figures already created and configured.
 
@@ -492,14 +521,18 @@ class DataImageDisplay:
         """
         new_layout = []
         self._exchange_figures(layout, new_layout)
-        show(gridplot(new_layout), tools_position=tools_position, notebook_handle=True)
+        show(
+            gridplot(new_layout),
+            tools_position=tools_position,
+            notebook_handle=True,
+        )
 
     def create_axe(
         self,
         data_identifier: str,
         label: Optional[str] = None,
         range: Optional[Tuple[float, float]] = None,
-        unit: str = "N/A"
+        unit: str = "N/A",
     ):
         """Create Axe information to be used on scatter plots.
 
@@ -522,14 +555,20 @@ class DataImageDisplay:
         if label is None:
             label = data_identifier
         index = self._exposure_data.index
-        assert data_identifier in index, f"Selected data {data_identifier}"\
-                                         f"not available on exposure data"
-        return hv.Dimension(data_identifier, label=label, range=(None, None), unit=unit)
+        assert data_identifier in index, (
+            f"Selected data {data_identifier}"
+            f"not available on exposure data"
+        )
+        return hv.Dimension(
+            data_identifier, label=label, range=(None, None), unit=unit
+        )
 
     def show_scatter(
         self,
-        columns: Optional[Tuple[hv.Dimension | str, hv.Dimension | str]] = None,
-        options: ScatterOptions = ScatterOptions()
+        columns: Optional[
+            Tuple[hv.Dimension | str, hv.Dimension | str]
+        ] = None,
+        options: ScatterOptions = ScatterOptions(),
     ):
         """Creates scatter plot using selected columns from data.
 
@@ -555,18 +594,26 @@ class DataImageDisplay:
             data_x = columns[0]
             data_y = columns[1]
             if isinstance(data_x, str):
-                assert data_x in index, f"Selected data {data_x} for X "\
-                                        f"not available on exposure data"
+                assert data_x in index, (
+                    f"Selected data {data_x} for X "
+                    f"not available on exposure data"
+                )
             if isinstance(data_y, str):
-                assert data_y in index, f"Selected data {data_y} for Y "\
-                                        f"not available on exposure data"
-            scatter = hv.Scatter(data, data_x, data_y).options(**options.to_dict())
+                assert data_y in index, (
+                    f"Selected data {data_y} for Y "
+                    f"not available on exposure data"
+                )
+            scatter = hv.Scatter(data, data_x, data_y).options(
+                **options.to_dict()
+            )
         return scatter
 
     def show_data_shade(
         self,
-        columns: Optional[Tuple[hv.Dimension | str, hv.Dimension | str]] = None,
-        options: DataShadeOptions = DataShadeOptions()
+        columns: Optional[
+            Tuple[hv.Dimension | str, hv.Dimension | str]
+        ] = None,
+        options: DataShadeOptions = DataShadeOptions(),
     ):
         """Creates datashader plot using selected columns from data.
 
@@ -574,7 +621,7 @@ class DataImageDisplay:
         ----------
         columns: `Tuple[hv.Dimension | str, hv.Dimension | str]`, optional
             Data columns selected to create the datashader plot,
-            if non columns are passed the two first columns from 
+            if non columns are passed the two first columns from
             data will be used.
 
         options: ScatterOptions, optional
@@ -591,7 +638,9 @@ class DataImageDisplay:
         scatter.opts(**options.to_dict())
         return scatter
 
-    def show_histogram(self, field: 'str', options: HistogramOptions = HistogramOptions()):
+    def show_histogram(
+        self, field: "str", options: HistogramOptions = HistogramOptions()
+    ):
         """Creates histogram plot using selected columns from data.
 
         Parameters
@@ -648,13 +697,14 @@ class PolygonOptions:
     ylabel: `str`
         ylabel value.
     """
+
     alpha: float = 0.0
     cmap: dict[str, str] = None
     color: str = None
     height: int = PlotOptionsDefault.height
     tools: [] = None
     hover_alpha: float = 0.3
-    line_color: str = 'blue'
+    line_color: str = "blue"
     line_alpha: float = 1.0
     title: Optional[str] = None
     width: int = PlotOptionsDefault.width
@@ -671,20 +721,23 @@ class PolygonOptions:
         options: `dict`
            Option key and values as dictionary.
         """
-        ret_dict = dict(alpha=self.alpha,
-                        cmap=self.cmap,
-                        color=self.color,
-                        height=self.height,
-                        hover_alpha=self.hover_alpha,
-                        line_color=self.line_color,
-                        line_alpha=self.line_alpha,
-                        tools=self.tools,
-                        title=self.title,
-                        width=self.width,
-                        xlabel=self.xlabel,
-                        ylabel=self.ylabel
-                        )
-        filtered_dict = {key: value for key, value in ret_dict.items() if value is not None}
+        ret_dict = dict(
+            alpha=self.alpha,
+            cmap=self.cmap,
+            color=self.color,
+            height=self.height,
+            hover_alpha=self.hover_alpha,
+            line_color=self.line_color,
+            line_alpha=self.line_alpha,
+            tools=self.tools,
+            title=self.title,
+            width=self.width,
+            xlabel=self.xlabel,
+            ylabel=self.ylabel,
+        )
+        filtered_dict = {
+            key: value for key, value in ret_dict.items() if value is not None
+        }
         return filtered_dict
 
 
@@ -714,6 +767,7 @@ class PointsOptions:
     ylabel: `str`
         ylabel value.
     """
+
     alpha: float = 1.0
     color: str = PlotOptionsDefault.marker_color
     fontsize: Dict[str, str] = field(
@@ -736,17 +790,20 @@ class PointsOptions:
         options: `dict`
            Option key and values as dictionary.
         """
-        ret_dict = dict(alpha=self.alpha,
-                        color=self.color,
-                        fontsize=self.fontsize,
-                        height=self.height,
-                        size=self.size,
-                        title=self.title,
-                        width=self.width,
-                        xlabel=self.xlabel,
-                        ylabel=self.ylabel
-                        )
-        filtered_dict = {key: value for key, value in ret_dict.items() if value is not None}
+        ret_dict = dict(
+            alpha=self.alpha,
+            color=self.color,
+            fontsize=self.fontsize,
+            height=self.height,
+            size=self.size,
+            title=self.title,
+            width=self.width,
+            xlabel=self.xlabel,
+            ylabel=self.ylabel,
+        )
+        filtered_dict = {
+            key: value for key, value in ret_dict.items() if value is not None
+        }
         return filtered_dict
 
 
@@ -754,8 +811,12 @@ class GeometricPlots:
     """Static functions to create HV plots
     with geometric figures.
     """
+
     @staticmethod
-    def points(points: List[Tuple[float, float]], options: PointsOptions = PointsOptions()):
+    def points(
+        points: List[Tuple[float, float]],
+        options: PointsOptions = PointsOptions(),
+    ):
         """Create a plot with the selected points on it.
 
         Parameters
@@ -779,7 +840,7 @@ class GeometricPlots:
         kdims: Optional[Tuple[str, str]] = None,
         vdims: Optional[Tuple[str, str]] = None,
         tooltips: Optional[List[Tuple[str, str]]] = None,
-        options: PolygonOptions = PointsOptions()
+        options: PolygonOptions = PointsOptions(),
     ):
         """Create a plot with the selected polygons on it.
 
@@ -802,6 +863,7 @@ class GeometricPlots:
         plot: `hv.Points`
             Plot with the polygons draw on it.
         """
-        region_poly = hv.Polygons(region_data, kdims=kdims, vdims=vdims)\
-            .opts(**options.to_dict())
+        region_poly = hv.Polygons(region_data, kdims=kdims, vdims=vdims).opts(
+            **options.to_dict()
+        )
         return region_poly

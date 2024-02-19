@@ -1,6 +1,7 @@
 """data science image interactors."""
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from typing import Tuple
 
 import holoviews as hv
 import pandas as pd
@@ -8,7 +9,6 @@ import panel as pn
 from bokeh.models import HoverTool
 from holoviews import streams
 
-from typing import Tuple
 from lsst.cst.visualization.image import ImageDisplay, Options
 
 __all__ = ["HoverSources", "BoxInteract", "OnClickInteract"]
@@ -76,7 +76,7 @@ class HoverSources(_InteractiveDisplay):
         self,
         image_display: ImageDisplay,
         sources: Tuple[pd.Series],
-        options=PointsOptions()
+        options=PointsOptions(),
     ):
         super().__init__()
         assert isinstance(image_display, ImageDisplay), (
@@ -164,7 +164,7 @@ class BoxInteract(_InteractiveDisplay):
             * dynamic_map
         )
         layout = pn.Row(interactive_image_display, self._text_area_input)
-        return layout 
+        return layout
 
 
 @dataclass

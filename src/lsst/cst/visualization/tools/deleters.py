@@ -1,8 +1,8 @@
 """data science delete plot tools."""
 
 import gc
-import matplotlib.pyplot as plt
 
+import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 from panel.layout.base import Panel
 
@@ -23,6 +23,7 @@ def delete_plot(plot: Panel) -> None:
     """
     del plot
     import gc
+
     gc.collect()
 
 

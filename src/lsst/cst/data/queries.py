@@ -1,14 +1,15 @@
 """data science query tools"""
 import logging
-import pandas as pd
-import numpy as np
-
-from enum import Enum
 from abc import ABC, abstractmethod
+from enum import Enum
+from typing import Optional
+
+import numpy as np
+import pandas as pd
 from astropy.coordinates import SkyCoord
 from bokeh.models import ColumnDataSource
+
 from lsst.rsp import get_tap_service
-from typing import Optional
 
 _log = logging.getLogger(__name__)
 
@@ -22,8 +23,8 @@ class Band(Enum):
 
 
 class DataHandler(ABC):
-    """Interface to modify data inside a dataframa.
-    """
+    """Interface to modify data inside a dataframa."""
+
     def __init__(self):
         super().__init__()
 
@@ -44,19 +45,22 @@ class DataHandler(ABC):
         raise NotImplementedError()
 
 
-class ExposureDataHandler():
+class ExposureDataHandler:
     """Standard actions to be done with a exposure data
-       dataframe.
+    dataframe.
     """
+
     def __init__(self):
         super().__init__()
 
     def handle_data(self, data: pd.DataFrame):
-        data['gmi'] = data['mag_g_cModel'] - data['mag_i_cModel']
-        data['rmi'] = data['mag_r_cModel'] - data['mag_i_cModel']
-        data['gmr'] = data['mag_g_cModel'] - data['mag_r_cModel']
-        data['shape_type'] = data['r_extendedness'].map({0: 'point', 1: 'extended'})
-        data['objectId'] = np.array(data['objectId']).astype('str')
+        data["gmi"] = data["mag_g_cModel"] - data["mag_i_cModel"]
+        data["rmi"] = data["mag_r_cModel"] - data["mag_i_cModel"]
+        data["gmr"] = data["mag_g_cModel"] - data["mag_r_cModel"]
+        data["shape_type"] = data["r_extendedness"].map(
+            {0: "point", 1: "extended"}
+        )
+        data["objectId"] = np.array(data["objectId"]).astype("str")
         return data
 
 
@@ -89,8 +93,7 @@ class DataWrapper:
 
     @property
     def index(self):
-        """
-        """
+        """ """
         return self._data.columns.tolist()
 
     @property
@@ -114,9 +117,9 @@ class DataWrapper:
         self,
         column_name: str,
         condition: int | float | str,
-        operator: str = '=='
+        operator: str = "==",
     ):
-        """Filter data by a given condition and 
+        """Filter data by a given condition and
         returns in a new DataWrapper.
 
         Parameters
@@ -131,11 +134,11 @@ class DataWrapper:
             New DataWrapper with the rows that
             meet the condition.
         """
-        operators = {'==': pd.Series.eq,
-                     '>': pd.Series.gt,
-                     '<': pd.Series.lt}
+        operators = {"==": pd.Series.eq, ">": pd.Series.gt, "<": pd.Series.lt}
         assert operator in operators.values(), f"Non valid operator {operator}"
-        data = self.data[operators[operator](self.data[column_name], condition)]
+        data = self.data[
+            operators[operator](self.data[column_name], condition)
+        ]
         return DataWrapper(data)
 
     def handle_data(self, handler: DataHandler):
@@ -173,7 +176,7 @@ class DataWrapper:
         assert 0.0 <= frac <= 1.0
         if frac == 1.0:
             return self
-        data = self._data.sample(frac=frac, axis='index')
+        data = self._data.sample(frac=frac, axis="index")
         return DataWrapper(data)
 
     def histogram(self, field: str):
@@ -190,7 +193,7 @@ class DataWrapper:
             Array containing the histogram data from the
             selected frame.
         """
-        return np.histogram(self._data[field], bins='fd')
+        return np.histogram(self._data[field], bins="fd")
 
     def __getitem__(self, value):
         if value in self.index:
@@ -207,8 +210,9 @@ class DataWrapper:
 
 class Query(ABC):
     """Interface of a Query to be
-       used by TAPService
+    used by TAPService
     """
+
     def __init__(self):
         super().__init__()
 
@@ -241,8 +245,8 @@ class Query(ABC):
 
 
 class BasicQuery(Query):
-    """Simple string data query.
-    """
+    """Simple string data query."""
+
     def __init__(self, query: str):
         super().__init__()
         self._query = query
@@ -263,15 +267,17 @@ class QueryPsFlux(Query):
         Selected band.
     """
 
-    _QUERY = "SELECT fsodo.coord_ra, fsodo.coord_dec, "\
-        "fsodo.diaObjectId, fsodo.ccdVisitId, fsodo.band, "\
-        "fsodo.psfFlux, fsodo.psfDiffFlux, "\
-        "fsodo.psfDiffFluxErr, cv.expMidptMJD "\
-        "FROM dp02_dc2_catalogs.ForcedSourceOnDiaObject as fsodo "\
-        "JOIN dp02_dc2_catalogs.CcdVisit as cv "\
-        "ON cv.ccdVisitId = fsodo.ccdVisitId "\
-        "WHERE fsodo.diaObjectId = {} "\
+    _QUERY = (
+        "SELECT fsodo.coord_ra, fsodo.coord_dec, "
+        "fsodo.diaObjectId, fsodo.ccdVisitId, fsodo.band, "
+        "fsodo.psfFlux, fsodo.psfDiffFlux, "
+        "fsodo.psfDiffFluxErr, cv.expMidptMJD "
+        "FROM dp02_dc2_catalogs.ForcedSourceOnDiaObject as fsodo "
+        "JOIN dp02_dc2_catalogs.CcdVisit as cv "
+        "ON cv.ccdVisitId = fsodo.ccdVisitId "
+        "WHERE fsodo.diaObjectId = {} "
         "AND fsodo.band = '{}'"
+    )
 
     def __init__(self, dia_object_id: int, band: Band):
         super().__init__()
@@ -299,32 +305,34 @@ class QueryCoordinateBoundingBox(Query):
     mjd_end:
         End time.
     """
-    _QUERY = "SELECT ra, decl, band, ccdVisitId, expMidptMJD, "\
-        "llcra, llcdec, ulcra, ulcdec, urcra, urcdec, lrcra, lrcdec "\
-        "FROM dp02_dc2_catalogs.CcdVisit "\
-        "WHERE CONTAINS(POINT('ICRS', {}, {}), "\
-        "POLYGON('ICRS', llcra, llcdec, ulcra, ulcdec, urcra, urcdec, lrcra, lrcdec)) = 1 "\
+
+    _QUERY = (
+        "SELECT ra, decl, band, ccdVisitId, expMidptMJD, "
+        "llcra, llcdec, ulcra, ulcdec, urcra, urcdec, lrcra, lrcdec "
+        "FROM dp02_dc2_catalogs.CcdVisit "
+        "WHERE CONTAINS(POINT('ICRS', {}, {}), "
+        "POLYGON('ICRS', llcra, llcdec, ulcra, ulcdec, urcra, urcdec, lrcra, lrcdec)) = 1 "
         "AND expMidptMJD >= {} AND expMidptMJD <= {}"
+    )
 
     def __init__(
         self,
         ra: np.float64,
         dec: np.float64,
         mjd_begin: np.int64,
-        mjd_end: np.int64
+        mjd_end: np.int64,
     ):
         self._ra = ra
         self._dec = dec
         self._mjd_begin = mjd_begin
         self._mjd_end = mjd_end
-        self._query = QueryCoordinateBoundingBox._QUERY.format(ra, dec, mjd_begin, mjd_end)
+        self._query = QueryCoordinateBoundingBox._QUERY.format(
+            ra, dec, mjd_begin, mjd_end
+        )
 
     @classmethod
     def from_sky_coord(
-        cls,
-        coord: SkyCoord,
-        mjd_begin: np.int64,
-        mjd_end: np.int64
+        cls, coord: SkyCoord, mjd_begin: np.int64, mjd_end: np.int64
     ):
         """Instantiates a QueryCoordinateBoundingBox
         from a astropy SkyCoord instance.
@@ -360,16 +368,19 @@ class QueryExposureData(Query):
     radius: `np.float64`
         Circumpherence radius.
     """
-    _QUERY = "SELECT coord_ra, coord_dec, objectId, r_extendedness, "\
-        "scisql_nanojanskyToAbMag(g_cModelFlux) AS mag_g_cModel, "\
-        "scisql_nanojanskyToAbMag(r_cModelFlux) AS mag_r_cModel, "\
-        "scisql_nanojanskyToAbMag(i_cModelFlux) AS mag_i_cModel "\
-        "FROM dp02_dc2_catalogs.Object "\
-        "WHERE CONTAINS(POINT('ICRS', coord_ra, coord_dec),"\
-        "CIRCLE('ICRS', {} , {} , {} )) = 1 " \
-        "AND detect_isPrimary = 1 "\
-        "AND scisql_nanojanskyToAbMag(r_cModelFlux) < 27.0 "\
+
+    _QUERY = (
+        "SELECT coord_ra, coord_dec, objectId, r_extendedness, "
+        "scisql_nanojanskyToAbMag(g_cModelFlux) AS mag_g_cModel, "
+        "scisql_nanojanskyToAbMag(r_cModelFlux) AS mag_r_cModel, "
+        "scisql_nanojanskyToAbMag(i_cModelFlux) AS mag_i_cModel "
+        "FROM dp02_dc2_catalogs.Object "
+        "WHERE CONTAINS(POINT('ICRS', coord_ra, coord_dec),"
+        "CIRCLE('ICRS', {} , {} , {} )) = 1 "
+        "AND detect_isPrimary = 1 "
+        "AND scisql_nanojanskyToAbMag(r_cModelFlux) < 27.0 "
         "AND r_extendedness IS NOT NULL"
+    )
 
     def __init__(self, ra: np.float64, dec: np.float64, radius: np.float64):
         super().__init__()
@@ -381,8 +392,7 @@ class QueryExposureData(Query):
 
     @classmethod
     def from_sky_coord(cls, coord: SkyCoord, radius: np.float64):
-        """Creates a exposure data query
-        """
+        """Creates a exposure data query"""
         return cls(coord.ra.value, coord.dec.value, radius)
 
     @property
@@ -402,17 +412,22 @@ class RaDecCoordinatesToTractPatch(Query):
     """Query to retrieve tract and patch closest to
     the selected coordinate.
     """
-    _QUERY = "SELECT coadd.lsst_tract, coadd.lsst_patch, "\
-             "DISTANCE(POINT('ICRS GEOCENTER',{},{}), "\
-             "POINT('ICRS GEOCENTER',coadd.s_ra, coadd.s_dec)) as distance "\
-             "FROM dp02_dc2_catalogs.CoaddPatches as coadd "\
-             "ORDER BY distance LIMIT {}"
+
+    _QUERY = (
+        "SELECT coadd.lsst_tract, coadd.lsst_patch, "
+        "DISTANCE(POINT('ICRS GEOCENTER',{},{}), "
+        "POINT('ICRS GEOCENTER',coadd.s_ra, coadd.s_dec)) as distance "
+        "FROM dp02_dc2_catalogs.CoaddPatches as coadd "
+        "ORDER BY distance LIMIT {}"
+    )
 
     def __init__(self, ra: float, dec: float, limit: int = 1):
         self._ra = ra
         self._dec = dec
         self._limit = limit
-        self._query = RaDecCoordinatesToTractPatch._QUERY.format(ra, dec, limit)
+        self._query = RaDecCoordinatesToTractPatch._QUERY.format(
+            ra, dec, limit
+        )
 
     @property
     def query(self):
@@ -431,6 +446,7 @@ class TAPService:
         Query to be launched
 
     """
+
     def __init__(self, query: Optional[str | Query] = None):
         self._query = query  # type: Optional[Query]
 
@@ -483,7 +499,7 @@ class TAPService:
         _log.info(f"Fetching Data from query: {self._query.query}")
         job = service.submit_job(self._query.query)
         job.run()
-        job.wait(phases=['COMPLETED', 'ERROR'])
+        job.wait(phases=["COMPLETED", "ERROR"])
         job.raise_if_error()
         self._check_status(job.phase)
         _log.info("Converting result to Dataframe")
@@ -491,9 +507,9 @@ class TAPService:
 
     def _check_status(self, job_state: str):
         # Helper function to check status
-        if job_state == 'COMPLETED':
+        if job_state == "COMPLETED":
             _log.info("Job phase COMPLETED")
-        elif job_state == 'ERROR':
+        elif job_state == "ERROR":
             _log.error("Job phase finished with ERROR")
         else:
             _log.info(f"Job phase finished with status {job_state}")
