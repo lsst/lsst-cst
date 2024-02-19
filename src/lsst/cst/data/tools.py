@@ -7,7 +7,7 @@ from enum import Enum
 import numpy as np
 from astropy.visualization import AsinhStretch, ZScaleInterval
 from lsst.cst.data.queries import Band, RaDecCoordinatesToTractPatch, TAPService
-
+from lsst.geom import ExtendI
 
 __all__ = [
     "Collection",
@@ -21,6 +21,8 @@ __all__ = [
 
 _log = logging.getLogger(__name__)
 _lsst_butler_ready = True
+
+SIGMA_TO_FWHM = 2.0*np.sqrt(2.0*np.log(2.0))
 
 try:
     from lsst.daf.butler import Butler, DatasetExistence
@@ -43,6 +45,65 @@ class Configuration(Enum):
     """
 
     DP02 = {"name": "dp02", "collections_available": [Collection.i22]}
+
+
+def gauss(x, a, x0, sigma):
+    # Helper function to define a one-dimensional Gaussian profile.
+    return a*np.exp(-(x-x0)**2/(2*sigma**2))
+
+
+@dataclass(frozen=True)
+class PsfProperties:
+    """Object with psf properties.
+
+    Parameters
+    ----------
+    fwhm : `float`
+        Full-width at half maximum: PSF determinant radius
+        from SDSS adaptive moments matrix (sigma) times
+        SIGMA_TO_FWHM.
+    ap_flux : `float`
+        PSF flux from aperture photometry weighted
+        by a sinc function.
+    peak : `float`
+        Peak PSF value.
+    dims : `lsst.geom.ExtendI`
+        PSF postage stamp dimensions.
+    """
+    fwhm: float
+    ap_flux: float
+    peak: float
+    dims: ExtendI
+
+
+def get_psf_properties(psf, point):
+    """Function to obtain PSF properties.
+
+    Parameters
+    ----------
+    psf : `lsst.meas.extensions.psfex.PsfexPsf`
+        PSF object.
+    point : `lsst.geom.Point2D`
+        Coordinate where the PSF is being evaluated.
+
+    Returns
+    -------
+    psf_values: `PsfProperties`
+        PsfProperties object containing psf properties:
+        fhwm, ap_flux, peak and dims.
+    """
+    sigma = psf.computeShape(point).getDeterminantRadius()
+    fwhm = sigma * SIGMA_TO_FWHM
+    ap_flux = psf.computeApertureFlux(radius=sigma, position=point)
+    peak = psf.computePeak(position=point)
+    dims = psf.computeImage(point).getDimensions()
+
+    print(f"PSF FWHM: {fwhm:.4} pix \n"
+          f"PSF flux from aperture photometry: {ap_flux:.4} \n"
+          f"Peak PSF value: {peak:.4} \n"
+          f"PSF postage stamp dimensions: {dims} \n")
+
+    return PsfProperties(sigma, ap_flux, peak, dims)
 
 
 @dataclass

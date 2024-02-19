@@ -263,6 +263,7 @@ def create_psf_flux_plot(dia_object_id: int, band: Band, show: str = 'psfFlux'):
     show: `str`
         Selectable data to be plotted over time,
         psfFlux or psfDiffFlux.
+
     Returns
     -------
         Panel row containing psfFlux or psfDiffFlux value
@@ -279,4 +280,4 @@ def create_psf_flux_plot(dia_object_id: int, band: Band, show: str = 'psfFlux'):
     data = tap_exposure_data.fetch()
     _log.info("Plotting data")
     return create_linked_plot_with_brushing(data,
-                                            [show, "expMidptMJD"])
+                                            columns=[show, "expMidptMJD"])
