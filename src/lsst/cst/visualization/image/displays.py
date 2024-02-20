@@ -9,13 +9,13 @@ from typing import Dict, List, Optional
 
 import holoviews as hv
 import numpy as np
-from astropy.visualization import make_lupton_rgb
 from holoviews.operation.datashader import rasterize
 
 from lsst.cst.data.tools import (
     CalExpData,
     ImageTransform,
     StandardImageTransform,
+    RGBImageTransform
 )
 from lsst.cst.visualization.params import PlotOptionsDefault
 
@@ -23,7 +23,6 @@ _log = logging.getLogger(__name__)
 
 
 __all__ = [
-    "DisplayImageTools",
     "ImageDisplay",
     "CalExpImageDisplay",
     "ImageArrayDisplay",
@@ -390,7 +389,7 @@ class CalExpImageDisplay(ImageDisplay):
         xlabel: str = "X",
         ylabel: str = "Y",
         show_detections: bool = True,
-        image_options: ImageOptions = ImageOptions(),
+        image_options: ImageOptions = ImageOptions()
     ):
         super().__init__()
         self._cal_exp_data = cal_exp_data
@@ -434,61 +433,64 @@ class CalExpImageDisplay(ImageDisplay):
         return self._img.transformed_image
 
 
-class DisplayImageTools:
-    """Bunch of utilities related to imaging tools."""
+class ImageRGBDisplay(ImageDisplay):
+    """Plot RGB image."""
 
-    @staticmethod
-    def create_rgb(image, bgr="gri", stretch=1, Q=10, scale=None):
-        """Create an RGB color composite image.
+    def __init__(
+        self,
+        image: np.array,
+        title: str = None,
+        xlabel: str = "X",
+        ylabel: str = "Y",
+        image_options: ImageOptions = ImageOptions()
+    ):
+        super().__init__()
+        self._image = image
+        self._image_transform = None
+        self._img = None
+        self._transformed_image = image_options
+        self._image_transform = RGBImageTransform()
 
-        Parameters
-        ----------
-        image : `MultibandExposure`
-            `MultibandExposure` to display.
-        bgr : `sequence`, optional
-            A 3-element sequence of filter names (i.e., keys of the exps dict)
-            indicating what band to use for each channel. If `image` only has
-            three filters then this parameter is ignored and the filters
-            in the image are used.
-        stretch: `int`, optional
-            The linear stretch of the image.
-        Q: `int`, optional
-            The Asinh softening parameter.
-        scale: `List[float]`, optional
-            list of 3 floats, each less than 1.
-            Re-scales the RGB channels.
+    def render(self):
+        """Render the image."""
+        self._transformed_image = self._image_transform.transform(self._image)
+        self._img = hv.RGB(self._transformed_image).options(
+            title=self._title,
+            xlabel=self._xlabel,
+            ylabel=self._ylabel,
+            **self._image_options.to_dict())
+
+    def show(self):
+        """Show the image."""
+        assert self._img is not None
+        return self._img
+
+    def rasterize(self):
+        """Rasterize the image."""
+        raise NotImplementedError()
+
+    @property
+    @abstractmethod
+    def image(self):
+        """Underlying image.
 
         Returns
         -------
-        rgb: `ndarray`
-            RGB (integer, 8-bits per channel) colour
-            image as an NxNx3 numpy array.
+        image: `np.ndarray`
+            Underlying image used to create the plot.
         """
-        # If the image only has 3 bands, reverse
-        # the order of the bands
-        # to produce the RGB image
-        if len(image) == 3:
-            bgr = image.filters
+        raise NotImplementedError()
 
-        # Extract the primary image component
-        # of each Exposure with the
-        #   .image property, and use .array
-        # to get a NumPy array view.
+    def _set_image_transform(self, image_transform: ImageTransform):
+        """Setter to change the image transformer before rendering the image.
 
-        if scale is None:
-            r_im = image[bgr[2]].array  # numpy array for the r channel
-            g_im = image[bgr[1]].array  # numpy array for the g channel
-            b_im = image[bgr[0]].array  # numpy array for the b channel
-        else:
-            # manually re-scaling the images here
-            r_im = image[bgr[2]].array * scale[0]
-            g_im = image[bgr[1]].array * scale[1]
-            b_im = image[bgr[0]].array * scale[2]
+        Parameters
+        ----------
+        image_transform: `ImageTransform`
+            New image transformation image to be applied when
+            rendering the plot
+        """
+        assert isinstance(image_transform, ImageTransform), ""
+        self._image_transform = image_transform
 
-        rgb = make_lupton_rgb(
-            image_r=r_im, image_g=g_im, image_b=b_im, stretch=stretch, Q=Q
-        )
-        # "stretch" and "Q" are parameters to
-        # stretch and scale the pixel values
-
-        return rgb
+    image_transform = property(fget=None, fset=_set_image_transform)

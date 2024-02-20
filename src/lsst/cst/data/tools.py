@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from enum import Enum
 
 import numpy as np
-from astropy.visualization import AsinhStretch, ZScaleInterval
+from astropy.visualization import AsinhStretch, ZScaleInterval, make_lupton_rgb
 
 from lsst.cst.data.queries import (
     Band,
@@ -97,6 +97,62 @@ class PsfProperties:
 
     def __repr__(self):
         return self.__str__()
+
+
+def create_rgb(image, bgr="gri", stretch=1, Q=10, scale=None):
+    """Create an RGB color composite image.
+
+    Parameters
+    ----------
+    image : `MultibandExposure`
+        `MultibandExposure` to display.
+    bgr : `sequence`, optional
+        A 3-element sequence of filter names (i.e., keys of the exps dict)
+        indicating what band to use for each channel. If `image` only has
+        three filters then this parameter is ignored and the filters
+        in the image are used.
+    stretch: `int`, optional
+        The linear stretch of the image.
+    Q: `int`, optional
+        The Asinh softening parameter.
+    scale: `List[float]`, optional
+        list of 3 floats, each less than 1.
+        Re-scales the RGB channels.
+
+    Returns
+    -------
+    rgb: `ndarray`
+        RGB (integer, 8-bits per channel) colour
+        image as an NxNx3 numpy array.
+    """
+    # If the image only has 3 bands, reverse
+    # the order of the bands
+    # to produce the RGB image
+    if len(image) == 3:
+        bgr = image.filters
+
+    # Extract the primary image component
+    # of each Exposure with the
+    #   .image property, and use .array
+    # to get a NumPy array view.
+
+    if scale is None:
+        r_im = image[bgr[2]].array  # numpy array for the r channel
+        g_im = image[bgr[1]].array  # numpy array for the g channel
+        b_im = image[bgr[0]].array  # numpy array for the b channel
+    else:
+        # manually re-scaling the images here
+        r_im = image[bgr[2]].array * scale[0]
+        g_im = image[bgr[1]].array * scale[1]
+        b_im = image[bgr[0]].array * scale[2]
+
+    rgb = make_lupton_rgb(
+        image_r=r_im, image_g=g_im, image_b=b_im, stretch=stretch, Q=Q
+    )
+    # "stretch" and "Q" are parameters to
+    # stretch and scale the pixel values
+
+    return rgb
 
 
 def get_psf_properties(psf, point):
@@ -397,6 +453,49 @@ class NoImageTransform(ImageTransform):
             Same array passaed as argument
         """
         return image_array
+
+
+class RGBImageTransform(ImageTransform):
+    """Standard RGB Image modificacions. When executing transform the image 
+    will be fliped vertically.
+    """
+
+    def __init__(self):
+        super().__init__()
+        self._transformation = [self._flip_columns]
+
+    def transform(self, image_array: np.ndarray) -> np.ndarray:
+        """Transform an image executing vertical flip
+        and dynamic range reduction.
+
+        Parameters
+        ----------
+        image_array: `np.array`
+            Array to be transformed.
+
+        Returns
+        -------
+        transformed_image_array: `np.array`
+            Array modified after all transformation has been applied.
+        """
+        for transformation_function in self._transformation:
+            image_array = transformation_function(image_array)
+        return image_array
+
+    def _flip_columns(self, image_array: np.ndarray) -> None:
+        """Flips vertically an image array.
+
+        Parameters
+        ----------
+        image_array: `np.ndarray`
+            Array to be vertically flip.
+
+        Returns
+        -------
+        transformed_image_array: `np.array`
+            Array vertically flipped.
+        """
+        return np.flipud(image_array)
 
 
 class StandardImageTransform(ImageTransform):
