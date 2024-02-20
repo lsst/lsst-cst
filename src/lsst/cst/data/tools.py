@@ -13,6 +13,21 @@ from lsst.cst.data.queries import (
     TAPService,
 )
 
+_log = logging.getLogger(__name__)
+_lsst_butler_ready = True
+_lsst_stack_ready = True
+
+try:
+    from lsst.daf.butler import Butler, DatasetExistence
+except ImportError:
+    _lsst_butler_ready = False
+    _log.warning("Unable to import lsst.daf.butler")
+try:
+    import lsst.geom as geom
+except ImportError:
+    _log.warning("Unable to import lsst.geom")
+    _lsst_stack_ready = False
+
 __all__ = [
     "Collection",
     "Configuration",
@@ -23,16 +38,8 @@ __all__ = [
     "tract_patch_from_ra_dec",
 ]
 
-_log = logging.getLogger(__name__)
-_lsst_butler_ready = True
 
 SIGMA_TO_FWHM = 2.0 * np.sqrt(2.0 * np.log(2.0))
-
-try:
-    from lsst.daf.butler import Butler, DatasetExistence
-except ImportError:
-    _lsst_butler_ready = False
-    _log.warning("Unable to import lsst.daf.butler")
 
 
 class Collection(Enum):
@@ -534,3 +541,57 @@ def tract_patch_from_ra_dec(ra: float, dec: float):
     return TractPatchInformation(
         final_data["lsst_tract"].iloc[0], final_data["lsst_patch"].iloc[0]
     )
+
+
+def cutout_coadd(butler, ra, dec, band='r', dataset_type='deepCoadd',
+                 skymap=None, cutout_side_length=51, **kwargs):
+    """
+    Produce a cutout from a coadd at the given ra, dec position.
+    Adapted from DC2 tutorial notebook by Michael Wood-Vasey.
+
+    Parameters
+    ----------
+    butler: `lsst.daf.persistence.Butler`
+        Helper object providing access to a data repository
+    ra: `float`
+        Right ascension of the center of the cutout, in degrees
+    dec: `float`
+        Declination of the center of the cutout, in degrees
+    band: `string`, optional
+        Filter of the image to load
+    dataset_type: `string [deepCoadd]`, optional
+        Which type of coadd to load.  Doesn't support 'calexp'
+    skymap: `lsst.afw.skyMap.SkyMap`, optional
+        Pass in to avoid the Butler read.
+        Useful if you have lots of them.
+    cutout_side_length: `float`, optional
+        Size of the cutout region in pixels.
+
+    Returns
+    -------
+    image: `MaskedImage`
+        Cutout image.
+    """
+    if not _lsst_stack_ready:
+        raise Exception("Cannot use this cutout_coadd "
+                        "if lsst stack is not loaded")
+    radec = geom.SpherePoint(ra, dec, geom.degrees)
+    cutout_size = geom.ExtentI(cutout_side_length, cutout_side_length)
+
+    if skymap is None:
+        skymap = butler.get("skyMap")
+
+    # Look up the tract, patch for the RA, Dec
+    tractInfo = skymap.findTract(radec)
+    patchInfo = tractInfo.findPatch(radec)
+    xy = geom.PointI(tractInfo.getWcs().skyToPixel(radec))
+    bbox = geom.BoxI(xy - cutout_size // 2, cutout_size)
+    patch = tractInfo.getSequentialPatchIndex(patchInfo)
+
+    coaddId = {'tract': tractInfo.getId(), 'patch': patch, 'band': band}
+    parameters = {'bbox': bbox}
+
+    cutout_image = butler.get(dataset_type, parameters=parameters,
+                              dataId=coaddId)
+
+    return cutout_image

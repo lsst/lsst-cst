@@ -19,7 +19,12 @@ __all__ = ["TAPService", "DataWrapper"]
 class Band(Enum):
     """Exposure bands available."""
 
-    i = "i"
+    g = 'g'
+    i = 'i'
+    r = 'r'
+    u = 'u'
+    y = 'y'
+    z = 'z'
 
 
 class DataHandler(ABC):
