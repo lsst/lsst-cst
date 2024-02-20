@@ -4,8 +4,9 @@ from typing import Optional, Tuple
 
 import pandas as pd
 import panel as pn
-
+import holoviews as hv
 from lsst.afw.image._exposure import ExposureF
+import matplotlib.pyplot as plt
 from lsst.cst.visualization.image import (
     CalExpImageDisplay,
     HoverSources,
@@ -109,8 +110,6 @@ def create_rgb_composite_image(
     coadds = [cutout_image_g, cutout_image_r, cutout_image_i]
     coadds = MultibandExposure.fromExposures(band_values, coadds)
     img = DisplayImageTools.create_rgb(coadds.image, bgr=band_values, scale=scale, stretch=stretch, Q=Q)
-    height, width, channels = img.shape
-    print(img)
-    display = ImageDisplay.from_image_array(img, [0, 0, height, width])
-    display.render()    
-    return pn.Row(display.show())
+    hv_rgb_image = hv.RGB(img)
+    # Plot the RGB image
+    return hv_rgb_image.opts(width=400, height=400)
