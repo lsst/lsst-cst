@@ -4,13 +4,13 @@ from typing import Optional, Tuple
 
 import pandas as pd
 import panel as pn
-import holoviews as hv
 
 from lsst.afw.image._exposure import ExposureF
 from lsst.cst.visualization.image import (
     CalExpImageDisplay,
     HoverSources,
     ImageDisplay,
+    RGBImageDisplay
 )
 from lsst.cst.data.tools import cutout_coadd, create_rgb
 from lsst.cst.data.queries import Band
@@ -109,6 +109,6 @@ def create_rgb_composite_image(
     coadds = [cutout_image_g, cutout_image_r, cutout_image_i]
     coadds = MultibandExposure.fromExposures(band_values, coadds)
     img = create_rgb(coadds.image, bgr=band_values, scale=scale, stretch=stretch, Q=Q)
-
-    # Plot the RGB image
-    return hv_rgb_image.opts(width=400, height=400)
+    display = RGBImageDisplay(img)
+    display.render()
+    return display.show()

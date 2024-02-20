@@ -28,6 +28,7 @@ __all__ = [
     "ImageArrayDisplay",
     "ImageOptions",
     "Options",
+    "RGBImageDisplay"
 ]
 
 
@@ -433,7 +434,7 @@ class CalExpImageDisplay(ImageDisplay):
         return self._img.transformed_image
 
 
-class ImageRGBDisplay(ImageDisplay):
+class RGBImageDisplay(ImageDisplay):
     """Plot RGB image."""
 
     def __init__(
