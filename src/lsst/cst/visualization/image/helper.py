@@ -66,8 +66,7 @@ def create_interactive_image(
     return pn.Row(img)
 
 
-def rgb_composite_image(
-    self,
+def create_rgb_composite_image(
     butler,
     ra: float,
     dec: float,
@@ -111,5 +110,7 @@ def rgb_composite_image(
     coadds = MultibandExposure.fromExposures(band_values, coadds)
     img = DisplayImageTools.create_rgb(coadds.image, bgr=band_values, scale=scale, stretch=stretch, Q=Q)
     height, width, channels = img.shape
+    print(img)
     display = ImageDisplay.from_image_array(img, [0, 0, height, width])
-    return pn.Row(display)
+    display.render()    
+    return pn.Row(display.show())
