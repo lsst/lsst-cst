@@ -112,8 +112,6 @@ class ImageOptions(Options):
         space around the plot.
     fontsize: `dict`
         Font size for axis labels, titles, and legend.
-    colorbar: `bool`
-        adds a colorbar to the plot.
     toolbar: `str`
         toolbar position 'left', 'right', 'above', bellow'.
     show_grid: `bool`
@@ -123,7 +121,6 @@ class ImageOptions(Options):
     """
 
     cmap: Optional[str] = None
-    colorbar: bool = True
     height: int = PlotOptionsDefault.height
     padding: float = 0.01
     fontsize: Dict[str, str] = field(
@@ -145,7 +142,6 @@ class ImageOptions(Options):
             yaxis=self.yaxis,
             padding=self.padding,
             fontsize=self.fontsize,
-            colorbar=self.colorbar,
             toolbar=self.toolbar_position,
             show_grid=self.show_grid,
             tools=self.tools,
@@ -440,7 +436,7 @@ class RGBImageDisplay(ImageDisplay):
     def __init__(
         self,
         image: np.array,
-        title: str = None,
+        title: str = "Untitled",
         xlabel: str = "X",
         ylabel: str = "Y",
         image_options: ImageOptions = ImageOptions()
@@ -450,6 +446,10 @@ class RGBImageDisplay(ImageDisplay):
         self._image_transform = None
         self._img = None
         self._transformed_image = image_options
+        self._title = title
+        self._xlabel = xlabel
+        self._ylabel = ylabel
+        self._image_options = image_options
         self._image_transform = RGBImageTransform()
 
     def render(self):
@@ -470,8 +470,6 @@ class RGBImageDisplay(ImageDisplay):
         """Rasterize the image."""
         raise NotImplementedError()
 
-    @property
-    @abstractmethod
     def image(self):
         """Underlying image.
 
@@ -480,7 +478,7 @@ class RGBImageDisplay(ImageDisplay):
         image: `np.ndarray`
             Underlying image used to create the plot.
         """
-        raise NotImplementedError()
+        return self._image
 
     def _set_image_transform(self, image_transform: ImageTransform):
         """Setter to change the image transformer before rendering the image.

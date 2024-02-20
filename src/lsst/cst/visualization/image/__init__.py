@@ -1,17 +1,16 @@
 """image visualization utils"""
 
 from .displays import (
-    DisplayImageTools,
     CalExpImageDisplay,
     ImageArrayDisplay,
     ImageDisplay,
     ImageOptions,
     Options,
+    RGBImageDisplay
 )
 from .interactors import BoxInteract, HoverSources, OnClickInteract
 
 __all__ = [
-    "DisplayImageTools",
     "ImageDisplay",
     "CalExpImageDisplay",
     "ImageArrayDisplay",
@@ -20,4 +19,5 @@ __all__ = [
     "HoverSources",
     "BoxInteract",
     "OnClickInteract",
+    "RGBImageDisplay",
 ]
