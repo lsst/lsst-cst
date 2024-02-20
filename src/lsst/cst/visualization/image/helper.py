@@ -1,20 +1,20 @@
 """data science helper functions for image plots."""
-from collections import Sequence
+from collections.abc import Sequence
 from typing import Optional, Tuple
 
 import pandas as pd
 import panel as pn
 
-from lsst.afw.image import MultibandExposure
 from lsst.afw.image._exposure import ExposureF
-from lsst.cst.data.queries import Band
-from lsst.cst.data.tools import cutout_coadd
 from lsst.cst.visualization.image import (
     CalExpImageDisplay,
-    DisplayImageTools,
     HoverSources,
     ImageDisplay,
+    DisplayImageTools
 )
+from lsst.cst.data.tools import cutout_coadd
+from lsst.cst.data.queries import Band
+from lsst.afw.image import MultibandExposure
 
 
 def create_interactive_image(
@@ -75,7 +75,7 @@ def rgb_composite_image(
     cutout_side_length: int = 701,
     scale: Optional[Sequence[float]] = None,
     stretch: int = 1,
-    Q: int = 10,
+    Q: int = 10
 ):
     """Create an RGB composite image from a location.
 
@@ -101,35 +101,15 @@ def rgb_composite_image(
         The Asinh softening parameter.
     """
     band_values = [member.value for member in bands]
-    cutout_image_g = cutout_coadd(
-        butler,
-        ra,
-        dec,
-        band=band_values[0],
-        datasetType="deepCoadd",
-        cutout_side_length=cutout_side_length,
-    )
-    cutout_image_r = cutout_coadd(
-        butler,
-        ra,
-        dec,
-        band=band_values[1],
-        datasetType="deepCoadd",
-        cutout_side_length=cutout_side_length,
-    )
-    cutout_image_i = cutout_coadd(
-        butler,
-        ra,
-        dec,
-        band=band_values[2],
-        datasetType="deepCoadd",
-        cutout_side_length=cutout_side_length,
-    )
+    cutout_image_g = cutout_coadd(butler, ra, dec, band=band_values[0],
+                                  datasetType='deepCoadd', cutout_side_length=cutout_side_length)
+    cutout_image_r = cutout_coadd(butler, ra, dec, band=band_values[1],
+                                  datasetType='deepCoadd', cutout_side_length=cutout_side_length)
+    cutout_image_i = cutout_coadd(butler, ra, dec, band=band_values[2],
+                                  datasetType='deepCoadd', cutout_side_length=cutout_side_length)
     coadds = [cutout_image_g, cutout_image_r, cutout_image_i]
     coadds = MultibandExposure.fromExposures(band_values, coadds)
-    img = DisplayImageTools.create_rgb(
-        coadds.image, bgr=band_values, scale=scale, stretch=stretch, Q=Q
-    )
+    img = DisplayImageTools.create_rgb(coadds.image, bgr=band_values, scale=scale, stretch=stretch, Q=Q)
     height, width, channels = img.shape
     display = ImageDisplay.from_image_array(img, [0, 0, height, width])
     return pn.Row(display)
