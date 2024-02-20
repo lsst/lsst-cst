@@ -5,7 +5,7 @@ import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 import holoviews as hv
 import numpy as np
@@ -122,7 +122,7 @@ class ImageOptions(Options):
         List of Bokeh tools to include to the default ones.
     """
 
-    cmap: str = "Greys_r"
+    cmap: Optional[str] = None
     colorbar: bool = True
     height: int = PlotOptionsDefault.height
     padding: float = 0.01
@@ -137,7 +137,7 @@ class ImageOptions(Options):
     yaxis: str = "left"
 
     def to_dict(self):
-        return dict(
+        ret_dict = dict(
             cmap=self.cmap,
             height=self.height,
             width=self.width,
@@ -150,6 +150,10 @@ class ImageOptions(Options):
             show_grid=self.show_grid,
             tools=self.tools,
         )
+        filtered_dict = {
+            key: value for key, value in ret_dict.items() if value is not None
+        }
+        return filtered_dict
 
 
 class ImageDisplay(ABC):
