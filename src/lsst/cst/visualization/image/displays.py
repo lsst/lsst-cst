@@ -430,13 +430,11 @@ class CalExpImageDisplay(ImageDisplay):
 
 
 class DisplayImageTools:
-    """Bunch of utilities related to imaging tools.
-    """
+    """Bunch of utilities related to imaging tools."""
 
     @staticmethod
     def create_rgb(image, bgr="gri", stretch=1, Q=10, scale=None):
-        """
-        Create an RGB color composite image.
+        """Create an RGB color composite image.
 
         Parameters
         ----------
@@ -461,7 +459,6 @@ class DisplayImageTools:
             RGB (integer, 8-bits per channel) colour
             image as an NxNx3 numpy array.
         """
-
         # If the image only has 3 bands, reverse
         # the order of the bands
         # to produce the RGB image
@@ -483,10 +480,9 @@ class DisplayImageTools:
             g_im = image[bgr[1]].array * scale[1]
             b_im = image[bgr[0]].array * scale[2]
 
-        rgb = make_lupton_rgb(image_r=r_im,
-                              image_g=g_im,
-                              image_b=b_im,
-                              stretch=stretch, Q=Q)
+        rgb = make_lupton_rgb(
+            image_r=r_im, image_g=g_im, image_b=b_im, stretch=stretch, Q=Q
+        )
         # "stretch" and "Q" are parameters to
         # stretch and scale the pixel values
 

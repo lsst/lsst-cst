@@ -543,10 +543,17 @@ def tract_patch_from_ra_dec(ra: float, dec: float):
     )
 
 
-def cutout_coadd(butler, ra, dec, band='r', dataset_type='deepCoadd',
-                 skymap=None, cutout_side_length=51, **kwargs):
-    """
-    Produce a cutout from a coadd at the given ra, dec position.
+def cutout_coadd(
+    butler,
+    ra,
+    dec,
+    band="r",
+    dataset_type="deepCoadd",
+    skymap=None,
+    cutout_side_length=51,
+    **kwargs,
+):
+    """Produce a cutout from a coadd at the given ra, dec position.
     Adapted from DC2 tutorial notebook by Michael Wood-Vasey.
 
     Parameters
@@ -573,8 +580,9 @@ def cutout_coadd(butler, ra, dec, band='r', dataset_type='deepCoadd',
         Cutout image.
     """
     if not _lsst_stack_ready:
-        raise Exception("Cannot use this cutout_coadd "
-                        "if lsst stack is not loaded")
+        raise Exception(
+            "Cannot use this cutout_coadd " "if lsst stack is not loaded"
+        )
     radec = geom.SpherePoint(ra, dec, geom.degrees)
     cutout_size = geom.ExtentI(cutout_side_length, cutout_side_length)
 
@@ -588,10 +596,11 @@ def cutout_coadd(butler, ra, dec, band='r', dataset_type='deepCoadd',
     bbox = geom.BoxI(xy - cutout_size // 2, cutout_size)
     patch = tractInfo.getSequentialPatchIndex(patchInfo)
 
-    coaddId = {'tract': tractInfo.getId(), 'patch': patch, 'band': band}
-    parameters = {'bbox': bbox}
+    coaddId = {"tract": tractInfo.getId(), "patch": patch, "band": band}
+    parameters = {"bbox": bbox}
 
-    cutout_image = butler.get(dataset_type, parameters=parameters,
-                              dataId=coaddId)
+    cutout_image = butler.get(
+        dataset_type, parameters=parameters, dataId=coaddId
+    )
 
     return cutout_image
