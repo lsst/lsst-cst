@@ -23,6 +23,7 @@ _log = logging.getLogger(__name__)
 
 
 __all__ = [
+    "DisplayImageTools",
     "ImageDisplay",
     "CalExpImageDisplay",
     "ImageArrayDisplay",
