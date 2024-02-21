@@ -14,8 +14,8 @@ from holoviews.operation.datashader import rasterize
 from lsst.cst.data.tools import (
     CalExpData,
     ImageTransform,
+    RGBImageTransform,
     StandardImageTransform,
-    RGBImageTransform
 )
 from lsst.cst.visualization.params import PlotOptionsDefault
 
@@ -275,12 +275,12 @@ class ImageDisplay(ABC):
 
 
 class ImageArrayDisplay(ImageDisplay):
-    """Plot for an ExposureF
+    """Plot for an array as an image.
 
     Parameters
     ----------
     image: `numpy.ndarray`
-        image array to be show in the plot.
+        1D image array to be show in the plot.
     title: `str`
         title of the plot.
     xlabel: `str`
@@ -431,7 +431,21 @@ class CalExpImageDisplay(ImageDisplay):
 
 
 class RGBImageDisplay(ImageDisplay):
-    """Plot RGB image."""
+    """Plot RGB image.
+
+    Parameters
+    ----------
+    image: `numpy.ndarray`
+        3D image array to be show in the plot.
+    title: `str`
+        title of the plot.
+    xlabel: `str`
+        label for the x coordinates.
+    ylabel: `str`
+        label for the y coordinates.
+    options: `Options`
+        Options for the underlying plot object.
+    """
 
     def __init__(
         self,

@@ -456,7 +456,7 @@ class NoImageTransform(ImageTransform):
 
 
 class RGBImageTransform(ImageTransform):
-    """Standard RGB Image modificacions. When executing transform the image 
+    """Standard RGB Image modificacions. When executing transform the image
     will be fliped vertically.
     """
 

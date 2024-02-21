@@ -6,7 +6,7 @@ from .displays import (
     ImageDisplay,
     ImageOptions,
     Options,
-    RGBImageDisplay
+    RGBImageDisplay,
 )
 from .interactors import BoxInteract, HoverSources, OnClickInteract
 
