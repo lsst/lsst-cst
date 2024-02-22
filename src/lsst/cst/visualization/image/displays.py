@@ -28,7 +28,7 @@ __all__ = [
     "ImageArrayDisplay",
     "ImageOptions",
     "Options",
-    "RGBImageDisplay"
+    "RGBImageDisplay",
 ]
 
 
@@ -386,7 +386,7 @@ class CalExpImageDisplay(ImageDisplay):
         xlabel: str = "X",
         ylabel: str = "Y",
         show_detections: bool = True,
-        image_options: ImageOptions = ImageOptions()
+        image_options: ImageOptions = ImageOptions(),
     ):
         super().__init__()
         self._cal_exp_data = cal_exp_data
@@ -453,7 +453,7 @@ class RGBImageDisplay(ImageDisplay):
         title: str = "Untitled",
         xlabel: str = "X",
         ylabel: str = "Y",
-        image_options: ImageOptions = ImageOptions()
+        image_options: ImageOptions = ImageOptions(),
     ):
         super().__init__()
         self._image = image
@@ -473,7 +473,8 @@ class RGBImageDisplay(ImageDisplay):
             title=self._title,
             xlabel=self._xlabel,
             ylabel=self._ylabel,
-            **self._image_options.to_dict())
+            **self._image_options.to_dict(),
+        )
 
     def show(self):
         """Show the image."""

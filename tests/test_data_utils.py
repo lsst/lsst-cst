@@ -10,7 +10,6 @@ class TestDataUtils(unittest.TestCase):
     """Test data utils."""
 
     def testSortDataFrameNonExistingKey(self) -> None:
-        """ """
         data = {
             "Prefecture": ["Tokyo", "Osaka", "Kanagawa", "Aichi", "Hokkaido"],
             "Population": [13929286, 8839469, 9126214, 7483128, 5386252],
@@ -20,7 +19,6 @@ class TestDataUtils(unittest.TestCase):
             sort_dataframe(df, sort_key="Residents")
 
     def testSortDescendingDataFrameSettingIndex(self) -> None:
-        """ """
         data = {
             "Prefecture": ["Tokyo", "Osaka", "Kanagawa", "Aichi", "Hokkaido"],
             "Population": [13929286, 8839469, 9126214, 7483128, 5386252],

@@ -3,10 +3,11 @@ import unittest
 
 import numpy as np
 import pandas as pd
-import psutil
 
 from lsst.cst.data.queries import Band
-from lsst.cst.data.tools import CalExpData, CalExpDataFactory, CalExpId
+from lsst.cst.data.tools import CalExpDataFactory, CalExpId
+from lsst.cst.visualization.image.helper import create_interactive_image
+from lsst.cst.visualization.tools import delete_plot, save_plot_as_html
 
 base_folder = os.path.dirname(os.path.abspath(__file__))
 
@@ -20,49 +21,47 @@ class CalExpDataTestFactory(CalExpDataFactory):
             calexp_id,
             "assets/image.npy",
             "assets/sources_data.csv",
-            (0, 0, 4072, 4000),
+            (4072, 4000),
         )
 
 
-def get_memory_in_use_mb():
-    # Get information about system memory
-    memory_info = psutil.virtual_memory()
-    used_memory_mb = memory_info.used / (1024**2)
-    return used_memory_mb
+class Image:
+    def __init__(self, array: np.array):
+        self._array = array
+
+    @property
+    def array(self):
+        return self._array
 
 
-def get_file_size(file_path):
-    """
-    Get the size of a file in bytes.
-    """
-    return os.path.getsize(file_path)
-
-
-class CalExpDataTest(CalExpData):
+class CalExpDataTest:
     def __init__(
         self,
         cal_exp_id: CalExpId,
         image_path: str,
         sources_path: str,
-        bounds: tuple[int],
+        dimensions: tuple[int, int],
     ):
         self._cal_exp_id = cal_exp_id
         self._image_path = image_path
         self._sources_path = sources_path
-        self._bounds = bounds
+        self._dimensions = dimensions
 
-    def get_image(self):
+    @property
+    def image(self):
         file_path = os.path.join(base_folder, self._image_path)
         data_array = np.load(file_path)
-        return data_array
+        return Image(data_array)
 
-    def get_sources(self):
+    @property
+    def sources(self):
         file_path = os.path.join(base_folder, self._sources_path)
         df = pd.read_csv(file_path)
+        df = df.reset_index(drop=True)
         return df
 
-    def get_image_bounds(self):
-        return self._bounds
+    def getDimensions(self):
+        return self._dimensions
 
     @property
     def cal_exp_id(self):
@@ -70,41 +69,21 @@ class CalExpDataTest(CalExpData):
 
 
 class TestImagePlot(unittest.TestCase):
+    _FILE_NAME = os.path.join(base_folder, "assets/image_plot.html")
+
     def setUp(self):
         cal_exp_factory = CalExpDataTestFactory()
         cal_exp_id = CalExpId(visit=192350, detector=175, band=Band.i)
         self._cal_exp_data = cal_exp_factory.get_cal_exp_data(cal_exp_id)
 
     def tearDown(self):
-        pass
+        os.remove(TestImagePlot._FILE_NAME)
 
-    @unittest.SkipTest
-    def test_image_with_sources(self):
-        pass
-        # cal_exp_plot = ImageDisplay.from_cal_exp_data(self._cal_exp_data)
-        # hover_sources = HoverSources(cal_exp_plot)
-        # html_saver = HTMLSaver()
-        # created_plot_filename = os.path.join(
-        #     base_folder, "assets/created_plot"
-        # )
-        # created_file = html_saver.save(hover_sources, created_plot_filename)
-        # TODO: How to check if two files are near to be equal?
-        # Size doesnt work and md5 neither
-        # file_size = get_file_size(created_file)
-        # saved_file_size = get_file_size(
-        #    os.path.join(base_folder, "assets/image_plot.html")
-        # )
-        # os.remove(created_file)
-
-    @unittest.SkipTest
-    def test_delete_image(self):
-        pass
-        # cal_exp_plot = ImageDisplay.from_cal_exp_data(self._cal_exp_data)
-        # initial_memory = get_memory_in_use_mb()
-        # cal_exp_plot.render()
-        # after_render_memory = get_memory_in_use_mb()
-        # cal_exp_plot.delete()
-        # after_deleted_memory = get_memory_in_use_mb()
-        # lost_memory = after_render_memory - initial_memory
-        # won_memory = after_render_memory - after_deleted_memory
-        # self.assertLess(after_deleted_memory, after_render_memory)
+    def testCreateImageWithSourcesAndDeleteItAfter(self):
+        plot = create_interactive_image(
+            self._cal_exp_data,
+            self._cal_exp_data.sources,
+            title=self._cal_exp_data.cal_exp_id,
+        )
+        save_plot_as_html(plot, TestImagePlot._FILE_NAME)
+        delete_plot(plot)

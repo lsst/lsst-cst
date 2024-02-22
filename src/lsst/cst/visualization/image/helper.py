@@ -1,12 +1,11 @@
 """data science helper functions for image plots."""
+import logging
 from collections.abc import Sequence
 from typing import Optional, Tuple
 
 import pandas as pd
 import panel as pn
 
-from lsst.afw.image import MultibandExposure
-from lsst.afw.image._exposure import ExposureF
 from lsst.cst.data.queries import Band
 from lsst.cst.data.tools import create_rgb, cutout_coadd
 from lsst.cst.visualization.image import (
@@ -16,9 +15,19 @@ from lsst.cst.visualization.image import (
     RGBImageDisplay,
 )
 
+_log = logging.getLogger(__name__)
+
+try:
+    from lsst.afw.image import MultibandExposure
+    from lsst.afw.image._exposure import ExposureF
+except ImportError:
+    _log.warning("Unable to import lsst.afw")
+
+    _lsst_stack_ready = False
+
 
 def create_interactive_image(
-    calexp: ExposureF,
+    calexp: "ExposureF",
     sources: Optional[Tuple[pd.Series]] = None,
     title: str = "Untitled",
     axes_label: Tuple[str, str] = ("X", "Y"),

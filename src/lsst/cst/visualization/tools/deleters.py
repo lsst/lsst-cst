@@ -11,23 +11,24 @@ from panel.layout.base import Panel
 __all__ = ["delete_plot"]
 
 
-def delete_plot(plot: Panel) -> None:
+def delete_plot(plot: Panel | Figure) -> None:
     """Delete selected plot.
 
     Parameters
     ----------
     plot: 'Any'
-       Plot to be deleted. Nowadays this function will work
-       with any python object, but the plan is to specialized
-       for diferent plots and layouts.
+       Plot to be deleted.
     """
     if isinstance(plot, Figure):
         _remove_figure(plot)
-    else:
+    elif isinstance(plot, Panel):
+        plot.clear()
         del plot
         import gc
 
         gc.collect()
+    else:
+        raise Exception(f"Unknown instance to delete {type(plot)}")
 
 
 def _remove_figure(fig: Figure):
