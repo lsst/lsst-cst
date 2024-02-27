@@ -1,13 +1,13 @@
-import unittest
-import numpy as np
 import os
-import pandas as pd
 import pathlib
+import unittest
+
+import numpy as np
+import pandas as pd
 import vcr
 
 from lsst.cst.data import ids_to_str, shuffle_dataframe, sort_dataframe
 from lsst.cst.data.tools import tract_patch_from_ra_dec
-
 
 PATH = pathlib.Path(__file__).parent.absolute()
 
@@ -119,16 +119,18 @@ class TestDataUtils(unittest.TestCase):
             shuffled_df, expected_result, check_exact=True
         )
 
-    @unittest.skip("Temporarily unused until VRC works or alternative found")
+    @unittest.skip("Temporarily unused until VCR works or alternative found")
     @safe_vcr.use_cassette()
     def test_tract_patch_from_ra_dec(self):
         os.environ["EXTERNAL_INSTANCE_URL"] = "https://data.lsst.cloud"
-        os.environ["ACCESS_TOKEN"] = "gt-8_AofuBjEGH2kynxHLdz7g.kmz21yw9y9VEdN5vJ-SXWQ"
+        os.environ[
+            "ACCESS_TOKEN"
+        ] = "gt-8_AofuBjEGH2kynxHLdz7g.kmz21yw9y9VEdN5vJ-SXWQ"
         my_ra_deg = 55.745834
         my_dec_deg = -32.269167
         tract_patch_from_ra_dec(my_ra_deg, my_dec_deg)
-        os.environ.pop('EXTERNAL_INSTANCE_URL')
-        os.environ.pop('ACCESS_TOKEN')
+        os.environ.pop("EXTERNAL_INSTANCE_URL")
+        os.environ.pop("ACCESS_TOKEN")
 
     def testIdsToString(self) -> None:
         """ """
