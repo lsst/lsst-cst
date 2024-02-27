@@ -119,7 +119,7 @@ class TestDataUtils(unittest.TestCase):
             shuffled_df, expected_result, check_exact=True
         )
 
-    @unittest.skip()
+    @unittest.skip("Temporarily unused until VRC works or alternative found")
     @safe_vcr.use_cassette()
     def test_tract_patch_from_ra_dec(self):
         os.environ["EXTERNAL_INSTANCE_URL"] = "https://data.lsst.cloud"
