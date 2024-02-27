@@ -1,0 +1,541 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br
+      Authorization:
+      - Bearer gt-8_AofuBjEGH2kynxHLdz7g.kmz21yw9y9VEdN5vJ-SXWQ
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://data.lsst.cloud/api/tap/capabilities
+  response:
+    body:
+      string: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<vosi:capabilities xmlns:vosi=\"http://www.ivoa.net/xml/VOSICapabilities/v1.0\"
+        xmlns:vs=\"http://www.ivoa.net/xml/VODataService/v1.1\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\r\n
+        \ <capability standardID=\"ivo://ivoa.net/std/VOSI#capabilities\">\r\n    <interface
+        xsi:type=\"vs:ParamHTTP\" role=\"std\">\r\n      <accessURL use=\"full\">https://data.lsst.cloud/api/tap/capabilities</accessURL>\r\n
+        \   </interface>\r\n  </capability>\r\n  <capability standardID=\"ivo://ivoa.net/std/VOSI#availability\">\r\n
+        \   <interface xsi:type=\"vs:ParamHTTP\" role=\"std\">\r\n      <accessURL
+        use=\"full\">https://data.lsst.cloud/api/tap/availability</accessURL>\r\n
+        \   </interface>\r\n  </capability>\r\n  <capability standardID=\"vos://cadc.nrc.ca~vospace/CADC/std/Logging#control-1.0\">\r\n
+        \   <interface xsi:type=\"vs:ParamHTTP\" role=\"std\" version=\"1.0\">\r\n
+        \     <accessURL use=\"full\">https://data.lsst.cloud/api/tap/logControl</accessURL>\r\n
+        \   </interface>\r\n  </capability>\r\n  <capability standardID=\"ivo://ivoa.net/std/VOSI#tables-1.1\">\r\n
+        \   <interface xsi:type=\"vs:ParamHTTP\" role=\"std\" version=\"1.1\">\r\n
+        \     <accessURL use=\"base\">https://data.lsst.cloud/api/tap/tables</accessURL>\r\n
+        \   </interface>\r\n    <interface xsi:type=\"vs:ParamHTTP\" role=\"std\"
+        version=\"1.1\">\r\n      <accessURL use=\"base\">https://data.lsst.cloud/api/tap/auth-tables</accessURL>\r\n
+        \     <securityMethod standardID=\"http://www.w3.org/Protocols/HTTP/1.0/spec.html#BasicAA\"
+        />\r\n    </interface>\r\n    <interface xsi:type=\"vs:ParamHTTP\" role=\"std\"
+        version=\"1.1\">\r\n      <accessURL use=\"base\">https://data.lsst.cloud/api/tap/tables</accessURL>\r\n
+        \     <securityMethod standardID=\"ivo://ivoa.net/sso#cookie\" />\r\n    </interface>\r\n
+        \   <interface xsi:type=\"vs:ParamHTTP\" role=\"std\" version=\"1.1\">\r\n
+        \     <accessURL use=\"base\">https://data.lsst.cloud/api/tap/tables</accessURL>\r\n
+        \     <securityMethod standardID=\"ivo://ivoa.net/sso#tls-with-certificate\"
+        />\r\n    </interface>\r\n  </capability>\r\n  <!-- TAP-1.1 -->\r\n  <capability
+        xmlns:tr=\"http://www.ivoa.net/xml/TAPRegExt/v1.0\" standardID=\"ivo://ivoa.net/std/TAP\"
+        xsi:type=\"tr:TableAccess\">\r\n    <interface xsi:type=\"vs:ParamHTTP\" role=\"std\"
+        version=\"1.1\">\r\n      <accessURL use=\"base\">https://data.lsst.cloud/api/tap</accessURL>\r\n
+        \   </interface>\r\n    <interface xmlns:uws=\"http://www.ivoa.net/xml/UWSRegExt/v0.1\"
+        xsi:type=\"uws:Async\" role=\"std\" version=\"1.1\">\r\n      <accessURL use=\"base\">https://data.lsst.cloud/api/tap/async</accessURL>\r\n
+        \   </interface>\r\n    <interface xmlns:uws=\"http://www.ivoa.net/xml/UWSRegExt/v0.1\"
+        xsi:type=\"uws:Async\" role=\"std\" version=\"1.1\">\r\n      <accessURL use=\"base\">https://data.lsst.cloud/api/tap/auth-async</accessURL>\r\n
+        \     <securityMethod standardID=\"ivo://ivoa.net/sso#BasicAA\" />\r\n    </interface>\r\n
+        \   <interface xmlns:uws=\"http://www.ivoa.net/xml/UWSRegExt/v0.1\" xsi:type=\"uws:Async\"
+        role=\"std\" version=\"1.1\">\r\n      <accessURL use=\"base\">https://data.lsst.cloud/api/tap/async</accessURL>\r\n
+        \     <securityMethod standardID=\"ivo://ivoa.net/sso#tls-with-certificate\"
+        />\r\n    </interface>\r\n    <interface xmlns:uws=\"http://www.ivoa.net/xml/UWSRegExt/v0.1\"
+        xsi:type=\"uws:Async\" role=\"std\" version=\"1.1\">\r\n      <accessURL use=\"base\">https://data.lsst.cloud/api/tap/async</accessURL>\r\n
+        \     <securityMethod standardID=\"ivo://ivoa.net/sso#cookie\" />\r\n    </interface>\r\n
+        \   <interface xmlns:uws=\"http://www.ivoa.net/xml/UWSRegExt/v0.1\" xsi:type=\"uws:Sync\"
+        role=\"std\" version=\"1.1\">\r\n      <accessURL use=\"base\">https://data.lsst.cloud/api/tap/sync</accessURL>\r\n
+        \   </interface>\r\n    <interface xmlns:uws=\"http://www.ivoa.net/xml/UWSRegExt/v0.1\"
+        xsi:type=\"uws:Sync\" role=\"std\" version=\"1.1\">\r\n      <accessURL use=\"base\">https://data.lsst.cloud/api/tap/auth-sync</accessURL>\r\n
+        \     <securityMethod standardID=\"ivo://ivoa.net/sso#BasicAA\" />\r\n    </interface>\r\n
+        \   <interface xmlns:uws=\"http://www.ivoa.net/xml/UWSRegExt/v0.1\" xsi:type=\"uws:Sync\"
+        role=\"std\" version=\"1.1\">\r\n      <accessURL use=\"base\">https://data.lsst.cloud/api/tap/sync</accessURL>\r\n
+        \     <securityMethod standardID=\"ivo://ivoa.net/sso#tls-with-certificate\"
+        />\r\n    </interface>\r\n    <interface xmlns:uws=\"http://www.ivoa.net/xml/UWSRegExt/v0.1\"
+        xsi:type=\"uws:Sync\" role=\"std\" version=\"1.1\">\r\n      <accessURL use=\"base\">https://data.lsst.cloud/api/tap/sync</accessURL>\r\n
+        \     <securityMethod standardID=\"ivo://ivoa.net/sso#cookie\" />\r\n    </interface>\r\n
+        \   <!-- cannot describe the #BasicAA access because TAP-1.0 only has a base
+        URL standardID -->\r\n    <language>\r\n      <name>ADQL</name>\r\n      <version
+        ivo-id=\"ivo://ivoa.net/std/ADQL#v2.0\">2.0</version>\r\n      <description>ADQL-2.0</description>\r\n
+        \     <languageFeatures type=\"ivo://ivoa.net/std/TAPRegExt#features-adqlgeo\">\r\n
+        \       <feature>\r\n          <form>POINT</form>\r\n        </feature>\r\n
+        \       <feature>\r\n          <form>CIRCLE</form>\r\n        </feature>\r\n
+        \       <feature>\r\n          <form>DISTANCE</form>\r\n        </feature>\r\n
+        \       <feature>\r\n          <form>POLYGON</form>\r\n        </feature>\r\n
+        \       <feature>\r\n          <form>CONTAINS</form>\r\n        </feature>\r\n
+        \       <!-- REGION, INTERSECTS, AREA, CENTROID, COORD1, and COORD2 not supported
+        by Qserv -->\r\n      </languageFeatures>\r\n    </language>\r\n    <outputFormat
+        ivo-id=\"ivo://ivoa.net/std/TAPRegExt#output-votable-td\">\r\n      <mime>application/x-votable+xml</mime>\r\n
+        \     <alias>votable</alias>\r\n    </outputFormat>\r\n    <outputFormat ivo-id=\"ivo://ivoa.net/std/TAPRegExt#output-votable-td\">\r\n
+        \     <mime>text/xml</mime>\r\n    </outputFormat>\r\n    <outputFormat>\r\n
+        \     <mime>text/csv</mime>\r\n      <alias>csv</alias>\r\n    </outputFormat>\r\n
+        \   <outputFormat>\r\n      <mime>text/tab-separated-values</mime>\r\n      <alias>tsv</alias>\r\n
+        \   </outputFormat>\r\n    <!-- uploadMethods are not yet supported by Qserv
+        -->\r\n    <retentionPeriod>\r\n      <default>604800</default>\r\n      <hard>604800</hard>\r\n
+        \   </retentionPeriod>\r\n    <executionDuration>\r\n      <default>600</default>\r\n
+        \     <hard>600</hard>\r\n    </executionDuration>\r\n    <!-- outputLimit
+        for async queries: 128MB -->\r\n    <outputLimit>\r\n      <default unit=\"byte\">134217728</default>\r\n
+        \     <hard unit=\"byte\">134217728</hard>\r\n    </outputLimit>\r\n    <!--
+        outputLimit for sync queries: no limit -->\r\n    <uploadLimit>\r\n      <default
+        unit=\"row\">10000</default>\r\n      <hard unit=\"row\">10000</hard>\r\n
+        \   </uploadLimit>\r\n  </capability>\r\n</vosi:capabilities>\r\n"
+    headers:
+      Connection:
+      - keep-alive
+      Content-Type:
+      - text/xml
+      Date:
+      - Tue, 27 Feb 2024 09:37:04 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Transfer-Encoding:
+      - chunked
+    status:
+      code: 200
+      message: ''
+- request:
+    body: REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+coadd.lsst_tract%2C+coadd.lsst_patch%2C+DISTANCE%28POINT%28%27ICRS+GEOCENTER%27%2C55.745834%2C-32.269167%29%2C+POINT%28%27ICRS+GEOCENTER%27%2Ccoadd.s_ra%2C+coadd.s_dec%29%29+as+distance+FROM+dp02_dc2_catalogs.CoaddPatches+as+coadd+ORDER+BY+distance+LIMIT+1
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br
+      Authorization:
+      - Bearer gt-8_AofuBjEGH2kynxHLdz7g.kmz21yw9y9VEdN5vJ-SXWQ
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '295'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - python-requests/2.31.0
+    method: POST
+    uri: https://data.lsst.cloud/api/tap/async
+  response:
+    body:
+      string: ''
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 27 Feb 2024 09:37:04 GMT
+      Location:
+      - https://data.lsst.cloud/api/tap/async/kwnmo0mzutdfxke6
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+    status:
+      code: 303
+      message: ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br
+      Authorization:
+      - Bearer gt-8_AofuBjEGH2kynxHLdz7g.kmz21yw9y9VEdN5vJ-SXWQ
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://data.lsst.cloud/api/tap/async/kwnmo0mzutdfxke6
+  response:
+    body:
+      string: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<uws:job xmlns:uws=\"http://www.ivoa.net/xml/UWS/v1.0\"
+        xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\">\r\n  <uws:jobId>kwnmo0mzutdfxke6</uws:jobId>\r\n
+        \ <uws:runId />\r\n  <uws:ownerId>cn=cpio</uws:ownerId>\r\n  <uws:phase>PENDING</uws:phase>\r\n
+        \ <uws:quote>2024-02-28T09:37:04.644Z</uws:quote>\r\n  <uws:creationTime>2024-02-27T09:37:04.644Z</uws:creationTime>\r\n
+        \ <uws:startTime xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:nil=\"true\"
+        />\r\n  <uws:endTime xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"
+        xsi:nil=\"true\" />\r\n  <uws:executionDuration>14400</uws:executionDuration>\r\n
+        \ <uws:destruction>2024-03-05T09:37:04.644Z</uws:destruction>\r\n  <uws:parameters>\r\n
+        \   <uws:parameter id=\"LANG\">ADQL</uws:parameter>\r\n    <uws:parameter
+        id=\"QUERY\">SELECT coadd.lsst_tract, coadd.lsst_patch, DISTANCE(POINT('ICRS
+        GEOCENTER',55.745834,-32.269167), POINT('ICRS GEOCENTER',coadd.s_ra, coadd.s_dec))
+        as distance FROM dp02_dc2_catalogs.CoaddPatches as coadd ORDER BY distance
+        LIMIT 1</uws:parameter>\r\n    <uws:parameter id=\"REQUEST\">doQuery</uws:parameter>\r\n
+        \ </uws:parameters>\r\n  <uws:results />\r\n</uws:job>\r\n"
+    headers:
+      Connection:
+      - keep-alive
+      Content-Type:
+      - text/xml
+      Date:
+      - Tue, 27 Feb 2024 09:37:04 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Transfer-Encoding:
+      - chunked
+    status:
+      code: 200
+      message: ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br
+      Authorization:
+      - Bearer gt-8_AofuBjEGH2kynxHLdz7g.kmz21yw9y9VEdN5vJ-SXWQ
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://data.lsst.cloud/api/tap/async/kwnmo0mzutdfxke6
+  response:
+    body:
+      string: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<uws:job xmlns:uws=\"http://www.ivoa.net/xml/UWS/v1.0\"
+        xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\">\r\n  <uws:jobId>kwnmo0mzutdfxke6</uws:jobId>\r\n
+        \ <uws:runId />\r\n  <uws:ownerId>cn=cpio</uws:ownerId>\r\n  <uws:phase>PENDING</uws:phase>\r\n
+        \ <uws:quote>2024-02-28T09:37:04.644Z</uws:quote>\r\n  <uws:creationTime>2024-02-27T09:37:04.644Z</uws:creationTime>\r\n
+        \ <uws:startTime xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:nil=\"true\"
+        />\r\n  <uws:endTime xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"
+        xsi:nil=\"true\" />\r\n  <uws:executionDuration>14400</uws:executionDuration>\r\n
+        \ <uws:destruction>2024-03-05T09:37:04.644Z</uws:destruction>\r\n  <uws:parameters>\r\n
+        \   <uws:parameter id=\"LANG\">ADQL</uws:parameter>\r\n    <uws:parameter
+        id=\"QUERY\">SELECT coadd.lsst_tract, coadd.lsst_patch, DISTANCE(POINT('ICRS
+        GEOCENTER',55.745834,-32.269167), POINT('ICRS GEOCENTER',coadd.s_ra, coadd.s_dec))
+        as distance FROM dp02_dc2_catalogs.CoaddPatches as coadd ORDER BY distance
+        LIMIT 1</uws:parameter>\r\n    <uws:parameter id=\"REQUEST\">doQuery</uws:parameter>\r\n
+        \ </uws:parameters>\r\n  <uws:results />\r\n</uws:job>\r\n"
+    headers:
+      Connection:
+      - keep-alive
+      Content-Type:
+      - text/xml
+      Date:
+      - Tue, 27 Feb 2024 09:37:04 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Transfer-Encoding:
+      - chunked
+    status:
+      code: 200
+      message: ''
+- request:
+    body: PHASE=RUN
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br
+      Authorization:
+      - Bearer gt-8_AofuBjEGH2kynxHLdz7g.kmz21yw9y9VEdN5vJ-SXWQ
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '9'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - python-requests/2.31.0
+    method: POST
+    uri: https://data.lsst.cloud/api/tap/async/kwnmo0mzutdfxke6/phase
+  response:
+    body:
+      string: ''
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 27 Feb 2024 09:37:04 GMT
+      Location:
+      - https://data.lsst.cloud/api/tap/async/kwnmo0mzutdfxke6
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+    status:
+      code: 303
+      message: ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br
+      Authorization:
+      - Bearer gt-8_AofuBjEGH2kynxHLdz7g.kmz21yw9y9VEdN5vJ-SXWQ
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://data.lsst.cloud/api/tap/async/kwnmo0mzutdfxke6
+  response:
+    body:
+      string: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<uws:job xmlns:uws=\"http://www.ivoa.net/xml/UWS/v1.0\"
+        xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\">\r\n  <uws:jobId>kwnmo0mzutdfxke6</uws:jobId>\r\n
+        \ <uws:runId />\r\n  <uws:ownerId>cn=cpio</uws:ownerId>\r\n  <uws:phase>EXECUTING</uws:phase>\r\n
+        \ <uws:quote>2024-02-28T09:37:04.644Z</uws:quote>\r\n  <uws:creationTime>2024-02-27T09:37:04.644Z</uws:creationTime>\r\n
+        \ <uws:startTime>2024-02-27T09:37:04.832Z</uws:startTime>\r\n  <uws:endTime
+        xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:nil=\"true\" />\r\n
+        \ <uws:executionDuration>14400</uws:executionDuration>\r\n  <uws:destruction>2024-03-05T09:37:04.644Z</uws:destruction>\r\n
+        \ <uws:parameters>\r\n    <uws:parameter id=\"LANG\">ADQL</uws:parameter>\r\n
+        \   <uws:parameter id=\"QUERY\">SELECT coadd.lsst_tract, coadd.lsst_patch,
+        DISTANCE(POINT('ICRS GEOCENTER',55.745834,-32.269167), POINT('ICRS GEOCENTER',coadd.s_ra,
+        coadd.s_dec)) as distance FROM dp02_dc2_catalogs.CoaddPatches as coadd ORDER
+        BY distance LIMIT 1</uws:parameter>\r\n    <uws:parameter id=\"REQUEST\">doQuery</uws:parameter>\r\n
+        \ </uws:parameters>\r\n  <uws:results />\r\n</uws:job>\r\n"
+    headers:
+      Connection:
+      - keep-alive
+      Content-Type:
+      - text/xml
+      Date:
+      - Tue, 27 Feb 2024 09:37:04 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Transfer-Encoding:
+      - chunked
+    status:
+      code: 200
+      message: ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br
+      Authorization:
+      - Bearer gt-8_AofuBjEGH2kynxHLdz7g.kmz21yw9y9VEdN5vJ-SXWQ
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://data.lsst.cloud/api/tap/async/kwnmo0mzutdfxke6?WAIT=-1
+  response:
+    body:
+      string: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<uws:job xmlns:uws=\"http://www.ivoa.net/xml/UWS/v1.0\"
+        xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\">\r\n  <uws:jobId>kwnmo0mzutdfxke6</uws:jobId>\r\n
+        \ <uws:runId />\r\n  <uws:ownerId>cn=cpio</uws:ownerId>\r\n  <uws:phase>COMPLETED</uws:phase>\r\n
+        \ <uws:quote>2024-02-28T09:37:04.644Z</uws:quote>\r\n  <uws:creationTime>2024-02-27T09:37:04.644Z</uws:creationTime>\r\n
+        \ <uws:startTime>2024-02-27T09:37:04.832Z</uws:startTime>\r\n  <uws:endTime>2024-02-27T09:37:19.797Z</uws:endTime>\r\n
+        \ <uws:executionDuration>14400</uws:executionDuration>\r\n  <uws:destruction>2024-03-05T09:37:04.644Z</uws:destruction>\r\n
+        \ <uws:parameters>\r\n    <uws:parameter id=\"LANG\">ADQL</uws:parameter>\r\n
+        \   <uws:parameter id=\"QUERY\">SELECT coadd.lsst_tract, coadd.lsst_patch,
+        DISTANCE(POINT('ICRS GEOCENTER',55.745834,-32.269167), POINT('ICRS GEOCENTER',coadd.s_ra,
+        coadd.s_dec)) as distance FROM dp02_dc2_catalogs.CoaddPatches as coadd ORDER
+        BY distance LIMIT 1</uws:parameter>\r\n    <uws:parameter id=\"REQUEST\">doQuery</uws:parameter>\r\n
+        \ </uws:parameters>\r\n  <uws:results>\r\n    <uws:result id=\"diag\" xlink:href=\"uws:executing:1\"
+        />\r\n    <uws:result id=\"diag\" xlink:href=\"jndi:lookup:0\" />\r\n    <uws:result
+        id=\"diag\" xlink:href=\"read:tap_schema:11\" />\r\n    <uws:result id=\"diag\"
+        xlink:href=\"query:parse:2\" />\r\n    <uws:result id=\"diag\" xlink:href=\"jndi:connect:2834\"
+        />\r\n    <uws:result id=\"diag\" xlink:href=\"query:execute:11661\" />\r\n
+        \   <uws:result id=\"diag\" xlink:href=\"query:store:456\" />\r\n    <uws:result
+        id=\"rowcount\" xlink:href=\"final:1\" />\r\n    <uws:result id=\"result\"
+        xlink:href=\"https://tap-files.lsst.codes/result_kwnmo0mzutdfxke6.xml\" />\r\n
+        \ </uws:results>\r\n</uws:job>\r\n"
+    headers:
+      Connection:
+      - keep-alive
+      Content-Type:
+      - text/xml
+      Date:
+      - Tue, 27 Feb 2024 09:37:19 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Transfer-Encoding:
+      - chunked
+    status:
+      code: 200
+      message: ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br
+      Authorization:
+      - Bearer gt-8_AofuBjEGH2kynxHLdz7g.kmz21yw9y9VEdN5vJ-SXWQ
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://data.lsst.cloud/api/tap/async/kwnmo0mzutdfxke6
+  response:
+    body:
+      string: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<uws:job xmlns:uws=\"http://www.ivoa.net/xml/UWS/v1.0\"
+        xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\">\r\n  <uws:jobId>kwnmo0mzutdfxke6</uws:jobId>\r\n
+        \ <uws:runId />\r\n  <uws:ownerId>cn=cpio</uws:ownerId>\r\n  <uws:phase>COMPLETED</uws:phase>\r\n
+        \ <uws:quote>2024-02-28T09:37:04.644Z</uws:quote>\r\n  <uws:creationTime>2024-02-27T09:37:04.644Z</uws:creationTime>\r\n
+        \ <uws:startTime>2024-02-27T09:37:04.832Z</uws:startTime>\r\n  <uws:endTime>2024-02-27T09:37:19.797Z</uws:endTime>\r\n
+        \ <uws:executionDuration>14400</uws:executionDuration>\r\n  <uws:destruction>2024-03-05T09:37:04.644Z</uws:destruction>\r\n
+        \ <uws:parameters>\r\n    <uws:parameter id=\"LANG\">ADQL</uws:parameter>\r\n
+        \   <uws:parameter id=\"QUERY\">SELECT coadd.lsst_tract, coadd.lsst_patch,
+        DISTANCE(POINT('ICRS GEOCENTER',55.745834,-32.269167), POINT('ICRS GEOCENTER',coadd.s_ra,
+        coadd.s_dec)) as distance FROM dp02_dc2_catalogs.CoaddPatches as coadd ORDER
+        BY distance LIMIT 1</uws:parameter>\r\n    <uws:parameter id=\"REQUEST\">doQuery</uws:parameter>\r\n
+        \ </uws:parameters>\r\n  <uws:results>\r\n    <uws:result id=\"diag\" xlink:href=\"uws:executing:1\"
+        />\r\n    <uws:result id=\"diag\" xlink:href=\"jndi:lookup:0\" />\r\n    <uws:result
+        id=\"diag\" xlink:href=\"read:tap_schema:11\" />\r\n    <uws:result id=\"diag\"
+        xlink:href=\"query:parse:2\" />\r\n    <uws:result id=\"diag\" xlink:href=\"jndi:connect:2834\"
+        />\r\n    <uws:result id=\"diag\" xlink:href=\"query:execute:11661\" />\r\n
+        \   <uws:result id=\"diag\" xlink:href=\"query:store:456\" />\r\n    <uws:result
+        id=\"rowcount\" xlink:href=\"final:1\" />\r\n    <uws:result id=\"result\"
+        xlink:href=\"https://tap-files.lsst.codes/result_kwnmo0mzutdfxke6.xml\" />\r\n
+        \ </uws:results>\r\n</uws:job>\r\n"
+    headers:
+      Connection:
+      - keep-alive
+      Content-Type:
+      - text/xml
+      Date:
+      - Tue, 27 Feb 2024 09:37:19 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Transfer-Encoding:
+      - chunked
+    status:
+      code: 200
+      message: ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br
+      Authorization:
+      - Bearer gt-8_AofuBjEGH2kynxHLdz7g.kmz21yw9y9VEdN5vJ-SXWQ
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://data.lsst.cloud/api/tap/async/kwnmo0mzutdfxke6
+  response:
+    body:
+      string: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<uws:job xmlns:uws=\"http://www.ivoa.net/xml/UWS/v1.0\"
+        xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\">\r\n  <uws:jobId>kwnmo0mzutdfxke6</uws:jobId>\r\n
+        \ <uws:runId />\r\n  <uws:ownerId>cn=cpio</uws:ownerId>\r\n  <uws:phase>COMPLETED</uws:phase>\r\n
+        \ <uws:quote>2024-02-28T09:37:04.644Z</uws:quote>\r\n  <uws:creationTime>2024-02-27T09:37:04.644Z</uws:creationTime>\r\n
+        \ <uws:startTime>2024-02-27T09:37:04.832Z</uws:startTime>\r\n  <uws:endTime>2024-02-27T09:37:19.797Z</uws:endTime>\r\n
+        \ <uws:executionDuration>14400</uws:executionDuration>\r\n  <uws:destruction>2024-03-05T09:37:04.644Z</uws:destruction>\r\n
+        \ <uws:parameters>\r\n    <uws:parameter id=\"LANG\">ADQL</uws:parameter>\r\n
+        \   <uws:parameter id=\"QUERY\">SELECT coadd.lsst_tract, coadd.lsst_patch,
+        DISTANCE(POINT('ICRS GEOCENTER',55.745834,-32.269167), POINT('ICRS GEOCENTER',coadd.s_ra,
+        coadd.s_dec)) as distance FROM dp02_dc2_catalogs.CoaddPatches as coadd ORDER
+        BY distance LIMIT 1</uws:parameter>\r\n    <uws:parameter id=\"REQUEST\">doQuery</uws:parameter>\r\n
+        \ </uws:parameters>\r\n  <uws:results>\r\n    <uws:result id=\"diag\" xlink:href=\"uws:executing:1\"
+        />\r\n    <uws:result id=\"diag\" xlink:href=\"jndi:lookup:0\" />\r\n    <uws:result
+        id=\"diag\" xlink:href=\"read:tap_schema:11\" />\r\n    <uws:result id=\"diag\"
+        xlink:href=\"query:parse:2\" />\r\n    <uws:result id=\"diag\" xlink:href=\"jndi:connect:2834\"
+        />\r\n    <uws:result id=\"diag\" xlink:href=\"query:execute:11661\" />\r\n
+        \   <uws:result id=\"diag\" xlink:href=\"query:store:456\" />\r\n    <uws:result
+        id=\"rowcount\" xlink:href=\"final:1\" />\r\n    <uws:result id=\"result\"
+        xlink:href=\"https://tap-files.lsst.codes/result_kwnmo0mzutdfxke6.xml\" />\r\n
+        \ </uws:results>\r\n</uws:job>\r\n"
+    headers:
+      Connection:
+      - keep-alive
+      Content-Type:
+      - text/xml
+      Date:
+      - Tue, 27 Feb 2024 09:37:20 GMT
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains
+      Transfer-Encoding:
+      - chunked
+    status:
+      code: 200
+      message: ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate, br
+      Connection:
+      - keep-alive
+      User-Agent:
+      - pyVO/1.5 Python/3.11.7 (Linux)
+    method: GET
+    uri: https://tap-files.lsst.codes/result_kwnmo0mzutdfxke6.xml
+  response:
+    body:
+      string: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<VOTABLE xmlns=\"http://www.ivoa.net/xml/VOTable/v1.3\"
+        xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" version=\"1.4\">\r\n
+        \ <RESOURCE type=\"results\">\r\n    <INFO name=\"QUERY_STATUS\" value=\"OK\"
+        />\r\n    <INFO name=\"QUERY_TIMESTAMP\" value=\"2024-02-27T09:37:19.569\"
+        />\r\n    <INFO name=\"QUERY\" value=\"SELECT coadd.lsst_tract, coadd.lsst_patch,
+        DISTANCE(POINT('ICRS GEOCENTER',55.745834,-32.269167), POINT('ICRS GEOCENTER',coadd.s_ra,
+        coadd.s_dec)) as distance FROM dp02_dc2_catalogs.CoaddPatches as coadd ORDER
+        BY distance LIMIT 1\" />\r\n    <TABLE>\r\n      <FIELD name=\"lsst_tract\"
+        datatype=\"long\" ID=\"col_0\" ucd=\"meta.id;obs.field\">\r\n        <DESCRIPTION>ID
+        number of the top level, 'tract', within the standard LSST skymap</DESCRIPTION>\r\n
+        \     </FIELD>\r\n      <FIELD name=\"lsst_patch\" datatype=\"long\" ID=\"col_1\"
+        ucd=\"meta.id.part;obs.field\">\r\n        <DESCRIPTION>ID number of the second
+        level, 'patch', within the standard LSST skymap</DESCRIPTION>\r\n      </FIELD>\r\n
+        \     <FIELD name=\"distance\" datatype=\"double\" ID=\"col_2\" />\r\n      <DATA>\r\n
+        \       <TABLEDATA>\r\n          <TR>\r\n            <TD>4431</TD>\r\n            <TD>17</TD>\r\n
+        \           <TD>0.10155415456386967</TD>\r\n          </TR>\r\n        </TABLEDATA>\r\n
+        \     </DATA>\r\n    </TABLE>\r\n    <INFO name=\"placeholder\" value=\"ignore\"
+        />\r\n  </RESOURCE>\r\n</VOTABLE>\r\n"
+    headers:
+      Alt-Svc:
+      - h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+      Content-Length:
+      - '1353'
+      accept-ranges:
+      - bytes
+      cache-control:
+      - public, max-age=3600
+      content-type:
+      - application/x-votable+xml
+      date:
+      - Tue, 27 Feb 2024 09:37:20 GMT
+      etag:
+      - '"8f89172f03795adac1d73a2cb0a759bc"'
+      expires:
+      - Tue, 27 Feb 2024 10:37:20 GMT
+      last-modified:
+      - Tue, 27 Feb 2024 09:37:19 GMT
+      server:
+      - UploadServer
+      via:
+      - 1.1 google
+      x-goog-expiration:
+      - Thu, 28 Mar 2024 09:37:19 GMT
+      x-goog-generation:
+      - '1709026639689890'
+      x-goog-hash:
+      - crc32c=G2K0jg==
+      - md5=j4kXLwN5WtrB1zossKdZvA==
+      x-goog-metageneration:
+      - '1'
+      x-goog-storage-class:
+      - STANDARD
+      x-goog-stored-content-encoding:
+      - identity
+      x-goog-stored-content-length:
+      - '1353'
+      x-guploader-uploadid:
+      - ABPtcPqKrSkl-461vhGpIBjYfr1NR9qDEOTYHDIZsoYL1wC43zvsLhMKRQGYPitRX8OBH6i5KA
+    status:
+      code: 200
+      message: OK
+version: 1

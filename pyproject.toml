@@ -31,7 +31,8 @@ dependencies = [
     "astropy>=6.0.0",
     "psutil>=5.9.7",
     "pandas>=2.1.4",
-    "lsst-rsp>=0.4.2"
+    "lsst-rsp>=0.4.2",
+    "vcrpy>=6.0.0"
 ]
 dynamic = ["version"]
 

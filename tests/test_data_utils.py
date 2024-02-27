@@ -2,8 +2,10 @@ import unittest
 
 import numpy as np
 import pandas as pd
+import vcr
 
 from lsst.cst.data import ids_to_str, shuffle_dataframe, sort_dataframe
+from lsst.cst.data.tools import tract_patch_from_ra_dec
 
 
 class TestDataUtils(unittest.TestCase):
@@ -105,6 +107,13 @@ class TestDataUtils(unittest.TestCase):
         pd.testing.assert_frame_equal(
             shuffled_df, expected_result, check_exact=True
         )
+
+    @unittest.skip
+    @vcr.use_cassette("cassettes/tract_patch_from_ra_dec.yaml")
+    def test_tract_patch_from_ra_dec(self):
+        my_ra_deg = 55.745834
+        my_dec_deg = -32.269167
+        tract_patch_from_ra_dec(my_ra_deg, my_dec_deg)
 
     def testIdsToString(self) -> None:
         """ """
