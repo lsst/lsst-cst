@@ -1,7 +1,6 @@
 """data science query tools"""
 import logging
 from abc import ABC, abstractmethod
-from enum import Enum
 from typing import Optional
 
 import numpy as np
@@ -9,6 +8,7 @@ import pandas as pd
 from astropy.coordinates import SkyCoord
 from bokeh.models import ColumnDataSource
 
+from lsst.cst.utilities.parameters import Band
 from lsst.rsp import get_tap_service
 
 _log = logging.getLogger(__name__)
@@ -16,19 +16,8 @@ _log = logging.getLogger(__name__)
 __all__ = ["TAPService", "DataWrapper"]
 
 
-class Band(Enum):
-    """Exposure bands available."""
-
-    g = "g"
-    i = "i"
-    r = "r"
-    u = "u"
-    y = "y"
-    z = "z"
-
-
 class DataHandler(ABC):
-    """Interface to modify data inside a dataframa."""
+    """Interface to modify data inside a dataframe."""
 
     def __init__(self):
         super().__init__()

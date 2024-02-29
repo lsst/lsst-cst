@@ -40,7 +40,6 @@ dev = [
     # Testing
     "coverage[toml]",
     "pytest",
-    "pytest-vcr",
     "pre-commit",
     "mypy",
     # Documentation
@@ -69,7 +68,7 @@ include = ["lsst*"]
 
 [tool.black]
 line-length = 79
-target-version = ["py310"]
+target-version = ["py311"]
 exclude = '''
 /(
     \.eggs
@@ -195,7 +194,7 @@ ignore = [
     "TRY003",  # good general advice but lint is way too aggressive
 ]
 select = ["ALL"]
-target-version = "py310"
+target-version = "py311"
 
 [tool.ruff.per-file-ignores]
 "src/lsst/handlers/**" = [

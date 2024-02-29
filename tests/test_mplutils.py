@@ -3,7 +3,7 @@ import unittest
 import matplotlib.pyplot as plt
 import numpy as np
 
-from lsst.cst.visualization.tools.deleters import delete_plot
+from lsst.cst.utilities import delete_plot
 
 
 class TestMPLUtils(unittest.TestCase):

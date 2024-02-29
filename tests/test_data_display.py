@@ -3,13 +3,13 @@ import unittest
 
 import pandas as pd
 
-from lsst.cst.data.queries import DataWrapper
-from lsst.cst.visualization.data.displays import HoverTool
-from lsst.cst.visualization.data.helper import (
+from lsst.cst.helpers import (
     create_datashader_plot,
     create_linked_plot_with_brushing,
 )
-from lsst.cst.visualization.tools import delete_plot, save_plot_as_html
+from lsst.cst.image_display.interactors import HoverTool
+from lsst.cst.utilities import delete_plot, save_plot_as_html
+from lsst.cst.utilities.queries import DataWrapper
 
 base_folder = os.path.dirname(os.path.abspath(__file__))
 

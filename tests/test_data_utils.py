@@ -1,28 +1,24 @@
-import os
 import pathlib
 import unittest
 
 import numpy as np
 import pandas as pd
-import vcr
 
-from lsst.cst.data import ids_to_str, shuffle_dataframe, sort_dataframe
-from lsst.cst.data.tools import tract_patch_from_ra_dec
+from lsst.cst.conversions import (
+    ids_to_str,
+    shuffle_dataframe,
+    sort_dataframe,
+    tract_patch_from_ra_dec,
+)
 
 PATH = pathlib.Path(__file__).parent.absolute()
-
-
-safe_vcr = vcr.VCR(
-    record_mode="none",
-    cassette_library_dir=str(PATH / "cassettes"),
-    path_transformer=vcr.VCR.ensure_suffix(".yaml"),
-)
 
 
 class TestDataUtils(unittest.TestCase):
     """Test data utils."""
 
     def testSortDataFrameNonExistingKey(self) -> None:
+        # test sort data frame non existing key
         data = {
             "Prefecture": ["Tokyo", "Osaka", "Kanagawa", "Aichi", "Hokkaido"],
             "Population": [13929286, 8839469, 9126214, 7483128, 5386252],
@@ -32,6 +28,7 @@ class TestDataUtils(unittest.TestCase):
             sort_dataframe(df, sort_key="Residents")
 
     def testSortDescendingDataFrameSettingIndex(self) -> None:
+        # test sort descending dataframe
         data = {
             "Prefecture": ["Tokyo", "Osaka", "Kanagawa", "Aichi", "Hokkaido"],
             "Population": [13929286, 8839469, 9126214, 7483128, 5386252],
@@ -63,7 +60,7 @@ class TestDataUtils(unittest.TestCase):
         )
 
     def testSortAscendingDataFrameNoSettingIndex(self) -> None:
-        """ """
+        # test sort ascending dataframe
         data = {
             "Prefecture": ["Aichi", "Hokkaido", "Kanagawa", "Osaka", "Tokyo"],
             "Population": [7483128, 5386252, 9126214, 8839469, 13929286],
@@ -98,7 +95,7 @@ class TestDataUtils(unittest.TestCase):
         )
 
     def testShuffleDataframe(self) -> None:
-        """ """
+        # test shuffle dataframe
         data = {
             "Prefecture": ["Tokyo", "Osaka", "Kanagawa", "Aichi", "Hokkaido"],
             "Population": [13929286, 8839469, 9126214, 7483128, 5386252],
@@ -119,21 +116,14 @@ class TestDataUtils(unittest.TestCase):
             shuffled_df, expected_result, check_exact=True
         )
 
-    @unittest.skip("Temporarily unused until VCR works or alternative found")
-    @safe_vcr.use_cassette()
+    @unittest.skip("Temporarily unused until a way to test is found")
     def test_tract_patch_from_ra_dec(self):
-        os.environ["EXTERNAL_INSTANCE_URL"] = "https://data.lsst.cloud"
-        os.environ[
-            "ACCESS_TOKEN"
-        ] = "gt-8_AofuBjEGH2kynxHLdz7g.kmz21yw9y9VEdN5vJ-SXWQ"
         my_ra_deg = 55.745834
         my_dec_deg = -32.269167
         tract_patch_from_ra_dec(my_ra_deg, my_dec_deg)
-        os.environ.pop("EXTERNAL_INSTANCE_URL")
-        os.environ.pop("ACCESS_TOKEN")
 
     def testIdsToString(self) -> None:
-        """ """
+        # test ids to string functionality
         data_ids = np.array(
             [
                 1249537790362809267,

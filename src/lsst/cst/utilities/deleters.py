@@ -16,7 +16,7 @@ def delete_plot(plot: Panel | Figure) -> None:
 
     Parameters
     ----------
-    plot: 'Any'
+    plot: 'Panel | Figure'
        Plot to be deleted.
     """
     if isinstance(plot, Figure):

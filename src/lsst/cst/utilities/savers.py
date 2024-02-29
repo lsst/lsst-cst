@@ -5,8 +5,9 @@ from abc import ABC, abstractmethod
 import holoviews as hv
 from panel.layout.base import Panel
 
-from lsst.cst.visualization.image.displays import ImageDisplay, get_extension
-from lsst.cst.visualization.image.interactors import _InteractiveDisplay
+from lsst.cst.image_display import ImageDisplay
+from lsst.cst.image_display.interactors import InteractiveDisplay
+from lsst.cst.tools import get_extension
 
 __all__ = ["save_plot_as_html"]
 
@@ -66,7 +67,7 @@ class _HVHtmlImageDisplaySaver(_ImageDisplaySaver):
 class _PanelHtmlLayoutSaver(_ImageDisplaySaver):
     """Save panel as html file."""
 
-    def __init__(self, interactive_display: _InteractiveDisplay):
+    def __init__(self, interactive_display: InteractiveDisplay):
         self._interactive_display = interactive_display
 
     def save(self, filename):
@@ -79,7 +80,7 @@ class HTMLSaver(Saver):
     def __init__(self, output_dir: str = os.path.expanduser("~")):
         super().__init__(output_dir)
 
-    def save(self, plot: ImageDisplay | _InteractiveDisplay, filename: str):
+    def save(self, plot: ImageDisplay | InteractiveDisplay, filename: str):
         """Save image as html in filename.
 
         Parameters
@@ -91,7 +92,7 @@ class HTMLSaver(Saver):
         output_file = os.path.join(self._output_dir, output_file_base_name)
         if isinstance(plot, ImageDisplay):
             saver = _HVHtmlImageDisplaySaver(plot)
-        elif isinstance(plot, _InteractiveDisplay):
+        elif isinstance(plot, InteractiveDisplay):
             saver = _PanelHtmlLayoutSaver(plot)
         else:
             raise Exception("Unable to save plot of this type")

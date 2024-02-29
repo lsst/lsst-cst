@@ -9,12 +9,13 @@ import panel as pn
 from bokeh.models import HoverTool
 from holoviews import streams
 
-from lsst.cst.visualization.image import ImageDisplay, Options
+from .displays import ImageDisplay
+from .options import PointsOptions
 
 __all__ = ["HoverSources", "BoxInteract", "OnClickInteract"]
 
 
-class _InteractiveDisplay(ABC):
+class InteractiveDisplay(ABC):
     def __init__(self):
         super().__init__()
 
@@ -24,44 +25,7 @@ class _InteractiveDisplay(ABC):
         raise NotImplementedError()
 
 
-@dataclass
-class PointsOptions(Options):
-    """Display points options.
-
-    Parameters
-    ----------
-    fill_color: `str`
-        Marker fill color.
-    size: `int`
-        Marker size
-    color: `int`
-        Marker color.
-    marker: `str`
-        Marker type.
-    """
-
-    fill_color: str = None
-    size: int = 9
-    color: str = "darkorange"
-    marker: str = "circle"
-
-    def to_dict(self):
-        """Options as dictionary.
-
-        Returns
-        -------
-        options: `dict`
-            Selected options as a dictionary.
-        """
-        return dict(
-            fill_color=self.fill_color,
-            size=self.size,
-            color=self.color,
-            marker=self.marker,
-        )
-
-
-class HoverSources(_InteractiveDisplay):
+class HoverSources(InteractiveDisplay):
     """Interactive display including the sources.
 
     Parameters
@@ -122,7 +86,7 @@ class BoxInteractOptions:
     color: str = "red"
 
 
-class BoxInteract(_InteractiveDisplay):
+class BoxInteract(InteractiveDisplay):
     """Interactive plot with a selectable box tool to show extra information.
 
     Parameters
@@ -186,7 +150,7 @@ class OnClickInteractOptions:
     size: int = 20
 
 
-class OnClickInteract(_InteractiveDisplay):
+class OnClickInteract(InteractiveDisplay):
     """Interactive display with a tap tool to show extra information.
 
     Parameters

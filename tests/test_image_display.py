@@ -4,10 +4,10 @@ import unittest
 import numpy as np
 import pandas as pd
 
-from lsst.cst.data.queries import Band
-from lsst.cst.data.tools import CalExpDataFactory, CalExpId
-from lsst.cst.visualization.image.helper import create_interactive_image
-from lsst.cst.visualization.tools import delete_plot, save_plot_as_html
+from lsst.cst.helpers import create_interactive_image
+from lsst.cst.utilities import delete_plot, save_plot_as_html
+from lsst.cst.utilities.image import CalExpDataFactory, CalExpId
+from lsst.cst.utilities.parameters import Band
 
 base_folder = os.path.dirname(os.path.abspath(__file__))
 

@@ -1,23 +1,21 @@
-"""data science data display utilities."""
+"""lst.cst science data display utilities."""
 
 import gc
 import logging
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
-from enum import Enum
-from typing import Dict, List, Optional
 
 import holoviews as hv
 import numpy as np
 from holoviews.operation.datashader import rasterize
 
-from lsst.cst.data.tools import (
-    CalExpData,
+from lsst.cst.utilities.image import CalExpData
+from lsst.cst.utilities.transform import (
     ImageTransform,
     RGBImageTransform,
     StandardImageTransform,
 )
-from lsst.cst.visualization.params import PlotOptionsDefault
+
+from .options import ImageOptions
 
 _log = logging.getLogger(__name__)
 
@@ -26,130 +24,8 @@ __all__ = [
     "ImageDisplay",
     "CalExpImageDisplay",
     "ImageArrayDisplay",
-    "ImageOptions",
-    "Options",
     "RGBImageDisplay",
 ]
-
-
-class Extension(Enum):
-    BOKEH = "bokeh"
-
-
-_extension_set = None  # type: Extension
-_extension_available = [Extension.BOKEH]
-
-
-def get_extension():
-    return _extension_set
-
-
-def _set_extension(extension: Extension = Extension.BOKEH):
-    """Function to set the extension used
-    by the holoviews module.
-    (Nowadays only 'bokeh' extension is available).
-    """
-    global _extension_set
-    if _extension_set is not None:
-        raise Exception("Extension already set")
-    if extension not in _extension_available:
-        raise Exception(f"Unknown extension: {extension}")
-    hv.extension(extension.value)
-    _extension_set = extension
-
-
-_set_extension()
-
-
-class Options(ABC):
-    """Interface with the indispensable methods of how an Option
-    class should act like.
-    """
-
-    @abstractmethod
-    def to_dict(self):
-        """Returns a dictionary with the keys as option name and the values
-        as the option value.
-        """
-        NotImplementedError()
-
-
-class NoOptions(Options):
-    """No Options."""
-
-    def to_dict(self):
-        return {}
-
-
-def _get_options(options_type: str) -> Options:
-    # Helper function to get options type
-    if _extension_set is None:
-        raise Exception("Extension not set")
-    if _extension_set == Extension.BOKEH:
-        if options_type == "image":
-            return ImageOptions
-    return NoOptions
-
-
-@dataclass
-class ImageOptions(Options):
-    """Image plot options.
-
-    Parameters
-    ----------
-    cmap: `str`
-        sets the colormap of the image, for example:
-        Greys_r, viridis, plasma, inferno, magma, cividis or rainbow.
-    height: `int`
-        Height of the plot in pixels.
-    width: `int`
-        Width of the plot in pixels.
-    xaxis: `str`
-        Position of the xaxis 'bottom', 'top'.
-    yaxis: `str`
-        Position of the yaxis.
-    padding: `float`
-        space around the plot.
-    fontsize: `dict`
-        Font size for axis labels, titles, and legend.
-    toolbar: `str`
-        toolbar position 'left', 'right', 'above', bellow'.
-    show_grid: `bool`
-        displays grid lines on the plot.
-    tools: `list`
-        List of Bokeh tools to include to the default ones.
-    """
-
-    cmap: Optional[str] = None
-    height: int = PlotOptionsDefault.height
-    padding: float = 0.01
-    fontsize: Dict[str, str] = field(
-        default_factory=lambda: PlotOptionsDefault.fontsize
-    )
-    toolbar_position: str = "right"
-    show_grid: bool = PlotOptionsDefault.show_grid
-    tools: List[str] = field(default_factory=lambda: [])
-    width: int = PlotOptionsDefault.width
-    xaxis: str = "bottom"
-    yaxis: str = "left"
-
-    def to_dict(self):
-        ret_dict = dict(
-            cmap=self.cmap,
-            height=self.height,
-            width=self.width,
-            xaxis=self.xaxis,
-            yaxis=self.yaxis,
-            padding=self.padding,
-            fontsize=self.fontsize,
-            toolbar=self.toolbar_position,
-            show_grid=self.show_grid,
-            tools=self.tools,
-        )
-        filtered_dict = {
-            key: value for key, value in ret_dict.items() if value is not None
-        }
-        return filtered_dict
 
 
 class ImageDisplay(ABC):
@@ -321,7 +197,9 @@ class ImageArrayDisplay(ImageDisplay):
             New image transformation image to be applied when
             rendering the plot
         """
-        assert isinstance(image_transform, ImageTransform), ""
+        assert isinstance(
+            image_transform, ImageTransform
+        ), "Non valid type of ImageTransform"
         self._image_transform = image_transform
 
     def render(self):
@@ -359,7 +237,8 @@ class ImageArrayDisplay(ImageDisplay):
 
 
 class CalExpImageDisplay(ImageDisplay):
-    """Plot using Calexp data, includes the image and also the sources.
+    """Plot using Calexp data, includes the
+       image and also the sources.
 
     Parameters
     ----------
@@ -386,14 +265,17 @@ class CalExpImageDisplay(ImageDisplay):
         xlabel: str = "X",
         ylabel: str = "Y",
         show_detections: bool = True,
-        image_options: ImageOptions = ImageOptions(),
+        options: ImageOptions = ImageOptions(),
     ):
         super().__init__()
+        assert isinstance(
+            options, ImageOptions
+        ), "Not valid options type, should be ImageOptions"
         self._cal_exp_data = cal_exp_data
         self._title = title
         self._xlabel = xlabel
         self._ylabel = ylabel
-        self._image_options = image_options
+        self._image_options = options
         self._detections = None
         self._show_detections = show_detections
 
@@ -453,17 +335,20 @@ class RGBImageDisplay(ImageDisplay):
         title: str = "Untitled",
         xlabel: str = "X",
         ylabel: str = "Y",
-        image_options: ImageOptions = ImageOptions(),
+        options: ImageOptions = ImageOptions(),
     ):
         super().__init__()
+        assert isinstance(
+            options, ImageOptions
+        ), "Not valid options type, should be ImageOptions"
         self._image = image
         self._image_transform = None
         self._img = None
-        self._transformed_image = image_options
+        self._transformed_image = None
         self._title = title
         self._xlabel = xlabel
         self._ylabel = ylabel
-        self._image_options = image_options
+        self._image_options = options
         self._image_transform = RGBImageTransform()
 
     def render(self):
@@ -504,7 +389,9 @@ class RGBImageDisplay(ImageDisplay):
             New image transformation image to be applied when
             rendering the plot
         """
-        assert isinstance(image_transform, ImageTransform), ""
+        assert isinstance(
+            image_transform, ImageTransform
+        ), "Non valid type of ImageTransform"
         self._image_transform = image_transform
 
     image_transform = property(fget=None, fset=_set_image_transform)
