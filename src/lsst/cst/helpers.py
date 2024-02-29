@@ -25,6 +25,7 @@ from lsst.cst.image_display import (
     ImageDisplay,
     RGBImageDisplay,
 )
+from lsst.cst.utilities.data import create_rgb, cutout_coadd
 from lsst.cst.utilities.parameters import Band, PlotOptionsDefault
 from lsst.cst.utilities.queries import (
     DataWrapper,
@@ -33,8 +34,6 @@ from lsst.cst.utilities.queries import (
     QueryPsFlux,
     TAPService,
 )
-
-from lsst.cst.utilities.data import create_rgb, cutout_coadd
 
 _log = logging.getLogger(__name__)
 
