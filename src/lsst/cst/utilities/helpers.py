@@ -116,7 +116,7 @@ def create_rgb_composite_image(
     scale: Optional[Sequence[float]] = None,
     stretch: int = 1,
     Q: int = 10,
-    title="Untitled"
+    title="Untitled",
 ):
     """Create an RGB composite image from a location.
 
