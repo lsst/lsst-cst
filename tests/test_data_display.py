@@ -3,14 +3,14 @@ import unittest
 
 import pandas as pd
 
-from lsst.cst.helpers import (
+from lsst.cst.image_display.interactors import HoverTool
+from lsst.cst.utilities.deleters import delete_plot
+from lsst.cst.utilities.helpers import (
     create_datashader_plot,
     create_linked_plot_with_brushing,
 )
-from lsst.cst.image_display.interactors import HoverTool
-from lsst.cst.utilities.deleters import delete_plot
-from lsst.cst.utilities.savers import save_plot_as_html
 from lsst.cst.utilities.queries import DataWrapper
+from lsst.cst.utilities.savers import save_plot_as_html
 
 base_folder = os.path.dirname(os.path.abspath(__file__))
 
