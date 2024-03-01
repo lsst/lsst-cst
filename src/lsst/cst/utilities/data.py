@@ -7,7 +7,7 @@ try:
     import lsst.geom as geom
 except ImportError:
     warnings.warn("Unable to import lsst.geom")
-    _lsst_stack_ready = False
+    _lsst_stack_ready = True
 
 
 __all__ = ["create_rgb", "cutout_coadd"]
