@@ -248,7 +248,7 @@ class _ButlerCalExpData(CalExpData):
             "sourceTable", dataId=self._calexp_id.as_dict()
         )
         _log.debug(f"Found Sources from {self._calexp_id}")
-        return exp_sources.x, exp_sources.y
+        return exp_sources
 
     def get_image_bounds(self):
         if self._calexp is None:

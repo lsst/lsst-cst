@@ -116,6 +116,7 @@ def create_rgb_composite_image(
     scale: Optional[Sequence[float]] = None,
     stretch: int = 1,
     Q: int = 10,
+    title="Untitled"
 ):
     """Create an RGB composite image from a location.
 
@@ -139,6 +140,8 @@ def create_rgb_composite_image(
         The linear stretch of the image.
     Q: `int`, optional
         The Asinh softening parameter.
+    title: `str`
+        Plot title.
     """
     band_values = [member.value for member in bands]
     cutout_image_g = cutout_coadd(
@@ -170,7 +173,7 @@ def create_rgb_composite_image(
     img = create_rgb(
         coadds.image, bgr=band_values, scale=scale, stretch=stretch, Q=Q
     )
-    display = RGBImageDisplay(img)
+    display = RGBImageDisplay(img, title=title)
     display.render()
     return display.show()
 
