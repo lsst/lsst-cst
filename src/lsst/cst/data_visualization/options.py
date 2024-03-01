@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Tuple
 
-from lsst.cst.utilities import PlotOptionsDefault
+from lsst.cst.utilities.parameters import PlotOptionsDefault
 
 __all__ = [
     "HVScatterOptions",

@@ -5,7 +5,8 @@ import numpy as np
 import pandas as pd
 
 from lsst.cst.helpers import create_interactive_image
-from lsst.cst.utilities import delete_plot, save_plot_as_html
+from lsst.cst.utilities.deleters import delete_plot
+from lsst.cst.utilities.savers import save_plot_as_html
 from lsst.cst.utilities.image import CalExpDataFactory, CalExpId
 from lsst.cst.utilities.parameters import Band
 

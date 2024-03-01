@@ -8,7 +8,8 @@ from lsst.cst.helpers import (
     create_linked_plot_with_brushing,
 )
 from lsst.cst.image_display.interactors import HoverTool
-from lsst.cst.utilities import delete_plot, save_plot_as_html
+from lsst.cst.utilities.deleters import delete_plot
+from lsst.cst.utilities.savers import save_plot_as_html
 from lsst.cst.utilities.queries import DataWrapper
 
 base_folder = os.path.dirname(os.path.abspath(__file__))

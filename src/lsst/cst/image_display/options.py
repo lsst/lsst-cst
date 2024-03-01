@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional
 
-from lsst.cst.utilities import PlotOptionsDefault
+from lsst.cst.utilities.parameters import PlotOptionsDefault
 
 
 class Options(ABC):
