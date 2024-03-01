@@ -2,12 +2,12 @@ import warnings
 
 from astropy.visualization import make_lupton_rgb
 
-_lsst_stack_ready = False
+_lsst_stack_ready = True
 try:
     import lsst.geom as geom
 except ImportError:
     warnings.warn("Unable to import lsst.geom")
-    _lsst_stack_ready = True
+    _lsst_stack_ready = False
 
 
 __all__ = ["create_rgb", "cutout_coadd"]
@@ -107,7 +107,7 @@ def cutout_coadd(
     """
     if not _lsst_stack_ready:
         raise Exception(
-            "Cannot use this cutout_coadd " "if lsst stack is not loaded"
+            "Cannot use this cutout_coadd if lsst stack is not loaded"
         )
     radec = geom.SpherePoint(ra, dec, geom.degrees)
     cutout_size = geom.ExtentI(cutout_side_length, cutout_side_length)
