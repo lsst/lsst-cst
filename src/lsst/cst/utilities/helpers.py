@@ -4,7 +4,7 @@ image and data plotting.
 
 import logging
 from collections.abc import Sequence
-from typing import Optional, Tuple, Union
+from typing import List, Optional, Tuple, Union
 
 import pandas as pd
 import panel as pn
@@ -15,9 +15,8 @@ from holoviews.element.chart import Scatter
 from lsst.cst.data_visualization import (
     DataImageDisplay,
     DataShadeOptions,
-    GeometricPlots,
     HVScatterOptions,
-    PolygonOptions,
+    create_polygons_and_point_plot,
 )
 from lsst.cst.image_display import (
     CalExpImageDisplay,
@@ -29,14 +28,13 @@ from lsst.cst.utilities.data import create_rgb, cutout_coadd
 from lsst.cst.utilities.parameters import Band, PlotOptionsDefault
 from lsst.cst.utilities.queries import (
     DataWrapper,
-    QueryCoordinateBoundingBox,
     QueryExposureData,
     QueryPsFlux,
     TAPService,
+    get_point_bounding_boxes,
 )
 
 _log = logging.getLogger(__name__)
-
 
 try:
     from lsst.afw.image import MultibandExposure
@@ -107,7 +105,7 @@ def create_interactive_image(
     return pn.Row(img)
 
 
-def create_rgb_composite_image(
+def build_rgb_composite_image(
     butler,
     ra: float,
     dec: float,
@@ -128,7 +126,7 @@ def create_rgb_composite_image(
         Right ascension of the center of the cutout, in degrees.
     dec: `float`
         Declination of the center of the cutout, in degrees.
-    bands : `sequence`, optional
+    bands : `sequence[Band]`
         A 3-element sequence of filter names (i.e., keys of the exps dict)
         indicating what band to use for each channel.
     cutout_side_length: `float`, optional
@@ -143,33 +141,68 @@ def create_rgb_composite_image(
     title: `str`
         Plot title.
     """
+    cutout_image = []
     band_values = [member.value for member in bands]
-    cutout_image_g = cutout_coadd(
-        butler,
-        ra,
-        dec,
-        band=band_values[0],
-        datasetType="deepCoadd",
-        cutout_side_length=cutout_side_length,
+    cutout_image.append(
+        cutout_coadd(
+            butler,
+            ra,
+            dec,
+            band=band_values[0],
+            datasetType="deepCoadd",
+            cutout_side_length=cutout_side_length,
+        )
     )
-    cutout_image_r = cutout_coadd(
-        butler,
-        ra,
-        dec,
-        band=band_values[1],
-        datasetType="deepCoadd",
-        cutout_side_length=cutout_side_length,
+    cutout_image.append(
+        cutout_coadd(
+            butler,
+            ra,
+            dec,
+            band=band_values[1],
+            datasetType="deepCoadd",
+            cutout_side_length=cutout_side_length,
+        )
     )
-    cutout_image_i = cutout_coadd(
-        butler,
-        ra,
-        dec,
-        band=band_values[2],
-        datasetType="deepCoadd",
-        cutout_side_length=cutout_side_length,
+    cutout_image.append(
+        cutout_coadd(
+            butler,
+            ra,
+            dec,
+            band=band_values[2],
+            datasetType="deepCoadd",
+            cutout_side_length=cutout_side_length,
+        )
     )
-    coadds = [cutout_image_g, cutout_image_r, cutout_image_i]
-    coadds = MultibandExposure.fromExposures(band_values, coadds)
+    return create_rgb_composite_image(cutout_image, scale, stretch, Q, title)
+
+
+def create_rgb_composite_image(
+    images: List["ExposureF"],
+    band_values: Sequence[str] = ("g", "r", "i"),
+    scale: Optional[Sequence[float]] = None,
+    stretch: int = 1,
+    Q: int = 10,
+    title="Untitled",
+):
+    """Create an RGB composite image from a list of images.
+
+    Parameters
+    ----------
+    images: List[ExposureF]
+    bands: `sequence`, optional
+        A 3-element sequence of filter names (i.e., keys of the exps dict)
+        indicating what band to use for each channel.
+    scale: `List[float]`, optional
+        list of 3 floats, each less than 1.
+        Re-scales the RGB channels.
+    stretch: `int`, optional
+        The linear stretch of the image.
+    Q: `int`, optional
+        The Asinh softening parameter.
+    title: `str`
+        Plot title.
+    """
+    coadds = MultibandExposure.fromExposures(band_values, images)
     img = create_rgb(
         coadds.image, bgr=band_values, scale=scale, stretch=stretch, Q=Q
     )
@@ -356,62 +389,6 @@ def create_linked_plot_with_brushing(
     return pn.Row(scatter)
 
 
-def create_bounding_boxes_calexps_overlapping_a_point_plot(
-    coord: SkyCoord, mjd_range: Tuple[int, int]
-):
-    """Draw bounding boxes of all calexps overlapping a point.
-
-    Parameters
-    ----------
-    ra: `np.float64`
-        Coordinate ascension.
-    dec: `np.float64`
-        Coordinate declination.
-    mjd_range: `Tuple[int, int]`
-       Time range to look for.
-
-    Returns
-    -------
-    plot: `pn.Row`
-        Panel Row containing bounding boxes ovelapping
-        a point plot.
-    """
-    _log.info("Retrieving data")
-    tap_exposure_data = TAPService()
-    mjd1 = str(mjd_range[0])
-    mjd2 = str(mjd_range[1])
-    query = QueryCoordinateBoundingBox.from_sky_coord(coord, mjd1, mjd2)
-    tap_exposure_data.query = query
-    data = tap_exposure_data.fetch()
-    df = data._data
-    region_list = []
-    _log.debug("Creating bounding boxes")
-    for index, row in df.iterrows():
-        r = {
-            "x": [row["llcra"], row["ulcra"], row["urcra"], row["lrcra"]],
-            "y": [row["llcdec"], row["ulcdec"], row["urcdec"], row["lrcdec"]],
-            "v1": row["band"],
-            "v2": row["ccdVisitId"],
-        }
-        region_list.append(r)
-    tooltips = [("band", "@v1"), ("ccdVisitId", "@v2")]
-
-    hover = HoverTool(tooltips=tooltips)
-    boxes = GeometricPlots.polygons(
-        region_list,
-        kdims=["x", "y"],
-        vdims=["v1", "v2"],
-        options=PolygonOptions(
-            cmap=PlotOptionsDefault.filter_colormap,
-            line_color="v1",
-            tools=[hover],
-        ),
-    )
-    _log.debug("Creating point")
-    points = GeometricPlots.points((coord.ra.deg, coord.dec.deg))
-    return pn.Row(boxes * points)
-
-
 def create_psf_flux_plot(
     dia_object_id: int, band: Band, show: str = "psfFlux"
 ):
@@ -450,4 +427,29 @@ def create_psf_flux_plot(
         columns=["expMidptMJD", show],
         options=options,
         show_histogram=False,
+    )
+
+
+def create_bounding_boxes_calexps_overlapping_a_point_plot(
+    coord: SkyCoord, mjd_range: Tuple[int, int]
+):
+    """Draws a plot with information of the boxes
+       of all calexps overlapping a point.
+
+    Parameters
+    ----------
+    coord: `SkyCoord`
+        Coordinates of the point.
+    mjd_range: `Tuple[int, int]`
+       Time range to look for.
+
+    Returns
+    -------
+    plot: `pn.Row`
+        Panel Row containing bounding boxes ovelapping
+        a point plot.
+    """
+    boxes_data = get_point_bounding_boxes(coord, mjd_range)
+    return create_polygons_and_point_plot(
+        boxes_data, [(coord.ra.deg, coord.dec.deg)]
     )

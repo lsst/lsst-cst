@@ -14,6 +14,7 @@ from .options import (
     PolygonOptions,
     ScatterOptions,
 )
+from .utils import create_polygons_and_point_plot
 
 __all__ = [
     "DataImageDisplay",
@@ -25,4 +26,5 @@ __all__ = [
     "PointsOptions",
     "PolygonOptions",
     "ScatterOptions",
+    "create_polygons_and_point_plot",
 ]

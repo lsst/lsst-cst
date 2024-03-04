@@ -1,7 +1,7 @@
 """data science query tools"""
 import logging
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import Optional, Tuple
 
 import numpy as np
 import pandas as pd
@@ -14,6 +14,33 @@ from lsst.rsp import get_tap_service
 _log = logging.getLogger(__name__)
 
 __all__ = ["TAPService", "DataWrapper"]
+
+
+def get_point_bounding_boxes(coord: SkyCoord, mjd_range: Tuple[int, int]):
+    """Returns dataframe with information of the boxes
+        of all calexps overlapping a point.
+
+    Parameters
+    ----------
+    coord: `SkyCoord`
+        Coordinates of the point.
+    mjd_range: `Tuple[int, int]`
+       Time range to look for.
+
+    Returns
+    -------
+    box_information: `pd.DataFrame`
+        Dataframe with information of the
+        boxes of all calexps overlapping a point.
+    """
+    _log.info("Retrieving data")
+    tap_exposure_data = TAPService()
+    mjd1 = str(mjd_range[0])
+    mjd2 = str(mjd_range[1])
+    query = QueryCoordinateBoundingBox.from_sky_coord(coord, mjd1, mjd2)
+    tap_exposure_data.query = query
+    data = tap_exposure_data.fetch()
+    return data._data
 
 
 class DataHandler(ABC):

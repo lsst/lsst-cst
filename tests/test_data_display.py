@@ -3,6 +3,7 @@ import unittest
 
 import pandas as pd
 
+from lsst.cst.data_visualization import create_polygons_and_point_plot
 from lsst.cst.image_display.interactors import HoverTool
 from lsst.cst.utilities.deleters import delete_plot
 from lsst.cst.utilities.helpers import (
@@ -16,7 +17,7 @@ base_folder = os.path.dirname(os.path.abspath(__file__))
 
 
 class TestDataPlot(unittest.TestCase):
-    _DATA_PLOT_FILE_NAME = os.path.join(base_folder, "assets/linked_plot.html")
+    _DATA_PLOT_FILE_NAME = os.path.join(base_folder, "assets/data_plot.html")
 
     def setUp(self):
         file_path = os.path.join(base_folder, "assets/compressed_data.csv.gz")
@@ -56,3 +57,16 @@ class TestDataPlot(unittest.TestCase):
         plot = create_datashader_plot(data, ("gmr", "gmi"))
         save_plot_as_html(plot, TestDataPlot._DATA_PLOT_FILE_NAME)
         delete_plot(plot)
+
+    def testBoundingBoxesPlot(self):
+        file_path = os.path.join(base_folder, "assets/bounding_box.csv")
+        bounding_box_data = pd.read_csv(file_path)
+        plot = create_polygons_and_point_plot(
+            bounding_box_data, [(62.0, -37.0)]
+        )
+        save_plot_as_html(plot, TestDataPlot._DATA_PLOT_FILE_NAME)
+        delete_plot(plot)
+
+    @unittest.skip
+    def testRGBPlot(self):
+        pass
