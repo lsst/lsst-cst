@@ -1,18 +1,15 @@
-import pandas as pd
-import panel as pn
 from typing import List, Tuple
 
+import pandas as pd
+import panel as pn
 from bokeh.models import HoverTool  # noqa: F401
-from lsst.cst.data_visualization import (
-    GeometricPlots,
-    PolygonOptions,
-)
+
+from lsst.cst.data_visualization import GeometricPlots, PolygonOptions
 from lsst.cst.utilities.parameters import PlotOptionsDefault
 
 
 def create_polygons_and_point_plot(
-    df: pd.DataFrame,
-    points: List[Tuple[float, float]]
+    df: pd.DataFrame, points: List[Tuple[float, float]]
 ):
     """Draw list of boxes in a dataframe and list of points.
 
