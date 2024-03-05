@@ -48,6 +48,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install Git LFS
+        run: |
+          sudo apt-get install git-lfs  # For Linux-based runners
+          git lfs install
+      
+      - name: Fetch Git LFS objects
+        run: git lfs pull
+
       - name: Run tox
         uses: lsst-sqre/run-tox@v1
         with:
