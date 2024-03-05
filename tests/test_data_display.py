@@ -66,7 +66,3 @@ class TestDataPlot(unittest.TestCase):
         )
         save_plot_as_html(plot, TestDataPlot._DATA_PLOT_FILE_NAME)
         delete_plot(plot)
-
-    @unittest.skip
-    def testRGBPlot(self):
-        pass

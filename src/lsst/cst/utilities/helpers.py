@@ -141,9 +141,9 @@ def build_rgb_composite_image(
     title: `str`
         Plot title.
     """
-    cutout_image = []
+    cutout_images = []
     band_values = [member.value for member in bands]
-    cutout_image.append(
+    cutout_images.append(
         cutout_coadd(
             butler,
             ra,
@@ -153,7 +153,7 @@ def build_rgb_composite_image(
             cutout_side_length=cutout_side_length,
         )
     )
-    cutout_image.append(
+    cutout_images.append(
         cutout_coadd(
             butler,
             ra,
@@ -163,7 +163,7 @@ def build_rgb_composite_image(
             cutout_side_length=cutout_side_length,
         )
     )
-    cutout_image.append(
+    cutout_images.append(
         cutout_coadd(
             butler,
             ra,
@@ -173,7 +173,7 @@ def build_rgb_composite_image(
             cutout_side_length=cutout_side_length,
         )
     )
-    return create_rgb_composite_image(cutout_image, scale, stretch, Q, title)
+    return create_rgb_composite_image(cutout_images, scale, stretch, Q, title)
 
 
 def create_rgb_composite_image(
