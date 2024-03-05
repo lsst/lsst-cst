@@ -52,7 +52,7 @@ jobs:
         run: |
           sudo apt-get install git-lfs  # For Linux-based runners
           git lfs install
-      
+
       - name: Fetch Git LFS objects
         run: git lfs pull
 
