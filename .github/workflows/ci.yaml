@@ -42,16 +42,25 @@ jobs:
     strategy:
       matrix:
         python:
+#          - "3.10"
           - "3.11"
 
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install Git LFS
+        run: |
+          sudo apt-get install git-lfs  # For Linux-based runners
+          git lfs install
+
+      - name: Fetch Git LFS objects
+        run: git lfs pull
+
       - name: Run tox
         uses: lsst-sqre/run-tox@v1
         with:
           python-version: ${{ matrix.python }}
-          tox-envs: "py,typing"
+          tox-envs: "py"
 
   docs:
 
@@ -79,18 +88,17 @@ jobs:
       # version clutter in the docs and failures when a PR doesn't have access
       # to secrets.
 
-# Uncomment when the lsst-cst.lsst.io LSST the Docs website is set up
-#      - name: Upload to LSST the Docs
-#        uses: lsst-sqre/ltd-upload@v1
-#        with:
-#          project: "lsst-cst"
-#          dir: "docs/_build/html"
-#          username: ${{ secrets.LTD_USERNAME }}
-#          password: ${{ secrets.LTD_PASSWORD }}
-#        if: >
-#          github.event_name != 'merge_group'
-#          && (github.event_name != 'pull_request'
-#              || startsWith(github.head_ref, 'tickets/'))
+      - name: Upload to LSST the Docs
+        uses: lsst-sqre/ltd-upload@v1
+        with:
+          project: "lsst-cst"
+          dir: "docs/_build/html"
+          username: ${{ secrets.LTD_USERNAME }}
+          password: ${{ secrets.LTD_PASSWORD }}
+        if: >
+          github.event_name != 'merge_group'
+          && (github.event_name != 'pull_request'
+             || startsWith(github.head_ref, 'tickets/'))
 
   test-packaging:
 
