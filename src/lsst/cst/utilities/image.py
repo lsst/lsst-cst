@@ -1,4 +1,5 @@
 """data science utilities for plotting data and images."""
+
 import logging
 import warnings
 from abc import ABC, abstractmethod
