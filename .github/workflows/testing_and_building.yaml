@@ -18,25 +18,7 @@ name: Python CI
     types: [published]
 
 jobs:
-<<<<<<< HEAD:.github/workflows/ci.yaml
-  lint:
-
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Run pre-commit
-        uses: pre-commit/action@v3.0.1
-=======
->>>>>>> 84da041 (Add new git workflows):.github/workflows/testing_and_building.yaml
-
+ 
   test:
 
     runs-on: ubuntu-latest
