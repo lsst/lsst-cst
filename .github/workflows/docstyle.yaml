@@ -10,7 +10,6 @@ jobs:
   call-workflow:
     uses: lsst/rubin_workflows/.github/workflows/docstyle.yaml@main
     with: |
-      arguments:
-        convention: numpy
-        ignore: D105,D102,D100,D200,D205,D400,D401
-        select: D212
+      convention: numpy
+      ignore: D105,D102,D100,D200,D205,D400,D401
+      select: D212
