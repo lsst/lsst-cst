@@ -12,5 +12,5 @@ jobs:
     with: 
       args: |
         convention: numpy
-        ignore: D105,D102,D100,D200,D205,D400,D401
-        select: D212
+        add-ignore: D105,D102,D100,D200,D205,D400,D401
+        add-select: D212
