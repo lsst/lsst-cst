@@ -1,4 +1,4 @@
-name: Python CI
+name: Testing and Building
 
 "on":
   merge_group: {}
@@ -18,7 +18,7 @@ name: Python CI
     types: [published]
 
 jobs:
- 
+
   test:
 
     runs-on: ubuntu-latest

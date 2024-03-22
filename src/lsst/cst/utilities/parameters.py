@@ -1,4 +1,5 @@
 """data science constant values for plots."""
+
 from enum import Enum
 
 __all__ = ["Band", "PlotOptionsDefault"]
