@@ -47,9 +47,7 @@ def data_id_to_str(data_id: dict):
     data_id_str: `str`
         Data identifier string.
     """
-
     data_id_str = json.dumps(data_id)
-
     return data_id_str
 
 
@@ -71,19 +69,14 @@ def psf_size_at_pixel_xy(psf, bbox, xy):
     psf_size: `dict`
         Size of the PSF in pixels; sigma and FWHM.
     """
-
     point2I = geom.Point2I(xy[0], xy[1])
-
     if bbox.contains(point2I):
         point2D = geom.Point2D(xy[0], xy[1])
         sigma = psf.computeShape(point2D).getDeterminantRadius()
         fwhm = sigma * 2.0 * np.sqrt(2.0 * np.log(2.0))
-
     else:
         raise Exception("Coordinates xy not contained by image boundaries.")
-
     psf_size = {'sigma': sigma, 'fwhm': fwhm}
-
     return psf_size
 
 
@@ -104,13 +97,11 @@ def nearest_patch_from_ra_dec(ra, dec):
         Numerical identifiers for the nearest patch (and its tract),
         and the distance (in degrees) to its center from the input coordinates.
     """
-
     tap_launcher = TAPService()
     query = RaDecCoordinatesToTractPatch(ra, dec)
     tap_launcher.query = query
     data = tap_launcher.fetch()
     results = data._data
-
     if results.empty:
         raise Exception("No patch found for RA {}, Dec {}.".format(ra, dec))
 
@@ -128,7 +119,6 @@ def nearest_patch_from_ra_dec(ra, dec):
         warnings.warn("Large distance to nearest patch ({} deg). "
                       "RA {}, Dec {} might not be within nearest patch "
                       "boundary.".format(results["distance"].iloc[0], ra, dec))
-
     if results["distance"].iloc[0] > maxdist:
         raise Exception("Large distance to nearest patch ({} deg). "
                         "RA {}, Dec {} do not fall withinin nearest patch "
@@ -138,5 +128,4 @@ def nearest_patch_from_ra_dec(ra, dec):
     nearest_patch = {'tract': results["lsst_tract"].iloc[0],
                      'patch': results["lsst_patch"].iloc[0],
                      'distance in degrees': results["distance"].iloc[0]}
-
     return nearest_patch
