@@ -1,8 +1,9 @@
 import pathlib
 import unittest
-import numpy as np
-from lsst.cst.conversions import ids_to_str, nearest_patch_from_ra_dec
 
+import numpy as np
+
+from lsst.cst.conversions import ids_to_str, nearest_patch_from_ra_dec
 
 PATH = pathlib.Path(__file__).parent.absolute()
 

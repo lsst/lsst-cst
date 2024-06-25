@@ -3,6 +3,7 @@
 import numpy as np
 import json
 import warnings
+
 from lsst import geom
 from lsst.cst.utilities.queries import RaDecCoordinatesToTractPatch, TAPService
 
