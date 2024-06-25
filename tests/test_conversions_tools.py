@@ -15,8 +15,8 @@ class TestDataUtils(unittest.TestCase):
         ra = 55.745834
         dec = -32.269167
         result = nearest_patch_from_ra_dec(ra, dec)
-        self.assertEqual(result['tract'], 4431)
-        self.assertEqual(result['patch'], 17)
+        self.assertEqual(result["tract"], 4431)
+        self.assertEqual(result["patch"], 17)
 
     def test_ids_to_str(self) -> None:
         # test ids to string functionality
