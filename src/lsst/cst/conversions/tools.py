@@ -4,7 +4,11 @@ import numpy as np
 import json
 import warnings
 
-from lsst import geom
+try:
+    from lsst import geom
+except ImportError:
+    warnings.warn("Unable to import lsst.geom.")
+
 from lsst.cst.utilities.queries import RaDecCoordinatesToTractPatch, TAPService
 
 
@@ -34,7 +38,7 @@ def ids_to_str(data_ids: np.ndarray) -> str:
     return "(" + ", ".join(str(value) for value in data_ids) + ")"
 
 
-def data_id_to_str(data_id: dict):
+def data_id_to_str(data_id: dict) -> str:
     """Converts a data identifier dictionary to a string.
     Will work on any dict, not specific to dataId format.
 
@@ -52,16 +56,17 @@ def data_id_to_str(data_id: dict):
     return data_id_str
 
 
-def psf_size_at_pixel_xy(psf, bbox, xy):
+def psf_size_at_pixel_xy(psf, bbox, xy: (int, int)) -> dict:
     """Obtains the size of the PSF in an image
     at a given xy coordinate.
 
     Parameters
     ----------
-    psf : `lsst.meas.extensions.psfex.PsfexPsf` `lsst.meas.algorithms.CoaddPsf`
-        PSF object for a calexp or deepCoadd; from .getPsf().
+    psf : `lsst.meas.extensions.psfex.PsfexPsf` or
+        `lsst.meas.algorithms.CoaddPsf` PSF object from a calexp
+        or deepCoadd respectively; use .getPsf().
     bbox : `lsst.geom.Box2I`
-        Bounding box for the calexp or deepCoadd; from .getBBox().
+        Bounding box for the calexp or deepCoadd; use .getBBox().
     xy : `Tuple[int, int]`
         Pixel coordinates x and y where PSF size is to be evaluated.
 
@@ -70,18 +75,23 @@ def psf_size_at_pixel_xy(psf, bbox, xy):
     psf_size: `dict`
         Size of the PSF in pixels; sigma and FWHM.
     """
+
     point2I = geom.Point2I(xy[0], xy[1])
+
     if bbox.contains(point2I):
         point2D = geom.Point2D(xy[0], xy[1])
         sigma = psf.computeShape(point2D).getDeterminantRadius()
         fwhm = sigma * 2.0 * np.sqrt(2.0 * np.log(2.0))
+
     else:
         raise Exception("Coordinates xy not contained by image boundaries.")
+
     psf_size = {'sigma': sigma, 'fwhm': fwhm}
+
     return psf_size
 
 
-def nearest_patch_from_ra_dec(ra, dec):
+def nearest_patch_from_ra_dec(ra: float, dec: float) -> dict:
     """Return nearest deepCoadd skymap patch, and its tract,
     for a given RA and Dec.
 

@@ -11,6 +11,7 @@ PATH = pathlib.Path(__file__).parent.absolute()
 class TestDataUtils(unittest.TestCase):
     """Test data utility functions in conversions module."""
 
+    @unittest.skip("Disabled. TAP Service not available in test environment.")
     def test_nearest_patch_from_ra_dec(self):
         ra = 55.745834
         dec = -32.269167
