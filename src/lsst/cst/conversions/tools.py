@@ -75,19 +75,14 @@ def psf_size_at_pixel_xy(psf, bbox, xy: (int, int)) -> dict:
     psf_size: `dict`
         Size of the PSF in pixels; sigma and FWHM.
     """
-
     point2I = geom.Point2I(xy[0], xy[1])
-
     if bbox.contains(point2I):
         point2D = geom.Point2D(xy[0], xy[1])
         sigma = psf.computeShape(point2D).getDeterminantRadius()
         fwhm = sigma * 2.0 * np.sqrt(2.0 * np.log(2.0))
-
     else:
         raise Exception("Coordinates xy not contained by image boundaries.")
-
     psf_size = {'sigma': sigma, 'fwhm': fwhm}
-
     return psf_size
 
 
