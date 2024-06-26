@@ -21,30 +21,31 @@ __all__ = [
 
 
 def ids_to_str(data_ids: np.ndarray) -> str:
-    """Transform a numpy array of ids (long int)
-        to a comma-separated values string
+    """Transform a numpy array of object identifiers
+    (long integers) to a string of comma-separated values
+    enclosed in parentheses. This is the format required for
+    a WHERE ... IN ... statement in a TAP query.
 
     Parameters
     ----------
     data_ids: `numpy.ndarray`
-        numpy array with objects id
+        Array of object IDs (long int).
 
     Returns
     -------
     result: `str`
-        String with separated by comma-separated values
-        from the data_ids
+        String of comma-separated IDs, in parentheses.
     """
     return "(" + ", ".join(str(value) for value in data_ids) + ")"
 
 
 def data_id_to_str(data_id: dict) -> str:
     """Converts a data identifier dictionary to a string.
-    Will work on any dict, not specific to dataId format.
+    Will work on any dict and is not specific to the dataId format.
 
     Parameters
     ----------
-    data_id: 'dict'
+    data_id: `dict`
         Data identifier dictionary.
 
     Returns
@@ -101,7 +102,8 @@ def nearest_patch_from_ra_dec(ra: float, dec: float) -> dict:
     -------
     nearest_patch: `dict`
         Numerical identifiers for the nearest patch (and its tract),
-        and the distance (in degrees) to its center from the input coordinates.
+        and the distance (in degrees) between the patch center and
+        the input coordinates.
     """
     tap_launcher = TAPService()
     query = RaDecCoordinatesToTractPatch(ra, dec)
