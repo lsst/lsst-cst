@@ -62,9 +62,9 @@ def psf_size_at_pixel_xy(psf, bbox, xy: tuple[int, int]) -> dict[str, float]:
 
     Parameters
     ----------
-    psf : `lsst.meas.extensions.psfex.PsfexPsf` or
-        `lsst.meas.algorithms.CoaddPsf` PSF object from a calexp
-        or deepCoadd respectively; use .getPsf().
+    psf : `lsst.meas.extensions.psfex.PsfexPsf` or \
+          `lsst.meas.algorithms.CoaddPsf`
+        PSF object from a calexp or deepCoadd respectively; use .getPsf().
     bbox : `lsst.geom.Box2I`
         Bounding box for the calexp or deepCoadd; use .getBBox().
     xy : `tuple` [`int`, `int`]
