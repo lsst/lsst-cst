@@ -56,7 +56,7 @@ def data_id_to_str(data_id: dict) -> str:
     return data_id_str
 
 
-def psf_size_at_pixel_xy(psf, bbox, xy: (int, int)) -> dict:
+def psf_size_at_pixel_xy(psf, bbox, xy: tuple[int, int]) -> dict[str, float]:
     """Obtains the size of the PSF in an image
     at a given xy coordinate.
 
@@ -67,7 +67,7 @@ def psf_size_at_pixel_xy(psf, bbox, xy: (int, int)) -> dict:
         or deepCoadd respectively; use .getPsf().
     bbox : `lsst.geom.Box2I`
         Bounding box for the calexp or deepCoadd; use .getBBox().
-    xy : `Tuple[int, int]`
+    xy : `tuple` [`int`, `int`]
         Pixel coordinates x and y where PSF size is to be evaluated.
 
     Returns
