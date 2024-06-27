@@ -1,264 +1,139 @@
-"""data science format utils."""
-
-from dataclasses import dataclass
+"""Tools for common conversions."""
 
 import numpy as np
-import pandas as pd
+import json
+import warnings
 
-from lsst.cst.utilities.image import CalExpId
+try:
+    from lsst import geom
+except ImportError:
+    warnings.warn("Unable to import lsst.geom.")
+
 from lsst.cst.utilities.queries import RaDecCoordinatesToTractPatch, TAPService
 
+
 __all__ = [
-    "data_id_to_str",
     "ids_to_str",
-    "shuffle_dataframe",
-    "sort_dataframe",
-    "TractPatchInformation",
-    "tract_patch_from_ra_dec",
-    "get_psf_properties",
+    "data_id_to_str",
+    "psf_size_at_pixel_xy",
+    "nearest_patch_from_ra_dec",
 ]
 
 
-SIGMA_TO_FWHM = 2.0 * np.sqrt(2.0 * np.log(2.0))
-
-
 def ids_to_str(data_ids: np.ndarray) -> str:
-    """Transform a numpy array of ids (long int)
-        to a comma-separated values string
+    """Transform a numpy array of object identifiers
+    (long integers) to a string of comma-separated values
+    enclosed in parentheses. This is the format required for
+    a WHERE ... IN ... statement in a TAP query.
 
     Parameters
     ----------
     data_ids: `numpy.ndarray`
-        numpy array with objects id
+        Array of object IDs (long int).
 
     Returns
     -------
     result: `str`
-        String with separated by comma-separated values
-        from the data_ids
+        String of comma-separated IDs, in parentheses.
     """
     return "(" + ", ".join(str(value) for value in data_ids) + ")"
 
 
-def data_id_to_str(data_id: dict):
-    """Returns a data identifier dictionary to a string
+def data_id_to_str(data_id: dict) -> str:
+    """Converts a data identifier dictionary to a string.
+    Will work on any dict and is not specific to the dataId format.
 
     Parameters
     ----------
-    data_id: 'dict'
+    data_id: `dict`
         Data identifier dictionary.
 
     Returns
     -------
     data_id_str: `str`
-        Data identifier string
+        Data identifier string.
     """
-    cal_exp_id = CalExpId(**data_id)
-    return str(cal_exp_id)
+    data_id_str = json.dumps(data_id)
+    return data_id_str
 
 
-def sort_dataframe(
-    df: pd.DataFrame,
-    sort_key: str,
-    ascending: bool = False,
-    set_index: bool = True,
-) -> pd.DataFrame:
-    """Return a sorted copy of the dataframe 'df' by index,
-    selecting the desired order (ascending or descending)
-    using the ascending argument, it also exchanges the index
-    of the dataframe for the sort_key if set_index parameter
-    is True (default).
+def psf_size_at_pixel_xy(psf, bbox, xy: tuple[int, int]) -> dict[str, float]:
+    """Obtains the size of the PSF in an image
+    at a given xy coordinate.
 
     Parameters
     ----------
-    df : `pandas.DataFrame`
-        dataframe to be sorted
-    sort_key: `str`
-        column key used to sort the dataframe
-    ascending: `bool`, optional
-        ascending/descending sorting
-    set_index: `bool`, optional
-        set sorted key as the dataframe index
+    psf : `lsst.meas.extensions.psfex.PsfexPsf` or \
+          `lsst.meas.algorithms.CoaddPsf`
+        PSF object from a calexp or deepCoadd respectively; use .getPsf().
+    bbox : `lsst.geom.Box2I`
+        Bounding box for the calexp or deepCoadd; use .getBBox().
+    xy : `tuple` [`int`, `int`]
+        Pixel coordinates x and y where PSF size is to be evaluated.
 
     Returns
     -------
-    result : `pandas.DataFrame`
-        Copy of the `~pandas.DataFrame` sorted using the selected column.
+    psf_size: `dict`
+        Size of the PSF in pixels; sigma and FWHM.
     """
-    if sort_key not in df.columns:
-        raise Exception(f"Index {sort_key} not existing in the dataframe")
-    df = df.sort_values(sort_key, ascending=ascending)
-    if set_index:
-        df.set_index(np.array(range(len(df))), inplace=True)
-    return df
+    point2I = geom.Point2I(xy[0], xy[1])
+    if bbox.contains(point2I):
+        point2D = geom.Point2D(xy[0], xy[1])
+        sigma = psf.computeShape(point2D).getDeterminantRadius()
+        fwhm = sigma * 2.0 * np.sqrt(2.0 * np.log(2.0))
+    else:
+        raise Exception("Coordinates xy not contained by image boundaries.")
+    psf_size = {'sigma': sigma, 'fwhm': fwhm}
+    return psf_size
 
 
-def shuffle_dataframe(df: pd.DataFrame, random_state: int = 0) -> pd.DataFrame:
-    """Return a copy of the dataframe df shuffled, random_state
-    argument may be used to reproduce same shuffling.
-
-    Parameters
-    ----------
-    df: `pandas.DataFrame`
-        dataframe to be shuffled
-
-    random_state: `int`
-        number to reproduce same randomness
-
-    Returns
-    -------
-    result: `pandas.DataFrame`
-        shuffled dataframe
-    """
-    df_randomized = df.sample(frac=1, random_state=random_state)
-    return df_randomized
-
-
-class TractPatchInformation:
-    """Tract patch information
-
-    Parameters
-    ----------
-    patch: `int`
-        Patch value.
-    tract: `int`
-        Tract value.
-    """
-
-    def __init__(self, tract: int, patch: int):
-        self._tract = tract
-        self._patch = patch
-
-    @property
-    def patch(self):
-        """Patch value.
-
-        Returns
-        -------
-        patch: `int`
-            Patch value.
-        """
-        return self._patch
-
-    @property
-    def tract(self):
-        """Patch value.
-
-        Returns
-        -------
-        tract: `int`
-            Tract value.
-        """
-        return self._tract
-
-    def to_dict(self):
-        """Dictionary containing
-        Tract-patch information
-
-        Returns
-        -------
-        values: `dict[str, int]`
-            Dictionary with tract-patch information.
-        """
-        return dict(tract=self._tract, patch=self._patch)
-
-    def __str__(self):
-        return f"tract: {self._tract} patch: {self._patch}"
-
-    def __repr__(self):
-        return str(self)
-
-
-def tract_patch_from_ra_dec(ra: float, dec: float):
-    """Look for nearest tract-patch information from a
-    coordinate ra-dec.
+def nearest_patch_from_ra_dec(ra: float, dec: float) -> dict:
+    """Return nearest deepCoadd skymap patch, and its tract,
+    for a given RA and Dec.
 
     Parameters
     ----------
     ra: `np.float64`
-        Coordinate ascension.
+        Right ascension, in decimal degrees.
     dec: `np.float64`
-        Coordinate declination.
+        Declination, in decimal degrees.
 
     Returns
     -------
-    value: `TractPatchInformation`
-        Tract patch information
+    nearest_patch: `dict`
+        Numerical identifiers for the nearest patch (and its tract),
+        and the distance (in degrees) between the patch center and
+        the input coordinates.
     """
-    tap_exposure_data = TAPService()
+    tap_launcher = TAPService()
     query = RaDecCoordinatesToTractPatch(ra, dec)
-    tap_exposure_data.query = query
-    data = tap_exposure_data.fetch()
-    final_data = data._data
-    if final_data.empty:
-        raise Exception(
-            f"No tract-patch info found" f"for ra: {ra} dec: {dec}"
-        )
-    return TractPatchInformation(
-        final_data["lsst_tract"].iloc[0], final_data["lsst_patch"].iloc[0]
-    )
+    tap_launcher.query = query
+    data = tap_launcher.fetch()
+    results = data._data
+    if results.empty:
+        raise Exception("No patch found for RA {}, Dec {}.".format(ra, dec))
 
+    # for DP0, 4100 pixels * (0.2 arcsec / pixel) * (degree / 3600 arcsec) / 2
+    patch_half_side = 4100 * 0.2 / 3600.0 / 2
 
-@dataclass(frozen=True)
-class PsfProperties:
-    """Object with psf properties.
+    # include the cos dec term to get maximum distance in RA
+    maxdist_ra = patch_half_side / np.cos(np.deg2rad(dec))
 
-    Parameters
-    ----------
-    fwhm : `float`
-        Full-width at half maximum: PSF determinant radius
-        from SDSS adaptive moments matrix (sigma) times
-        SIGMA_TO_FWHM.
-    ap_flux : `float`
-        PSF flux from aperture photometry weighted
-        by a sinc function.
-    peak : `float`
-        Peak PSF value.
-    dims : `Tuple[int, int]`
-        PSF postage stamp dimensions.
-    """
+    # diagonal distance from patch center to corner
+    maxdist = np.sqrt(patch_half_side**2 + maxdist_ra**2)
 
-    fwhm: float
-    ap_flux: float
-    peak: float
-    dims: (int, int)
+    if (results["distance"].iloc[0] >= maxdist_ra)\
+       & (results["distance"].iloc[0] <= maxdist):
+        warnings.warn("Large distance to nearest patch ({} deg). "
+                      "RA {}, Dec {} might not be within nearest patch "
+                      "boundary.".format(results["distance"].iloc[0], ra, dec))
+    if results["distance"].iloc[0] > maxdist:
+        raise Exception("Large distance to nearest patch ({} deg). "
+                        "RA {}, Dec {} do not fall withinin nearest patch "
+                        "boundary.".format(results["distance"].iloc[0],
+                                           ra, dec))
 
-    def __str__(self):
-        return (
-            f"PSF FWHM: {self.fwhm:.4} pix \n"
-            f"PSF flux from aperture photometry: {self.ap_flux:.4} \n"
-            f"Peak PSF value: {self.peak:.4} \n"
-            f"PSF postage stamp dimensions: {self.dims} \n"
-        )
-
-    def __repr__(self):
-        return self.__str__()
-
-
-def get_psf_properties(psf, point):
-    """Function to obtain PSF properties.
-
-    Parameters
-    ----------
-    psf : `lsst.meas.extensions.psfex.PsfexPsf`
-        PSF object.
-    point : `lsst.geom.Point2D`
-        Coordinate where the PSF is being evaluated.
-
-    Returns
-    -------
-    psf_values: `PsfProperties`
-        PsfProperties object containing psf properties:
-        fhwm, ap_flux, peak and dims.
-    """
-    sigma = psf.computeShape(point).getDeterminantRadius()
-    fwhm = sigma * SIGMA_TO_FWHM
-    ap_flux = psf.computeApertureFlux(radius=sigma, position=point)
-    peak = psf.computePeak(position=point)
-    dims = psf.computeImage(point).getDimensions()
-    return PsfProperties(fwhm, ap_flux, peak, (dims[0], dims[1]))
-
-
-def gauss(x, a, x0, sigma):
-    # Helper function to define a one-dimensional Gaussian profile.
-    return a * np.exp(-((x - x0) ** 2) / (2 * sigma**2))
+    nearest_patch = {'tract': results["lsst_tract"].iloc[0],
+                     'patch': results["lsst_patch"].iloc[0],
+                     'distance in degrees': results["distance"].iloc[0]}
+    return nearest_patch
