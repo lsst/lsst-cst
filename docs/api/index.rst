@@ -10,7 +10,5 @@ Python API reference
    :maxdepth: 1
    :caption: Contents:
 
-   Conversions <conversions.rst>
-   Image Display Utils <image_display.rst>
-   Data Display Utils <data_visualization.rst>
    Utilities <utilities.rst>
+   Plots <plots.rst>

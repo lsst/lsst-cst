@@ -1,23 +1,15 @@
 import pathlib
 import unittest
-
+import matplotlib.pyplot as plt
 import numpy as np
-
-from lsst.cst.conversions import ids_to_str, nearest_patch_from_ra_dec
+from lsst.cst.utilities import ids_to_str
+from lsst.cst.utilities import delete_plot
 
 PATH = pathlib.Path(__file__).parent.absolute()
 
 
-class TestDataUtils(unittest.TestCase):
-    """Test data utility functions in conversions module."""
-
-    @unittest.skip("Disabled. TAP Service not available in test environment.")
-    def test_nearest_patch_from_ra_dec(self):
-        ra = 55.745834
-        dec = -32.269167
-        result = nearest_patch_from_ra_dec(ra, dec)
-        self.assertEqual(result["tract"], 4431)
-        self.assertEqual(result["patch"], 17)
+class TestUtilities(unittest.TestCase):
+    """Test utility functions in utilities module."""
 
     def test_ids_to_str(self) -> None:
         # test ids to string functionality
@@ -48,3 +40,27 @@ class TestDataUtils(unittest.TestCase):
         )
 
         self.assertEqual(data_id_str, result)
+
+
+    @unittest.SkipTest
+    def test_delete_plot(self) -> None:
+        """Create a figure and test that the remove_figure function
+        removes it as expected."""
+
+        # Data for plotting
+        t = np.arange(0.0, 2.0, 0.01)
+        s = 1 + np.sin(2 * np.pi * t)
+
+        fig, ax = plt.subplots()
+        ax.plot(t, s)
+
+        ax.set(
+            xlabel="time (s)",
+            ylabel="voltage (mV)",
+            title="A simple test plot",
+        )
+        ax.grid()
+        self.assertIsNotNone(fig)
+
+        # Remove figure using utility function
+        delete_plot(fig)
